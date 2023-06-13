@@ -1,0 +1,82 @@
+// app global css in SCSS form
+@font-face {
+  font-family: 'robotomono';
+  src: url(./fonts/RobotoMono-Regular.ttf);
+}
+
+html {
+  word-wrap: break-word;
+}
+
+body {
+  font-family: 'robotomono' !important;
+  background-color: white;
+  background-image: url('/noise4.png');
+  background-repeat: repeat;
+}
+
+.noise2 {
+  background-color: white;
+  background-image: url('/noise6.png');
+  background-repeat: repeat;
+}
+
+.text-h1 {
+  font-size: 3rem;
+  line-height: 1.2;
+}
+
+.grow:hover {
+  cursor: pointer;
+  //box-shadow: 0px 0px 0px 1px #9E9E9E;
+
+  -webkit-transition: all 0.3s ease-in-out !important;
+  -moz-transition: all 0.3s ease-in-out !important;
+  transition: all 0.3s ease-in-out !important;
+  /*box-shadow: 0px 0px 15px gold;*/
+}
+
+.stateborn-card {
+  background-image: url('/noise5.png');
+  background-repeat: repeat;
+  transition: box-shadow 0.3s ease;
+  box-shadow: 0px 0px 0px 0px #9E9E9E;
+}
+
+.my-markdown h1 {
+  line-height: 1 !important; /* Adjust this value as needed */
+  margin: 0;
+  padding: 0;
+}
+
+.my-markdown h2 {
+  line-height: 1 !important; /* Adjust this value as needed */
+  margin: 0;
+  padding: 0;
+}
+
+.my-markdown p {
+  line-height: normal !important; /* Adjust this value as needed */
+  font-size: 1rem;
+}
+
+.font-one-rem {
+  font-size: 1rem !important;
+}
+.text-stroke {
+  -webkit-text-stroke-width: 2px;
+  -webkit-text-stroke-color: white;
+}
+
+.sticky-parallax {
+  position: sticky;
+  top: 0;
+}
+
+.vertical-align {
+  position: relative !important;
+  top: 50% !important;
+  -webkit-transform: translateY(-50%) !important;
+  -ms-transform: translateY(-50%) !important;
+  transform: translateY(-50%) !important;
+}

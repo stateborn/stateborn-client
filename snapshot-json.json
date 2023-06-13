@@ -1,0 +1,84 @@
+{
+  "address": "0x824732D3F4Eb94a20254cca9DE10485Ce445Bb40",
+  "sig": "0x7775d10fee19e789cb9711cd3dd459939c51a9b5c383bd08033c9e59c044cb4811cf0da45426e53e8540fac30805d52655ac852ad975fbff99a2c5c367d4b58e1c",
+  "data": {
+    "domain": {
+      "name": "snapshot",
+      "version": "0.1.4"
+    },
+    "types": {
+      "Proposal": [
+        {
+          "name": "from",
+          "type": "address"
+        },
+        {
+          "name": "space",
+          "type": "string"
+        },
+        {
+          "name": "timestamp",
+          "type": "uint64"
+        },
+        {
+          "name": "type",
+          "type": "string"
+        },
+        {
+          "name": "title",
+          "type": "string"
+        },
+        {
+          "name": "body",
+          "type": "string"
+        },
+        {
+          "name": "discussion",
+          "type": "string"
+        },
+        {
+          "name": "choices",
+          "type": "string[]"
+        },
+        {
+          "name": "start",
+          "type": "uint64"
+        },
+        {
+          "name": "end",
+          "type": "uint64"
+        },
+        {
+          "name": "snapshot",
+          "type": "uint64"
+        },
+        {
+          "name": "plugins",
+          "type": "string"
+        },
+        {
+          "name": "app",
+          "type": "string"
+        }
+      ]
+    },
+    "message": {
+      "space": "1inch.eth",
+      "type": "single-choice",
+      "title": "[1IP-10]  1inch DAO SAFE Airdrop Claim (re-vote)",
+      "body": "## Simple Summary\n\nThe purpose of this proposal is to create the transaction needed to claim the SAFE airdrop that has been allocated to the [1inch DAO Treasury](https://gnosis-safe.io/app/eth:0x7951c7ef839e26F63DA87a42C9a87986507f1c07/balances) as well as delegate this voting power to StableNode.\n\n## Abstract\n\nGnosis Safe DAO is [airdropping SAFE tokens](https://safe.mirror.xyz/p1aonqM1NSZeOFN8iY2_Ms8y6Ikuz5E76HRiEPKnCEA) to historical users of the platform. The [1inch DAO Treasury Gnosis Safe](https://gnosis-safe.io/app/eth:0x7951c7ef839e26F63DA87a42C9a87986507f1c07/balances) is eligible for an airdrop of 10,128.65 SAFE (5,103.86 of which is immediately available, and 5,034.79 vests over the next 4 years). If passed, this proposal will execute the on-chain claim transaction and delegate this voting power.\n\n## Motivation\n\nThere are no financial costs associated with claiming the SAFE airdrop other than the small amount of required gas. There is no reason not to claim the tokens, and doing so will add additional assets to the 1inch DAO Treausury.\n\nThis proposal also allows for the 1inch DAO’s interests to be represented in SafeDAO via vote delegation.\n\n## Specification\n\nDelegate Address: `Stablelab.eth` -- [0xea172676E4105e92Cc52DBf45fD93b274eC96676](https://etherscan.io/address/0xea172676e4105e92cc52dbf45fd93b274ec96676)\n***\n\n#### Safesnap Transaction Data:\n```\n[\n\t{\n\t\t\"to\": \"0x469788fE6E9E9681C6ebF3bF78e7Fd26Fc015446\",\n\t\t\"operation\": \"0\",\n\t\t\"value\": \"0.0\",\n\t\t\"data\": \"0xbd86e508736166652e657468000000000000000000000000000000000000000000000000000000000000000000000000ea172676e4105e92cc52dbf45fd93b274ec96676\"\n\t},\n\t{\n\t\t\"to\": \"0xA0b937D5c8E32a80E3a8ed4227CD020221544ee6\",\n\t\t\"operation\": \"0\",\n\t\t\"value\": \"0.0\",\n\t\t\"data\": \"0xbf6213e4000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001a0000000000000000000000000000000000000000000000000000000005bacaa2000000000000000000000000000000000000000000000022513418138e440000000000000000000000000000000000000000000000000000000000000000000a00000000000000000000000000000000000000000000000000000000000000010e358ae256a8fefd36e9ea5c48c369f6ada89aab98d9a7692313e9247bb83d30ddecf3ea81c773522a38338c9bc56f21752504e403b97b00a846c8b74ccb49095a681610ddbc4326d6a0883e680a5e575decb20dbc04dba79d0566d4c61792652834ef7366c9bf27b485842a651ae1c71f145f3fe74f1ea02aeb820663104b32139cf5231a6701804386f97d122712147638764a90f876e3fdfeb45fb344566c74c1c73600eed0dd3c3322898d790a2548480212593e5c5a6fc7f532d6f3a661854e6b4dd55e41545752eb8222ee96d8a67d9e24982cc8dc60f3f84d60151c498fc1d9cd25b7080ca24b66d64f6f3ceaa2442a69e2cff6cf17c7cf45cd02fed378e40073295ba99431257f051cb6822b21b6e5b8ecb19b45aaa55235e6ff5f58a1b155cc48a3f983883777daaecca51e89b90443bc3390494b68fbecae3928f1462f72c711f41ce5faf101ddc3a938d581cdc746950cb7c93762f5cf4a3d88efca0870e463abf45cb18f85a835919099f45c6c56581232b3be9c06448420b35c94f4f3628f31b808b09ced67b073ab97919ba14e9389e154be4fe2b10fcdd327302fdc9a0b8cea5373715d2fce8d9ddd244f4259aafb0a21305edfdda956dd84359d69bacd790ff82f7310dd382bf3f53e885e74f5dad9b3aeb7fe96ce926ff47f8e2791b9d07b3e620189a36bf17e30c874e66b205c79492a16cd5a9c5bb65b7\"\n\t},\n\t{\n\t\t\"to\": \"0xA0b937D5c8E32a80E3a8ed4227CD020221544ee6\",\n\t\t\"operation\": \"0\",\n\t\t\"value\": \"0.0\",\n\t\t\"data\": \"0x0087b83fcdcd74dcca41c772a2d1bfb8ba75e9c5f44ee4ca1f062385a31b0db14ab55ceb0000000000000000000000007951c7ef839e26f63da87a42c9a87986507f1c0700000000000000000000000000000000ffffffffffffffffffffffffffffffff\"\n\t}\n]\n\n```\n\n***\n\n## Rationale\n\nAs part of the [stage-2 governance](https://blog.1inch.io/the-road-to-decentralization-ddee58d3b198) launch, the powers of the 1inch DAO treasury multisig owners are limited to emergency cases only. In order for the 1inch DAO Treasury to make any transaction, a vote needs to occur.\n\nSafeSnap will be used to execute this off-chain SnapShot vote in a trust-minimized fashion. A full description of this process can be seen in the governance documentation: [Gnosis Safe + Snapshot + SafeSnap](https://docs.1inch.io/docs/governance/dao-treasury#gnosis-safe--snapshot--safesnap).\n\n### Delegation\n\n\nDuring the [phase-1 discussion](https://gov.1inch.io/t/gnosis-safe-airdrop-claim/3550), StableNode and DAOplomats agreed that the team with the least amount of SAFE delegation on Monday October, 10th should be set as the delegate. There were no objections to this suggestion.\n\nStableNode currently has 0 SAFE delegated to their address, so they have been selected as delegate. \n\n## Considerations\n\nThere are no costs associated with this proposal. If passed, the proposal will add 10,128.65 SAFE to the 1inch DAO Treasury.\n\nThis proposal does not call for spending these SAFE tokens, only the claiming of them and the delegation of the voting power. Any use of these funds will require an additional proposal.",
+      "discussion": "https://gov.1inch.io/t/1rc-1inch-dao-safe-airdrop-claim/3573",
+      "choices": [
+        "(Yes) In favor of this proposal",
+        "(No) Against this proposal"
+      ],
+      "start": 1670973482,
+      "end": 1671578282,
+      "snapshot": 16178698,
+      "plugins": "{\"safeSnap\":{\"safes\":[{\"txs\":[{\"hash\":\"0x34b51e4b654ddb9016adfaca1282f3a734dd8d40a241577fe0dac080071a299c\",\"nonce\":0,\"mainTransaction\":{\"to\":\"0x8D29bE29923b68abfDD21e541b9374737B49cdAD\",\"operation\":\"1\",\"value\":\"0\",\"nonce\":\"0\",\"data\":\"0x8d80ff0a0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000046b00469788fe6e9e9681c6ebf3bf78e7fd26fc01544600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000044bd86e508736166652e657468000000000000000000000000000000000000000000000000000000000000000000000000ea172676e4105e92cc52dbf45fd93b274ec9667600a0b937d5c8e32a80e3a8ed4227cd020221544ee6000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002c4bf6213e4000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001a0000000000000000000000000000000000000000000000000000000005bacaa2000000000000000000000000000000000000000000000022513418138e440000000000000000000000000000000000000000000000000000000000000000000a00000000000000000000000000000000000000000000000000000000000000010e358ae256a8fefd36e9ea5c48c369f6ada89aab98d9a7692313e9247bb83d30ddecf3ea81c773522a38338c9bc56f21752504e403b97b00a846c8b74ccb49095a681610ddbc4326d6a0883e680a5e575decb20dbc04dba79d0566d4c61792652834ef7366c9bf27b485842a651ae1c71f145f3fe74f1ea02aeb820663104b32139cf5231a6701804386f97d122712147638764a90f876e3fdfeb45fb344566c74c1c73600eed0dd3c3322898d790a2548480212593e5c5a6fc7f532d6f3a661854e6b4dd55e41545752eb8222ee96d8a67d9e24982cc8dc60f3f84d60151c498fc1d9cd25b7080ca24b66d64f6f3ceaa2442a69e2cff6cf17c7cf45cd02fed378e40073295ba99431257f051cb6822b21b6e5b8ecb19b45aaa55235e6ff5f58a1b155cc48a3f983883777daaecca51e89b90443bc3390494b68fbecae3928f1462f72c711f41ce5faf101ddc3a938d581cdc746950cb7c93762f5cf4a3d88efca0870e463abf45cb18f85a835919099f45c6c56581232b3be9c06448420b35c94f4f3628f31b808b09ced67b073ab97919ba14e9389e154be4fe2b10fcdd327302fdc9a0b8cea5373715d2fce8d9ddd244f4259aafb0a21305edfdda956dd84359d69bacd790ff82f7310dd382bf3f53e885e74f5dad9b3aeb7fe96ce926ff47f8e2791b9d07b3e620189a36bf17e30c874e66b205c79492a16cd5a9c5bb65b700a0b937d5c8e32a80e3a8ed4227cd020221544ee6000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000640087b83fcdcd74dcca41c772a2d1bfb8ba75e9c5f44ee4ca1f062385a31b0db14ab55ceb0000000000000000000000007951c7ef839e26f63da87a42c9a87986507f1c0700000000000000000000000000000000ffffffffffffffffffffffffffffffff000000000000000000000000000000000000000000\"},\"transactions\":[{\"to\":\"0x469788fE6E9E9681C6ebF3bF78e7Fd26Fc015446\",\"value\":\"0\",\"data\":\"0xbd86e508736166652e657468000000000000000000000000000000000000000000000000000000000000000000000000ea172676e4105e92cc52dbf45fd93b274ec96676\",\"nonce\":0,\"operation\":\"0\"},{\"to\":\"0xA0b937D5c8E32a80E3a8ed4227CD020221544ee6\",\"value\":\"0\",\"data\":\"0xbf6213e4000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001a0000000000000000000000000000000000000000000000000000000005bacaa2000000000000000000000000000000000000000000000022513418138e440000000000000000000000000000000000000000000000000000000000000000000a00000000000000000000000000000000000000000000000000000000000000010e358ae256a8fefd36e9ea5c48c369f6ada89aab98d9a7692313e9247bb83d30ddecf3ea81c773522a38338c9bc56f21752504e403b97b00a846c8b74ccb49095a681610ddbc4326d6a0883e680a5e575decb20dbc04dba79d0566d4c61792652834ef7366c9bf27b485842a651ae1c71f145f3fe74f1ea02aeb820663104b32139cf5231a6701804386f97d122712147638764a90f876e3fdfeb45fb344566c74c1c73600eed0dd3c3322898d790a2548480212593e5c5a6fc7f532d6f3a661854e6b4dd55e41545752eb8222ee96d8a67d9e24982cc8dc60f3f84d60151c498fc1d9cd25b7080ca24b66d64f6f3ceaa2442a69e2cff6cf17c7cf45cd02fed378e40073295ba99431257f051cb6822b21b6e5b8ecb19b45aaa55235e6ff5f58a1b155cc48a3f983883777daaecca51e89b90443bc3390494b68fbecae3928f1462f72c711f41ce5faf101ddc3a938d581cdc746950cb7c93762f5cf4a3d88efca0870e463abf45cb18f85a835919099f45c6c56581232b3be9c06448420b35c94f4f3628f31b808b09ced67b073ab97919ba14e9389e154be4fe2b10fcdd327302fdc9a0b8cea5373715d2fce8d9ddd244f4259aafb0a21305edfdda956dd84359d69bacd790ff82f7310dd382bf3f53e885e74f5dad9b3aeb7fe96ce926ff47f8e2791b9d07b3e620189a36bf17e30c874e66b205c79492a16cd5a9c5bb65b7\",\"nonce\":1,\"operation\":\"0\"},{\"to\":\"0xA0b937D5c8E32a80E3a8ed4227CD020221544ee6\",\"value\":\"0\",\"data\":\"0x0087b83fcdcd74dcca41c772a2d1bfb8ba75e9c5f44ee4ca1f062385a31b0db14ab55ceb0000000000000000000000007951c7ef839e26f63da87a42c9a87986507f1c0700000000000000000000000000000000ffffffffffffffffffffffffffffffff\",\"nonce\":2,\"operation\":\"0\"}]}],\"hash\":\"0x9f454488ebe322a8e94f545f4a48bcbd31158291ef04833ecd27ca7653a7272f\",\"network\":\"1\",\"realityAddress\":\"0xa62D2a75eb39C12e908e9F6BF50f189641692F2E\",\"multiSendAddress\":\"0x8D29bE29923b68abfDD21e541b9374737B49cdAD\"}],\"valid\":true}}",
+      "app": "snapshot",
+      "from": "0x824732D3F4Eb94a20254cca9DE10485Ce445Bb40",
+      "timestamp": 1670969882
+    }
+  }
+}
