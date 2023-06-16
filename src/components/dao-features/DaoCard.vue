@@ -19,14 +19,13 @@
         />
       </div>
     </div>
-    <q-card-section style="padding: 2px; margin:2px;" horizontal
-                    @click="$router.push(`/${props.dao.ipfsHash}`)">
+    <q-card-section style="padding: 2px; margin:2px; min-height: 100px" >
       <div class="text-subtitle2 q-pa-xs">{{ props.dao.description }}</div>
     </q-card-section>
     <q-separator class="q-mt-xs q-mb-xs"></q-separator>
     <q-card-section style="padding:0; margin:0; ">
       <q-list>
-        <q-item clickable v-if="props.isFull">
+        <q-item clickable v-if="props.isFull" @click="goToIpfs(props.dao.ipfsHash)">
           <q-item-section avatar>
             <q-icon color="primary" size="xs" name="fa-solid fa-arrow-up-right-from-square"/>
           </q-item-section>
@@ -69,7 +68,7 @@
           </q-item-section>
         </q-item>
 
-        <q-item clickable v-if="props.isFull">
+        <q-item clickable v-if="props.isFull" @click="goToEtherscan(props.dao.tokenAddress)">
           <q-item-section avatar>
             <q-icon color="primary" size="xs" name="fa-solid fa-arrow-up-right-from-square"/>
           </q-item-section>
@@ -110,7 +109,8 @@
   </q-card>
 </template>
 <script lang="ts" setup>
-import { ref } from 'vue';
+
+import { goToEtherscan, goToIpfs } from 'src/api/services/utils-service';
 
 const props = defineProps(['dao', 'isFull']);
 </script>

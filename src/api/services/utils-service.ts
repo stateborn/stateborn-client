@@ -9,3 +9,12 @@ export const getTimeCounterColorDependingOTimeLeft = (days: number, hours: numbe
     }
   }
 }
+
+export const goToIpfs = (ipfsHash: string) => {
+  window.open(`https://stateborn.org/api/v0/cat?arg=${ipfsHash}`, '_blank');
+};
+
+export const goToEtherscan = (address: string) => {
+  window.open(`https://etherscan.io/address/${address}`, '_blank');
+};
+

@@ -31,3 +31,5 @@ yarn-error.log*
 *.ntvs*
 *.njsproj
 *.sln
+
+build_and_push.sh

@@ -1,19 +1,17 @@
 <template>
   <q-page>
-    <div class="row justify-center q-pa-md" >
-      <div class="col-6 justify-center q-pa-xs">
-        <picture-parallax image-src="/proposal2noise.webp" alt="proposal image" title="Create Proposal" height="330"></picture-parallax>
+    <div class="row justify-center" :class="$q.platform.is.mobile ? '' : 'q-pa-md'" >
+      <div class="col-lg-6 col-xs-grow justify-center q-pa-xs">
+        <picture-parallax
+          image-src="/proposal2noise.webp"
+          alt="proposal image"
+          :text-class="$q.platform.is.mobile ? 'text-h5': undefined"
+          title="Create Proposal"
+          :style="$q.platform.is.mobile ? 'height: 100px !important;' :''"
+          :height="$q.platform.is.mobile ? '323': '300'"
+        ></picture-parallax>
         <CreateProposalCard @proposal-changed="proposalChanged"></CreateProposalCard>
       </div>
-<!--      <div class="col-5 justify-center q-pa-xs">-->
-<!--        <FullProposalCard-->
-<!--          class="text-left"-->
-<!--          :proposal="proposal"-->
-<!--          v-if="proposal !== undefined"-->
-<!--          card-title="Proposal preview"-->
-<!--          picture-height="380"-->
-<!--        ></FullProposalCard>-->
-<!--      </div>-->
     </div>
   </q-page>
 </template>
@@ -26,7 +24,7 @@ import PictureParallax from 'components/PictureParallax.vue';
 import { useRoute } from 'vue-router';
 
 const route = useRoute();
-const daoIpfsHash: string = route.params.daoIpfsHash;
+const daoIpfsHash: string = <string>route.params.daoIpfsHash;
 
 const ethConnectionStore = useEthConnectionStore();
 const proposal = ref({

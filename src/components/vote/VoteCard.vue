@@ -1,5 +1,5 @@
 <template>
-  <q-card class="stateborn-card" square>
+  <q-card class="stateborn-card" square >
     <q-card-section style="padding:0;">
       <div class="row justify-center items-center">
         <div class="col-auto q-pa-xs justify-center">
@@ -12,26 +12,42 @@
         </div>
       </div>
       <q-separator class="q-mb-xs q-mt-xs"/>
-      <div class="row text-subtitle2" v-if="props.userVotes.length === 0 || changeMyVote"><div class="col text-bold">Your voting power</div><div class="col text-right">{{ props.tokenBalance }} {{tokenSymbol}}</div></div>
-      <q-banner :class="userVote === 'NO' ? 'noisered': 'noisegreen'" class="text-black text-bold text-subtitle2 text-center" v-if="props.userVotes.length > 0 && !changeMyVote">
-        <span class="text-bold">You already voted: </span><q-chip square color="white" class="text-bold" :text-color="userVote === 'NO' ? 'red': 'green'"> {{ userVote }}</q-chip>
-      </q-banner>
-      <div class="row justify-center" v-if="props.userVotes.length > 0 && !isProposalEnded">
-        <div class="col-auto justify-center">
-          <q-option-group
-            v-model="changeMyVote"
-            :options="[{label: 'I want to change my vote', value: true}]"
-            color="black"
-            type="toggle"
-          />
+      <div v-if="ethConnectionStore.isConnected">
+        <div class="row text-subtitle2" v-if="props.userVotes.length === 0 || changeMyVote"><div class="col text-bold">Your voting power</div><div class="col text-right">{{ props.tokenBalance }} {{tokenSymbol}}</div></div>
+        <q-banner :class="userVote === 'NO' ? 'noisered': 'noisegreen'" class="text-black text-bold text-subtitle2 text-center" v-if="props.userVotes.length > 0 && !changeMyVote">
+          <span class="text-bold">You already voted: </span><q-chip square color="white" class="text-bold" :text-color="userVote === 'NO' ? 'red': 'green'"> {{ userVote }}</q-chip>
+        </q-banner>
+        <div class="row justify-center" v-if="props.userVotes.length > 0 && !isProposalEnded">
+          <div class="col-auto justify-center">
+            <q-option-group
+              v-model="changeMyVote"
+              :options="[{label: 'I want to change my vote', value: true}]"
+              color="black"
+              type="toggle"
+            />
+          </div>
         </div>
       </div>
+      <div v-else>
+        <div class="row items-center justify-center"
+             :style="$q.platform.is.mobile ? 'height:50px': `height: 100%`">
+          <div class="col-lg-12 col-xs-grow justify-center">
+            <div class="row justify-center" v-if="!$q.platform.is.mobile">
+              <div class="col-lg-auto col-xs-12 justify-center">
+                <div class="text-subtitle2 text-bold text-red">Please connect to vote</div>
+              </div>
+            </div>
+            <div class="text-center text-subtitle2 text-red" v-else>Please connect to vote</div>
+          </div>
+        </div>
+      </div>
+
     </q-card-section>
-    <q-card-actions vertical style="padding:0px;" v-if="options.length === 0 && (props.userVotes.length === 0 || changeMyVote)">
+    <q-card-actions vertical style="padding:0px;" v-if="ethConnectionStore.isConnected && (options.length === 0 && (props.userVotes.length === 0 || changeMyVote))">
           <q-btn square color="green-5" label="YES" @click="callVote('YES')"></q-btn>
           <q-btn square color="red-5" label="NO" @click="callVote('NO')"></q-btn>
     </q-card-actions>
-    <q-card-actions vertical style="padding:5px;" v-if="options.length > 0 && (props.userVotes.length === 0 || changeMyVote)">
+    <q-card-actions vertical style="padding:5px;" v-if="ethConnectionStore.isConnected && (options.length > 0 && (props.userVotes.length === 0 || changeMyVote))">
       <div class="text-h6 text-center">Options</div>
       <q-option-group
         :options="options"
@@ -56,7 +72,6 @@ const changeMyVote = ref(false);
 const options = ref([]);
 const option = ref('');
 import { Notify } from 'quasar';
-
 const userVote = computed(() => {
   if (props.userVotes.length > 0) {
     return props.userVotes[0].clientVote.vote;

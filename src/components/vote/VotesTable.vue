@@ -10,8 +10,9 @@
     >
       <template v-slot:body="props">
         <q-tr :props="props" class="text-subtitle2" :class="(props.row.vote === 'YES' || props.row.vote === 'NO') ? (props.row.vote === 'YES' ? 'noisegreen' : 'noisered') : 'bg-white'">
-          <q-td key="voterAddress"  :props="props">
-            <a href="google.pl">{{ props.row.voterAddress }}</a>
+          <q-td key="voterAddress"  :props="props" >
+            {{ props.row.voterAddress }}
+            <q-btn flat round color="primary" size="xs" class="q-pl-xs" icon="fa-solid fa-arrow-up-right-from-square" @click="goToEtherscan(props.row.voterAddress)"/>
           </q-td>
           <q-td key="vote" :props="props" :class="(props.row.vote === 'YES' || props.row.vote === 'NO') ? (props.row.vote === 'YES' ? 'text-green' : 'text-red') : 'text-black'">
               {{ props.row.vote }}
@@ -20,7 +21,8 @@
             {{ props.row.votingPower }}
           </q-td>
           <q-td key="ipfsHash" :props="props">
-            <a href="google.pl">{{ props.row.ipfsHash }}</a>
+            {{ props.row.ipfsHash }}
+            <q-btn flat round color="primary" size="xs" class="q-pl-xs" icon="fa-solid fa-arrow-up-right-from-square" @click="goToIpfs(props.row.ipfsHash)"/>
           </q-td>
           <q-td key="createdAt" :props="props">
               {{ props.row.createdAt }}
@@ -32,6 +34,7 @@
 <script lang="ts" setup>
 import { ref, watch } from 'vue';
 import { sleep } from 'src/api/services/sleep-service';
+import { goToEtherscan, goToIpfs } from 'src/api/services/utils-service';
 
 const columns = [
   {

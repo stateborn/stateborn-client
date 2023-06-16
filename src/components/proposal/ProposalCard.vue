@@ -1,5 +1,5 @@
 <template>
-  <q-card class="stateborn-card" square>
+  <q-card class="stateborn-card cursor-pointer" square>
     <q-badge floating align="top" class="font-one-rem text-subtitle2 text-bold"
              :class="isProposalEnded? 'noisered' : 'noisegreen'"
              :label="isProposalEnded? 'Ended' : 'Active'" :text-color="isProposalEnded? 'red' : 'green'"

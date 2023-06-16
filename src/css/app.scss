@@ -54,21 +54,15 @@ body {
   line-height: 1.2;
 }
 
-.grow:hover {
-  cursor: pointer;
-  //box-shadow: 0px 0px 0px 1px #9E9E9E;
-
-  -webkit-transition: all 0.3s ease-in-out !important;
-  -moz-transition: all 0.3s ease-in-out !important;
-  transition: all 0.3s ease-in-out !important;
-  /*box-shadow: 0px 0px 15px gold;*/
-}
-
 .stateborn-card {
   background-image: url('/noise5.png');
   background-repeat: repeat;
   transition: box-shadow 0.3s ease;
   box-shadow: 0px 0px 0px 0px #9E9E9E;
+}
+
+.cursor-pointer {
+  cursor: pointer;
 }
 
 .my-markdown h1 {

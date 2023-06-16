@@ -5,7 +5,7 @@
 
         <q-toolbar-title>
           <router-link to="/">
-            stateborn - trustless democracy
+            <span :style="$q.platform.is.mobile ? 'font-size:12px': ''">stateborn - trustless democracy</span>
           </router-link>
         </q-toolbar-title>
         <ConnectWithWallet></ConnectWithWallet>

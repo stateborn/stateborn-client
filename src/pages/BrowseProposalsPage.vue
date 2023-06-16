@@ -5,29 +5,30 @@
         <picture-parallax
           image-src="/proposalsnoise.webp"
           alt="proposal image"
+          :text-class="$q.platform.is.mobile ? 'text-h5': 'text-h3 text-center q-pa-md'"
           :scroll-target-value="scrollTarget"
           :title="dao !== null ? `${dao.name}` :''"
           line-height="1.5rem"
-          text-class="text-h3 text-center q-pa-md"
-          height="200">
+          :style="$q.platform.is.mobile ? 'height: 100px !important;' :''"
+          :height="$q.platform.is.mobile ? '325': '200'">
         </picture-parallax>
       </div>
     </div>
     <div class="row justify-center q-mt-md" >
-      <div class="col-8">
+      <div class="col-lg-8 col-xs-grow">
         <q-breadcrumbs class="text-subtitle2 noise text-primary">
           <q-breadcrumbs-el icon="home" to="/">
             <span class="text-underline">Home</span>
           </q-breadcrumbs-el>
           <q-breadcrumbs-el :to="`/${daoIpfsHash}`" >
-            {{dao !== null ? `${dao.name}`: ''}}
+            {{dao !== null ? `${$q.platform.is.mobile ? `${dao.name.substring(0, 20)}...` : dao.name}`: ''}}
           </q-breadcrumbs-el>
         </q-breadcrumbs>
         <div class="row">
-          <div class="col-lg-3 col-md-5">
+          <div class="col-lg-3 col-md-5 col-xs-grow">
             <dao-card :dao="dao" v-if="dao !== null" :is-full="true"></dao-card>
           </div>
-          <div class="col-lg-9 col-md-7">
+          <div class="col-lg-9 col-md-7 col-xs-grow">
             <q-table
               id="proposalsTable"
               v-if="proposals.length > 0 || hasData"
@@ -58,12 +59,15 @@
                   @click="$router.push(`/${daoIpfsHash}/${props.row.ipfsHash}`)"></proposal-card>
               </template>
             </q-table>
-            <div class="row items-center justify-center" v-else :style="`height:${proposalScrollHeight}px`">
-              <div class="col-12 justify-center">
-                <div class="row justify-center">
-                  <div class="col-auto">
-                    <div class="text-h5 text-center">No proposals yet</div>
+            <div class="row items-center justify-center" v-else
+                 :style="$q.platform.is.mobile ? 'height:100px': `height:${proposalScrollHeight}px`">
+              <div class="col-lg-12 col-xs-grow justify-center">
+                <div class="row justify-center" v-if="!$q.platform.is.mobile">
+                  <div class="col-lg-auto col-xs-12 justify-center">
+                    <div class="text-h5">No proposals yet</div>
                   </div>
+                </div>
+                <div class="text-center text-subtitle2" v-else>No proposals yet
                 </div>
               </div>
             </div>
@@ -132,7 +136,6 @@ api.get(`/api/rest/v1/dao/${daoIpfsHash}/proposals/count`).then(async (response)
 
 getDao(daoIpfsHash).then(_ => dao.value = _);
 const onTableDataRequest = async ({ pagination, filter }: any) => {
-  console.log('hej request', filter);
   proposals.value = await loadProposals(pagination.rowsPerPage, (pagination.page - 1) * pagination.rowsPerPage, filter);
   initialPagination.value.page = pagination.page;
 };

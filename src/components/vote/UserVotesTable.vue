@@ -33,7 +33,9 @@
             {{ props.row.votingPower }}
         </q-td>
         <q-td key="ipfsHash" :props="props">
-            <a href="google.pl">{{ `${props.row.ipfsHash.substring(0, 5)}...` }}</a>
+            {{ `${props.row.ipfsHash.substring(0, 5)}...` }}
+          <q-btn flat round color="primary" size="xs" class="q-pl-xs" icon="fa-solid fa-arrow-up-right-from-square" @click="goToIpfs(props.row.ipfsHash)"/>
+
         </q-td>
         <q-td key="createdAt" :props="props">
             {{ props.row.createdAt }}
@@ -53,6 +55,7 @@
 <script lang="ts" setup>
 import { ref, watch } from 'vue';
 import { verifyBackendReceivedVoteWithLocal } from 'src/api/services/get-and-store-ipfs-vote-service';
+import { goToIpfs } from 'src/api/services/utils-service';
 
 const columns = [
   {

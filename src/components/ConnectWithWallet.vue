@@ -1,6 +1,6 @@
 <template>
   <q-btn color="primary" v-if="ethConnectionStore.account == ''" @click="connectWithMetamask">Connect</q-btn>
-  <div v-else class="text-subtitle2">{{ ethConnectionStore.account }}</div>
+  <div v-else class="text-subtitle2">{{ $q.platform.is.mobile ? ethConnectionStore.account.substring(0, 10) : ethConnectionStore.account }}</div>
 </template>
 
 <script lang="ts" setup>

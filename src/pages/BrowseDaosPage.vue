@@ -5,22 +5,25 @@
         <picture-parallax
           image-src="browsepropsnoise.webp"
           alt="proposal image"
+          :text-class="$q.platform.is.mobile ? 'text-h5': 'text-h3 q-pa-md'"
           v-if="scrollTarget !== null"
           :scroll-target-value="scrollTarget"
           title="stateborn"
-          height="200">
+          :style="$q.platform.is.mobile ? 'height: 100px !important;' : ''"
+          :height="$q.platform.is.mobile ? '336': '200'">
         </picture-parallax>
       </div>
     </div>
     <div class="row justify-center">
-      <div class="col-8">
+      <div class="col-lg-8 col-md-12 col-xs-grow">
         <div class="row">
-          <div class="col-lg-3 col-md-5">
+          <div class="col-lg-3 col-md-4 col-xs-grow">
             <welcome-to-stateborn-card :is-full="true"></welcome-to-stateborn-card>
           </div>
-          <div class="col-lg-9">
-            <q-scroll-area :style="`height: ${proposalScrollHeight}px; width: 100%; min-width:330px`" ref="proposalScrollArea">
+          <div class="col-lg-9 col-md-8 col-xs-grow">
+            <q-scroll-area :style="`height: ${proposalScrollHeight}px; width: 100%; min-width:300px`" ref="proposalScrollArea">
               <q-table
+                id="daosTable"
                 flat bordered
                 grid
                 v-model:pagination="initialPagination"
@@ -40,7 +43,7 @@
                   </q-input>
                 </template>
                 <template v-slot:item="props">
-                  <dao-card-min :dao="props.row" :is-full="false"></dao-card-min>
+                  <dao-card-min :dao="props.row" :is-full="false" :width="$q.platform.is.mobile ? daoCardWidth : daoEntryWidth"></dao-card-min>
                 </template>
               </q-table>
             </q-scroll-area>
@@ -58,22 +61,34 @@ import DaoCardMin from 'components/dao-features/DaoCardMin.vue';
 import WelcomeToStatebornCard from 'components/WelcomeToStatebornCard.vue';
 import { getDao } from 'src/api/services/dao-service';
 import { Dao } from 'src/api/model/dao';
+import { dom } from 'quasar';
+import width = dom.width;
 
 // 200 picture height, 50 toolbar height, 20 some spaces
 const proposalScrollHeight = ref(window.innerHeight - 50  - 200 - 20);
+const daoCardWidth = ref(window.innerWidth - 10 );
 const proposalScrollArea = ref(null);
 const scrollTarget = ref(null);
 const filter = ref('');
+const daoEntryWidth = ref(300);
 const daos = ref(<Dao[]>[]);
 const initialPagination = ref({
   sortBy: 'desc',
   descending: false,
   page: 1,
-  rowsPerPage: 2,
+  rowsPerPage: 10,
   rowsNumber: 10
 });
 const hasData = ref(false);
 onMounted(async () => {
+  daoEntryWidth.value = width(document.getElementById('daosTable')!)  / 3 - 20;
+  if (daoEntryWidth.value > 400) {
+    daoEntryWidth.value = 400;
+  }
+  if (daoEntryWidth.value <= 300) {
+    daoEntryWidth.value = 400;
+  }
+  console.log('wyszlo mi ', daoEntryWidth.value);
   daos.value = await loadDaos(initialPagination.value.rowsPerPage, (initialPagination.value.page - 1) * initialPagination.value.rowsPerPage);
   if (daos.value.length > 0) {
     hasData.value = true;

@@ -27,11 +27,6 @@
               {{ file.__sizeLabel }} {{file.emitted}}
             </q-item-label>
 
-            <q-item-label v-if="!daoFileMode">
-              <q-btn color="red" label="Remove from description"
-                     v-if="emittedFileNames.filter(_ => _ === file.name).length > 0" @click="emitRemovedFile(file)"></q-btn>
-              <q-btn color="primary" label="Add to description" v-else @click="emitFile(file)"></q-btn>
-            </q-item-label>
           </q-item-section>
 
           <q-item-section
@@ -126,9 +121,7 @@ export default {
             }
             result = encoded;
             file.base64 = result;
-            if (this.daoFileMode) {
-              this.emitFile(file);
-            }
+            this.emitFile(file);
           }
         };
         reader.onerror = (evt) => {

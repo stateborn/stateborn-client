@@ -1,5 +1,6 @@
 <template>
   <div>
+    <span class="text-subtitle2 text-red text-bold" v-if="!ethConnectionStore.isConnected">Please connect first</span>
     <q-input square filled label="Title" v-model="title" maxlength="120" counter class="q-pa-xs"></q-input>
     <q-input type="textarea" filled counter square label="Description" v-model="description" class="q-pa-xs q-pt-lg"></q-input>
     <div>
@@ -27,7 +28,9 @@
       </div>
     </div>
     <file-reader class="q-pa-xs" label="Upload proposal attachments" @file-uploaded="onFileUploaded" @file-removed="onFileRemoved" :as-base="true"></file-reader>
-    <q-btn class="q-ma-xs old-button" square label="Create" color="primary" @click="callCreateProposal"></q-btn>
+    <q-btn class="q-ma-xs old-button" square label="Create" color="primary"
+           :disable="!ethConnectionStore.isConnected"
+           @click="callCreateProposal"></q-btn>
 
   </div>
 </template>
@@ -96,7 +99,7 @@ watch([title, description, durationHours], async () => {
 });
 
 const onFileUploaded = (res: any) => {
-  if (res.fileName.endsWith('.png') || res.fileName.endsWith('.jpg') || res.fileName.endsWith('.jpeg') || res.fileName.endsWith('.gif')) {
+  if (res.fileName.endsWith('.png') || res.fileName.endsWith('.jpg') || res.fileName.endsWith('.jpeg') || res.fileName.endsWith('.gif') || res.fileName.endsWith('.webp')) {
     imagesMap.set(res.fileName, {
       fileName: res.fileName,
       file: `\n<img src="data:image/jpeg;base64, ${res.base64File}" style="max-width:80%;height:100%"/>`,

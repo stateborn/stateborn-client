@@ -1,17 +1,19 @@
 <template>
   <div>
-    <q-input square outlined filled label="Name" v-model="name" class="q-pa-xs" maxlength="60" counter></q-input>
-    <q-input counter filled square label="Description" v-model="description" maxlength="120" class="q-pa-xs q-pt-lg"></q-input>
-    <q-input square filled label="Token address" v-model="tokenAddress" class="q-pa-xs q-pt-lg"></q-input>
+    <span class="text-subtitle2 text-red text-bold" v-if="!ethConnectionStore.isConnected">Please connect first</span>
+    <q-input square outlined filled label="Name" v-model="name" class="q-pa-xs" maxlength="60" counter :disable="!ethConnectionStore.isConnected"></q-input>
+    <q-input counter filled square label="Description" v-model="description" maxlength="120" class="q-pa-xs q-pt-lg" :disable="!ethConnectionStore.isConnected"></q-input>
+    <q-input square filled label="Token address" v-model="tokenAddress" class="q-pa-xs q-pt-lg" :disable="!ethConnectionStore.isConnected"></q-input>
     <div v-if="tokenName !== ''">
       <q-input square dense readonly filled outlined prefix="Token name:" v-model="tokenName" class="q-pa-xs" debounce="500"></q-input>
       <q-input square dense readonly filled prefix="Token symbol:" v-model="tokenSymbol" class="q-pa-xs"></q-input>
       <q-input square dense readonly filled prefix="Token type:" v-model="tokenType" class="q-pa-xs"></q-input>
       <q-input square dense readonly filled prefix="Token supply:" v-model="tokenSupply" v-if="tokenSupply !== ''" class="q-pa-xs"></q-input>
     </div>
-    <q-input square label="Owner" readonly v-model="daoOwner" class="q-pa-xs"></q-input>
-    <define-voting-options-card v-if="proposalType.value === 'OPTIONS'" @proposal-option-added="proposalOptionAdded"></define-voting-options-card>
+    <q-input square label="DAO owner" readonly v-model="daoOwner" class="q-pa-xs"></q-input>
+    <define-voting-options-card v-if="proposalType.value === 'OPTIONS'" @proposal-option-added="proposalOptionAdded" :disable="!ethConnectionStore.isConnected"></define-voting-options-card>
     <q-input
+      :disable="!ethConnectionStore.isConnected"
       filled
       class="q-pa-xs"
       v-model.number="minimalTokens"
@@ -22,6 +24,7 @@
     <div class="row justify-center items-center">
       <div class="col-6">
         <file-reader class="q-pa-xs"
+                     :disable="!ethConnectionStore.isConnected"
                      label="Upload DAO image/logo"
                      @file-uploaded="onFileUploaded"
                      @file-removed="onFileRemoved"
@@ -38,12 +41,14 @@
         />
       </div>
     </div>
-    <q-btn class="q-ma-xs old-button" square label="Create" color="primary" @click="callCreateProposal"></q-btn>
+    <q-btn class="q-ma-xs old-button" square label="Create" color="primary"
+           :disable="!ethConnectionStore.isConnected"
+           @click="callCreateProposal"></q-btn>
 
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { api } from 'boot/axios';
 import { useEthConnectionStore } from 'stores/eth-connection-store';
 import { signDao } from 'src/api/services/signature-service';
@@ -55,12 +60,13 @@ import { Notify, useQuasar } from 'quasar';
 import { useRouter } from 'vue-router';
 import { ERC_721_SERVICE } from 'src/api/services/erc-721-service';
 import { ERC_20_SERVICE } from 'src/api/services/erc-20-service';
+import { sleep } from 'src/api/services/sleep-service';
 
 dayjs.extend(dayjsPluginUTC);
 const ethConnectionStore = useEthConnectionStore();
 const name = ref('My new DAO...');
 // 0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D - bored ape
-const description = ref('0xD33526068D116cE69F19A9ee46F0bd304F21A51f');
+const description = ref('Description of your DAO...');
 const tokenAddress = ref('');
 const tokenName = ref('');
 const tokenSymbol = ref('');
@@ -77,9 +83,14 @@ const startDate = dayjs();
 const router = useRouter();
 watch(() => ethConnectionStore.account, async () => {
   daoOwner.value = ethConnectionStore.account;
+  tokenAddress.value = '0xD33526068D116cE69F19A9ee46F0bd304F21A51f';
 });
 const $q = useQuasar();
-
+onMounted(() => {
+  if (ethConnectionStore.isConnected) {
+    tokenAddress.value = '0xD33526068D116cE69F19A9ee46F0bd304F21A51f';
+  }
+});
 watch(() => tokenAddress.value, async () => {
   $q.loading.show({
     delay: 100, // ms
@@ -193,16 +204,26 @@ const callCreateProposal = async () => {
     clientDao.token.type,
     clientDao.token.network,
   );
+  $q.loading.show({
+    delay: 100, // ms
+    message: 'Creating the DAO...',
+    backgroundColor: 'black',
+    messageColor: 'white',
+  });
   api.post('/api/rest/v1/dao', {
     clientDao,
     signature,
     creatorAddress: ethConnectionStore.account,
-  }).then((response) => {
+  }).then(async (response) => {
     Notify.create({ message: 'Successfully created DAO!', position: 'top-right', color: 'green' });
+    $q.loading.hide();
+    await sleep(100);
     router.push('/');
     console.log('Proposal created!', response);
-  }, (error) => {
+  }, async (error) => {
     Notify.create({ message: 'Creating DAO failed - server problem!', position: 'top-right', color: 'red' });
+    $q.loading.hide();
+    await sleep(100);
     console.log(error);
   });
 };

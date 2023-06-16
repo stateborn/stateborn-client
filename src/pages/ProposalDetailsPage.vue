@@ -1,7 +1,7 @@
 <template>
   <q-page>
-    <div class="row justify-center" v-if="ethConnectionStore.isConnected">
-      <div class="col-8 justify-center">
+    <div class="row justify-center" >
+      <div class="col-lg-8 col-xs-grow justify-center">
         <q-breadcrumbs class="text-subtitle2 noise text-primary q-mt-md">
           <q-breadcrumbs-el icon="home" to="/">
             <span class="text-underline">Home</span>
@@ -9,19 +9,27 @@
           <q-breadcrumbs-el :to="`/${daoIpfsHash}`" class="text-underline">
             {{ dao !== null ? `${dao.name}` : 'proposals' }}
           </q-breadcrumbs-el>
-          <q-breadcrumbs-el :label="`${proposalIpfsHash}`" :to="`/${daoIpfsHash}`/{proposalIpfsHash}"/>
+          <q-breadcrumbs-el
+            :label="`${$q.platform.is.mobile ? `${proposalIpfsHash.substring(0, 10)}...` : proposalIpfsHash}`"
+            :to="`/${daoIpfsHash}`/proposalIpfsHash"/>
         </q-breadcrumbs>
         <div class="row">
-          <div class="col-8">
-            <q-scroll-area :style="`height: ${proposalScrollHeight}px; max-width: 100%;`">
+          <div class="col-lg-8 col-xs-grow">
+            <q-scroll-area :style="`height: ${proposalScrollHeight}px; max-width: 100%;`" v-if="!$q.platform.is.mobile">
               <FullProposalCard
                 class="q-ma-md"
                 :proposal="proposal"
                 v-if="proposal !== undefined">
               </FullProposalCard>
             </q-scroll-area>
+            <FullProposalCard
+              v-else
+              class="q-ma-md"
+              :proposal="proposal"
+              v-if="proposal !== undefined">
+            </FullProposalCard>
           </div>
-          <div class="col-4">
+          <div class="col-lg-4 col-xs-grow">
             <div id="other-info-row">
               <dao-card-min :full-width="true" class="q-ma-md" :dao="dao" v-if="dao !== null" ></dao-card-min>
               <VoteCard
@@ -67,7 +75,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { api } from 'boot/axios';
 import FullProposalCard from 'components/proposal/FullProposalCard.vue';
 import { useRoute } from 'vue-router';
@@ -102,8 +110,8 @@ const tokenBalance = ref('');
 const proposalResultDto = ref(<ProposalResultDto | undefined>undefined);
 const votes = ref([]);
 const userVotes = ref([]);
-const proposalIpfsHash: string = route.params.id;
-const daoIpfsHash: string = route.params.daoIpfsHash;
+const proposalIpfsHash: string = <string>route.params.id;
+const daoIpfsHash: string = <string>route.params.daoIpfsHash;
 const ethConnectionStore = useEthConnectionStore();
 const isProposalEnded = ref(false);
 // eslint-disable-next-line
@@ -112,7 +120,7 @@ const dao = ref(<Dao | null > null);
 const onVotesRendered = () => {
   const otherInfoRowHeight = height(document.getElementById('other-info-row')!);
   // eslint-disable-next-line
-  const scrollHeight = window.innerHeight - 70 - height(document.getElementById('table-votes-row')!);
+  const scrollHeight = window.innerHeight - 90 - height(document.getElementById('table-votes-row')!);
   if (otherInfoRowHeight > scrollHeight) {
     proposalScrollHeight.value = otherInfoRowHeight;
   } else {
@@ -122,18 +130,13 @@ const onVotesRendered = () => {
 
 const fetchProposalData = async () => {
   dao.value = await getDao(daoIpfsHash);
+  if (ethConnectionStore.isConnected) {
+    getTokenBalance(dao.value.tokenAddress);
+    fetchUserVotes();
+  }
   api.get(`/api/rest/v1/proposal/${proposalIpfsHash}/votes`).then(async (response) => {
     console.log('votes', response.data);
     votes.value = response.data;
-  }, (error) => {
-    console.log(error);
-  });
-  api.get(`/api/rest/v1/proposal/${proposalIpfsHash}/${ethConnectionStore.account}/votes`).then(async (res) => {
-    console.log('user votes', res.data);
-    for (const userVote of res.data) {
-      await fetchAndStoreIpfsVoteInStorage(proposalIpfsHash, userVote.ipfsHash);
-    }
-    userVotes.value = res.data;
   }, (error) => {
     console.log(error);
   });
@@ -144,11 +147,6 @@ const fetchProposalData = async () => {
   });
   getProposal(proposalIpfsHash).then((_) => {
     proposal.value = _;
-    ERC_20_SERVICE.readTokenBalance(ethConnectionStore.account, dao.value.tokenAddress).then((response2) => {
-      tokenBalance.value = response2;
-    }, (error) => {
-      console.log(error);
-    });
     isProposalEnded.value = dayjs().isAfter(proposal.value.endDateUtc);
     if (isProposalEnded.value) {
       getProposalReportFromStorage(proposalIpfsHash).then((proposalReportFromStorage) => {
@@ -161,13 +159,31 @@ const fetchProposalData = async () => {
     console.log(error);
   });
 };
+fetchProposalData();
 
-if (ethConnectionStore.isConnected) {
-  fetchProposalData();
+const getTokenBalance = async (tokenAddress: string) => {
+  ERC_20_SERVICE.readTokenBalance(ethConnectionStore.account, tokenAddress).then((res) => {
+    tokenBalance.value = res;
+  }, (error) => {
+    console.log(error);
+  });
+};
+
+const fetchUserVotes = async () => {
+  api.get(`/api/rest/v1/proposal/${proposalIpfsHash}/${ethConnectionStore.account}/votes`).then(async (res) => {
+    console.log('user votes', res.data);
+    for (const userVote of res.data) {
+      await fetchAndStoreIpfsVoteInStorage(proposalIpfsHash, userVote.ipfsHash);
+    }
+    userVotes.value = res.data;
+  }, (error) => {
+    console.log(error);
+  });
 }
 
 watch(() => ethConnectionStore.isConnected, async () => {
-  await fetchProposalData();
+  getTokenBalance(dao.value.tokenAddress);
+  fetchUserVotes();
 });
 
 const onVoted = async (vote: any) => {

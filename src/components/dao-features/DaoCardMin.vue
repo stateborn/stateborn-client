@@ -1,5 +1,5 @@
 <template>
-  <q-card class="stateborn-card grow q-ma-xs q-pa-xs" :style="props.fullWidth ? '' : 'width: 330px;'">
+  <q-card class="stateborn-card grow q-ma-xs q-pa-xs" :style="props.fullWidth ? '' : `width: ${width !== undefined ? width : '330'}px;`">
     <div class="row justify-center text-center items-center q-pt-xs" style="height:50px" >
       <div class="col-auto justify-center items-center">
         <div class="text-subtitle2" style="line-height: 1.5rem">
@@ -63,5 +63,5 @@
 </template>
 <script lang="ts" setup>
 
-const props = defineProps(['dao', 'fullWidth']);
+const props = defineProps(['dao', 'fullWidth', 'width']);
 </script>
