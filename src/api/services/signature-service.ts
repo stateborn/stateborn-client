@@ -9,9 +9,10 @@ export const signProposal = async (
   proposalType: string,
   startDateUtc: string,
   endDateUtc: string,
+  blockNumber: string,
   data?: any,
 ): Promise<string> => {
-  const types = ['address', 'bytes', 'bytes', 'bytes', 'bytes32', 'bytes32', 'bytes32'];
+  const types = ['address', 'bytes', 'bytes', 'bytes', 'bytes32', 'bytes32', 'bytes32', 'uint256'];
   const values = [
     creatorAddress,
     ethers.toUtf8Bytes(daoIpfsHash),
@@ -19,7 +20,8 @@ export const signProposal = async (
     ethers.toUtf8Bytes(description),
     encodeBytes32String(proposalType),
     encodeBytes32String(startDateUtc),
-    encodeBytes32String(endDateUtc)];
+    encodeBytes32String(endDateUtc),
+    Number(blockNumber)];
   if (proposalType === 'OPTIONS') {
     types.push('bytes');
     const options = (<[]>data).join('');

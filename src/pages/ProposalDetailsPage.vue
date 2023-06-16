@@ -2,47 +2,58 @@
   <q-page>
     <div class="row justify-center" v-if="ethConnectionStore.isConnected">
       <div class="col-8 justify-center">
-        <div class="row q-pt-md">
+        <q-breadcrumbs class="text-subtitle2 noise text-primary q-mt-md">
+          <q-breadcrumbs-el icon="home" to="/">
+            <span class="text-underline">Home</span>
+          </q-breadcrumbs-el>
+          <q-breadcrumbs-el :to="`/${daoIpfsHash}`" class="text-underline">
+            {{ dao !== null ? `${dao.name}` : 'proposals' }}
+          </q-breadcrumbs-el>
+          <q-breadcrumbs-el :label="`${proposalIpfsHash}`" :to="`/${daoIpfsHash}`/{proposalIpfsHash}"/>
+        </q-breadcrumbs>
+        <div class="row">
           <div class="col-8">
             <q-scroll-area :style="`height: ${proposalScrollHeight}px; max-width: 100%;`">
               <FullProposalCard
                 class="q-ma-md"
-                :proposal="proposalWithReport.proposal"
-                v-if="proposalWithReport !== undefined"
-                picture-height="150"
-                card-title="Proposal">
+                :proposal="proposal"
+                v-if="proposal !== undefined">
               </FullProposalCard>
             </q-scroll-area>
           </div>
-          <div class="col-4" id="other-info-row">
-            <dao-card-min :full-width="true" class="q-ma-md" :dao="dao" v-if="dao !== null" ></dao-card-min>
-            <VoteCard
-              class="q-ma-md"
-              :proposal-options="proposalWithReport.proposal.clientProposal.data?.options"
-              :token-balance="tokenBalance"
-              :proposal-ipfs-hash="proposalIpfsHash"
-              :user-votes="userVotes"
-              :is-proposal-ended="isProposalEnded"
-              @voted="onVoted"
-              v-if="proposalWithReport !== undefined">
-            </VoteCard>
-            <ProposalCountdownCard class="q-ma-md"
-                                   :is-proposal-ended="isProposalEnded"
-                                   :end-date-utc="proposalWithReport.proposal.clientProposal.endDateUtc"
-                                   v-if="proposalWithReport !== undefined"></ProposalCountdownCard>
-            <ResultCard class="q-ma-md"
-                        :proposal-result-dto="proposalResultDto"
-                        :proposal-options="proposalWithReport.proposal.clientProposal.data?.options"
-                        v-if="proposalWithReport !== undefined && proposalResultDto !== undefined"></ResultCard>
-            <UserVotesTable class="q-ma-md"
-                            :proposal-ipfs-hash="proposalIpfsHash"
-                            :user-votes="userVotes"
-                            v-if="proposalWithReport !== undefined"></UserVotesTable>
-            <ValidityCard class="q-ma-md"
+          <div class="col-4">
+            <div id="other-info-row">
+              <dao-card-min :full-width="true" class="q-ma-md" :dao="dao" v-if="dao !== null" ></dao-card-min>
+              <VoteCard
+                class="q-ma-md"
+                :proposal-options="proposal.data?.options"
+                :token-balance="tokenBalance"
+                :proposal-ipfs-hash="proposalIpfsHash"
+                :user-votes="userVotes"
+                :token-symbol="dao?.tokenSymbol"
+                :is-proposal-ended="isProposalEnded"
+                @voted="onVoted"
+                v-if="proposal !== undefined">
+              </VoteCard>
+              <ProposalCountdownCard class="q-ma-md"
+                                     :is-proposal-ended="isProposalEnded"
+                                     :end-date-utc="proposal.endDateUtc"
+                                     v-if="proposal !== undefined"></ProposalCountdownCard>
+              <ResultCard class="q-ma-md"
+                          :token-symbol="dao?.tokenSymbol"
                           :proposal-result-dto="proposalResultDto"
-                          :proposal-ipfs-hash="proposalIpfsHash"
-                          :proposal-report-dto="proposalWithReport.proposalReport"
-                          v-if="proposalWithReport !== undefined && proposalWithReport.proposalReport !== undefined && proposalResultDto !== undefined && isProposalEnded"></ValidityCard>
+                          :proposal-options="proposal.data?.options"
+                          v-if="proposal !== undefined && proposalResultDto !== undefined"></ResultCard>
+              <UserVotesTable class="q-ma-md"
+                              :proposal-ipfs-hash="proposalIpfsHash"
+                              :user-votes="userVotes"
+                              v-if="proposal !== undefined"></UserVotesTable>
+              <ValidityCard class="q-ma-md"
+                            :proposal-ipfs-hash="proposalIpfsHash"
+                            :proposal-report="proposalReport"
+                            v-if="proposal !== undefined && proposalReport !== undefined && isProposalEnded">
+              </ValidityCard>
+            </div>
           </div>
         </div>
         <div class="row" id="table-votes-row">
@@ -74,59 +85,49 @@ import {
   fetchAndStoreIpfsVoteInStorage,
   storeVoteCreatedByUser,
 } from 'src/api/services/get-and-store-ipfs-vote-service';
-import height = dom.height;
-import DaoCard from 'components/dao-features/DaoCard.vue';
 import DaoCardMin from 'components/dao-features/DaoCardMin.vue';
+import { getDao } from 'src/api/services/dao-service';
+import height = dom.height;
+import { Dao } from 'src/api/model/dao';
+import { getProposal } from 'src/api/services/proposal-service';
+import { ProposalReport } from 'src/api/model/proposal-report';
+import { getProposalReportFromStorage } from 'src/api/services/local-storage-service';
+import { Proposal } from 'src/api/model/proposal';
+import { ProposalResultDto } from 'src/api/dto/proposal-result-dto';
 
 const route = useRoute();
-const proposalWithReport = ref(undefined);
+const proposal = ref(<Proposal | undefined> undefined);
+const proposalReport = ref(<ProposalReport | undefined> undefined);
 const tokenBalance = ref('');
-const proposalResultDto = ref(undefined);
+const proposalResultDto = ref(<ProposalResultDto | undefined>undefined);
 const votes = ref([]);
 const userVotes = ref([]);
-const proposalIpfsHash = route.params.id;
-const daoIpfsHash = route.params.daoIpfsHash;
+const proposalIpfsHash: string = route.params.id;
+const daoIpfsHash: string = route.params.daoIpfsHash;
 const ethConnectionStore = useEthConnectionStore();
 const isProposalEnded = ref(false);
 // eslint-disable-next-line
-const proposalScrollHeight = ref(window.innerHeight - 50 - 100);
+const proposalScrollHeight = ref(window.innerHeight - 50 - 200);
+const dao = ref(<Dao | null > null);
 const onVotesRendered = () => {
   const otherInfoRowHeight = height(document.getElementById('other-info-row')!);
   // eslint-disable-next-line
-  const scrollHeight = window.innerHeight - 50 - height(document.getElementById('table-votes-row')!);
+  const scrollHeight = window.innerHeight - 70 - height(document.getElementById('table-votes-row')!);
   if (otherInfoRowHeight > scrollHeight) {
     proposalScrollHeight.value = otherInfoRowHeight;
   } else {
     proposalScrollHeight.value = scrollHeight;
   }
 };
-const dao = ref(null);
 
-const getProposal = async () => {
-  const response = await api.get(`/api/rest/v1/dao/${daoIpfsHash}`);
-  dao.value = {
-    name: response.data.clientDao.name,
-    description: response.data.clientDao.description,
-    imageBase64: response.data.clientDao.imageBase64,
-    owners: response.data.clientDao.owners,
-    ownersMultisigThreshold: response.data.clientDao.ownersMultisigThreshold,
-    proposalTokenRequiredQuantity: response.data.clientDao.proposalTokenRequiredQuantity,
-    tokenName: response.data.clientDao.token.name,
-    tokenSymbol: response.data.clientDao.token.symbol,
-    tokenNetwork: response.data.clientDao.token.network,
-    tokenAddress: response.data.clientDao.token.address,
-    tokenType: response.data.clientDao.token.type,
-    ipfsHash: response.data.ipfsHash,
-  };
-  console.log('no pięknie kurwa', dao);
-
+const fetchProposalData = async () => {
+  dao.value = await getDao(daoIpfsHash);
   api.get(`/api/rest/v1/proposal/${proposalIpfsHash}/votes`).then(async (response) => {
     console.log('votes', response.data);
     votes.value = response.data;
   }, (error) => {
     console.log(error);
   });
-
   api.get(`/api/rest/v1/proposal/${proposalIpfsHash}/${ethConnectionStore.account}/votes`).then(async (res) => {
     console.log('user votes', res.data);
     for (const userVote of res.data) {
@@ -137,35 +138,40 @@ const getProposal = async () => {
     console.log(error);
   });
   api.get(`/api/rest/v1/proposal/${proposalIpfsHash}/result`).then((res) => {
-    console.log('proposal result', res.data);
     proposalResultDto.value = res.data;
   }, (error) => {
     console.log(error);
   });
-  api.get(`/api/rest/v1/proposal/${proposalIpfsHash}`).then((res) => {
-    proposalWithReport.value = res.data;
-    console.log('proposal dane', res.data);
+  getProposal(proposalIpfsHash).then((_) => {
+    proposal.value = _;
     ERC_20_SERVICE.readTokenBalance(ethConnectionStore.account, dao.value.tokenAddress).then((response2) => {
       tokenBalance.value = response2;
     }, (error) => {
       console.log(error);
     });
-    isProposalEnded.value = dayjs().isAfter(proposalWithReport.value.proposal.clientProposal.endDateUtc);
+    isProposalEnded.value = dayjs().isAfter(proposal.value.endDateUtc);
+    if (isProposalEnded.value) {
+      getProposalReportFromStorage(proposalIpfsHash).then((proposalReportFromStorage) => {
+        proposalReport.value = proposalReportFromStorage;
+      }, (error) => {
+        console.log(error);
+      });
+    }
   }, (error) => {
     console.log(error);
   });
 };
 
 if (ethConnectionStore.isConnected) {
-  getProposal();
+  fetchProposalData();
 }
 
 watch(() => ethConnectionStore.isConnected, async () => {
-  await getProposal();
+  await fetchProposalData();
 });
 
 const onVoted = async (vote: any) => {
-  storeVoteCreatedByUser(proposalIpfsHash, vote.clientVote, vote.userSignature);
-  await getProposal();
+  await storeVoteCreatedByUser(proposalIpfsHash, vote.clientVote, vote.userSignature);
+  await fetchProposalData();
 };
 </script>

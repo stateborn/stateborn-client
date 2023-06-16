@@ -9,7 +9,7 @@
       row-key="name"
     >
       <template v-slot:body="props">
-        <q-tr :props="props" class="text-subtitle2" :class="(props.row.vote === 'YES' || props.row.vote === 'NO') ? (props.row.vote === 'YES' ? 'bg-green-1' : 'bg-red-1') : 'bg-white'">
+        <q-tr :props="props" class="text-subtitle2" :class="(props.row.vote === 'YES' || props.row.vote === 'NO') ? (props.row.vote === 'YES' ? 'noisegreen' : 'noisered') : 'bg-white'">
           <q-td key="voterAddress"  :props="props">
             <a href="google.pl">{{ props.row.voterAddress }}</a>
           </q-td>
@@ -30,7 +30,6 @@
     </q-table>
 </template>
 <script lang="ts" setup>
-import { api } from 'boot/axios';
 import { ref, watch } from 'vue';
 import { sleep } from 'src/api/services/sleep-service';
 
@@ -65,7 +64,7 @@ watch(() => props.votes, async () => {
     };
     return row;
   });
-  await sleep(100);
+  await sleep(200);
   emit('rendered', true);
 });
 </script>

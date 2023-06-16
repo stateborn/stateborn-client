@@ -1,13 +1,12 @@
 <template>
   <q-card class="stateborn-card q-ma-xs" >
-    <q-separator></q-separator>
     <q-card-section style="padding: 2px !important; margin:2px !important;">
-      <div class="text-h5 text-bold text-center">DAO</div>
+      <div class="text-h5 text-center">DAO</div>
     </q-card-section>
     <q-separator class="q-mt-xs q-mb-xs"></q-separator>
     <div class="row justify-center text-center items-center q-pt-xs">
       <div class="col-auto justify-center items-center">
-        <div class="text-subtitle1 text-bold " style="">
+        <div class="text-subtitle2 text-bold q-pa-xs" style="line-height: 1.5rem">
           {{ props.dao.name }}
         </div>
       </div>
@@ -21,8 +20,8 @@
       </div>
     </div>
     <q-card-section style="padding: 2px; margin:2px;" horizontal
-                    @click="$router.push(`/${props.dao.ipfsHash}/proposals`)">
-      <div class="text-subtitle2 text-bold">{{ props.dao.description }}</div>
+                    @click="$router.push(`/${props.dao.ipfsHash}`)">
+      <div class="text-subtitle2 q-pa-xs">{{ props.dao.description }}</div>
     </q-card-section>
     <q-separator class="q-mt-xs q-mb-xs"></q-separator>
     <q-card-section style="padding:0; margin:0; ">
@@ -89,6 +88,15 @@
           <q-item-section>
             <q-item-label>{{ props.dao.proposalTokenRequiredQuantity }}</q-item-label>
             <q-item-label caption class="text-primary">Required tokens for creating proposal</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item>
+          <q-item-section avatar class="text-bold" >
+            500
+          </q-item-section>
+
+          <q-item-section>
+            <q-item-label class="text-subtitle2">proposals</q-item-label>
           </q-item-section>
         </q-item>
 

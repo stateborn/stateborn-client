@@ -4,46 +4,13 @@
       <q-toolbar>
 
         <q-toolbar-title>
-          Stateborn - trustless DAO
+          <router-link to="/">
+            stateborn - trustless democracy
+          </router-link>
         </q-toolbar-title>
         <ConnectWithWallet></ConnectWithWallet>
       </q-toolbar>
     </q-header>
-
-    <q-drawer
-      v-model="leftDrawerOpen"
-      show-if-above
-      class="noise2"
-    >
-      <q-list class="text-black">
-        <q-item-label header class="text-black">
-          Menu
-        </q-item-label>
-
-        <EssentialLink
-          v-for="link in essentialLinks"
-          :key="link.title"
-          v-bind="link"
-        />
-        <q-item
-          class="bg-grey-8 text-white"
-          clickable
-
-          to="/create-dao"
-        >
-          <q-item-section
-            avatar
-          >
-            <q-icon name="fa-regular fa-square-plus" />
-          </q-item-section>
-
-          <q-item-section>
-            <q-item-label>Create DAO</q-item-label>
-            <q-item-label caption class="text-white">Create your own DAO</q-item-label>
-          </q-item-section>
-        </q-item>
-      </q-list>
-    </q-drawer>
 
     <q-page-container>
       <router-view />

@@ -1,8 +1,8 @@
 <template>
   <div>
-    <q-input square label="Name" v-model="name" class="q-pa-xs"></q-input>
-    <q-input counter square label="Description" v-model="description" class="q-pa-xs"></q-input>
-    <q-input square label="Token address" v-model="tokenAddress" class="q-pa-xs"></q-input>
+    <q-input square outlined filled label="Name" v-model="name" class="q-pa-xs" maxlength="60" counter></q-input>
+    <q-input counter filled square label="Description" v-model="description" maxlength="120" class="q-pa-xs q-pt-lg"></q-input>
+    <q-input square filled label="Token address" v-model="tokenAddress" class="q-pa-xs q-pt-lg"></q-input>
     <div v-if="tokenName !== ''">
       <q-input square dense readonly filled outlined prefix="Token name:" v-model="tokenName" class="q-pa-xs" debounce="500"></q-input>
       <q-input square dense readonly filled prefix="Token symbol:" v-model="tokenSymbol" class="q-pa-xs"></q-input>
@@ -12,11 +12,12 @@
     <q-input square label="Owner" readonly v-model="daoOwner" class="q-pa-xs"></q-input>
     <define-voting-options-card v-if="proposalType.value === 'OPTIONS'" @proposal-option-added="proposalOptionAdded"></define-voting-options-card>
     <q-input
+      filled
       class="q-pa-xs"
       v-model.number="minimalTokens"
       type="number"
-      label="Minimal tokens for proposal creation"
-      :suffix="tokenType === 'NFT' ? 'NFT tokens' : `${tokenSymbol} tokens`"
+      label="Minimal tokens required for proposal creation"
+      :suffix="tokenType === 'NFT' ? `${tokenSymbol} NFTs` : `${tokenSymbol} tokens`"
     />
     <div class="row justify-center items-center">
       <div class="col-6">
@@ -33,11 +34,11 @@
         <q-img
           :src="image"
           spinner-color="white"
-          style="height: 150px; max-width: 150px; border: 1px solid black"
+          style="height: 150px; max-width: 150px; border: 1px solid #9E9E9E"
         />
       </div>
     </div>
-    <q-btn class="q-ma-xs old-button" square label="Create" color="black" @click="callCreateProposal"></q-btn>
+    <q-btn class="q-ma-xs old-button" square label="Create" color="primary" @click="callCreateProposal"></q-btn>
 
   </div>
 </template>
@@ -91,6 +92,7 @@ watch(() => tokenAddress.value, async () => {
     tokenName.value = nameRes;
     tokenSymbol.value = symbolRes;
     tokenType.value = 'NFT';
+    minimalTokens.value = 1;
     $q.loading.hide();
     Notify.create({ message: 'Successfully fetched NFT token data!', position: 'top-right', color: 'green' });
   } catch (err2) {

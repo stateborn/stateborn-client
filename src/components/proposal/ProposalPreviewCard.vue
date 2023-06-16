@@ -7,7 +7,6 @@
 </template>
 
 <script lang="ts" setup>
-import FullProposalCard from 'components/proposal/FullProposalCard.vue';
 
 const props = defineProps(['proposal']);
 </script>

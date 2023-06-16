@@ -1,20 +1,20 @@
 <template>
   <q-card class="stateborn-card" square>
-    <q-card-section style="padding:5px;">
+    <q-card-section style="padding:0;">
       <div class="row justify-center items-center">
         <div class="col-auto q-pa-xs justify-center">
           <q-icon name="fa-solid fa-square-check"  style="font-size: 1.5rem !important;"></q-icon>
         </div>
         <div class="col-auto justify-center">
-          <div class="text-h5 text-center" >
+          <div class="text-h6 text-center" >
             Vote on proposal
           </div>
         </div>
       </div>
       <q-separator class="q-mb-xs q-mt-xs"/>
-      <div class="row text-subtitle2" v-if="props.userVotes.length === 0 || changeMyVote"><div class="col text-bold">Your voting power</div><div class="col text-right">{{ props.tokenBalance }}</div></div>
-      <q-banner :class="userVote === 'NO' ? 'bg-red': 'bg-green'" class="text-white text-bold text-subtitle2 text-center" v-if="props.userVotes.length > 0 && !changeMyVote">
-        You already voted: <q-chip square color="white" class="text-bold"> {{ userVote }}</q-chip>
+      <div class="row text-subtitle2" v-if="props.userVotes.length === 0 || changeMyVote"><div class="col text-bold">Your voting power</div><div class="col text-right">{{ props.tokenBalance }} {{tokenSymbol}}</div></div>
+      <q-banner :class="userVote === 'NO' ? 'noisered': 'noisegreen'" class="text-black text-bold text-subtitle2 text-center" v-if="props.userVotes.length > 0 && !changeMyVote">
+        <span class="text-bold">You already voted: </span><q-chip square color="white" class="text-bold" :text-color="userVote === 'NO' ? 'red': 'green'"> {{ userVote }}</q-chip>
       </q-banner>
       <div class="row justify-center" v-if="props.userVotes.length > 0 && !isProposalEnded">
         <div class="col-auto justify-center">
@@ -27,9 +27,9 @@
         </div>
       </div>
     </q-card-section>
-    <q-card-actions vertical style="padding:5px;" v-if="options.length === 0 && (props.userVotes.length === 0 || changeMyVote)">
-          <q-btn square color="green" label="YES" @click="callVote('YES')"></q-btn>
-          <q-btn square color="red" label="NO" @click="callVote('NO')"></q-btn>
+    <q-card-actions vertical style="padding:0px;" v-if="options.length === 0 && (props.userVotes.length === 0 || changeMyVote)">
+          <q-btn square color="green-5" label="YES" @click="callVote('YES')"></q-btn>
+          <q-btn square color="red-5" label="NO" @click="callVote('NO')"></q-btn>
     </q-card-actions>
     <q-card-actions vertical style="padding:5px;" v-if="options.length > 0 && (props.userVotes.length === 0 || changeMyVote)">
       <div class="text-h6 text-center">Options</div>
@@ -49,7 +49,7 @@ import { api } from 'boot/axios';
 import { signVote } from 'src/api/services/signature-service';
 import { computed, ref, watch } from 'vue';
 
-const props = defineProps(['tokenBalance', 'proposalIpfsHash', 'blockNumber', 'userVotes', 'proposalOptions', 'isProposalEnded']);
+const props = defineProps(['tokenBalance', 'proposalIpfsHash', 'blockNumber', 'userVotes', 'proposalOptions', 'isProposalEnded', 'tokenSymbol']);
 const emit = defineEmits(['voted']);
 const ethConnectionStore = useEthConnectionStore();
 const changeMyVote = ref(false);

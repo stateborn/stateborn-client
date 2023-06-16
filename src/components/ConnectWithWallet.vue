@@ -1,6 +1,6 @@
 <template>
   <q-btn color="primary" v-if="ethConnectionStore.account == ''" @click="connectWithMetamask">Connect</q-btn>
-  <div v-else>{{ ethConnectionStore.account }}</div>
+  <div v-else class="text-subtitle2">{{ ethConnectionStore.account }}</div>
 </template>
 
 <script lang="ts" setup>

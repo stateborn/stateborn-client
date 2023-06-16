@@ -14,15 +14,15 @@ const voteIsValid = (clientVoteDto: any, signature: string) => {
 };
 
 export const storeVoteCreatedByUser = async (proposalIpfsHash: string, clientVote: any, voteSignature: string): Promise<void> => {
-  const userVote = getUserVoteFromStorage(proposalIpfsHash);
+  const userVote = await getUserVoteFromStorage(proposalIpfsHash);
   if (userVote !== undefined) {
     userVote.votes.push(new SingleUserVoteStorage(
       clientVote,
       voteSignature,
     ));
-    setUserVote(proposalIpfsHash, userVote);
+    await setUserVote(proposalIpfsHash, userVote);
   } else {
-    setUserVote(proposalIpfsHash, new UserVoteStorage(
+    await setUserVote(proposalIpfsHash, new UserVoteStorage(
       proposalIpfsHash,
       [new SingleUserVoteStorage(
         clientVote,
@@ -34,12 +34,11 @@ export const storeVoteCreatedByUser = async (proposalIpfsHash: string, clientVot
 };
 
 export const fetchAndStoreIpfsVoteInStorage = async (proposalIpfsHash: string, voteIpfsHash: string): Promise<void> => {
-  const userVote = getUserVoteFromStorage(proposalIpfsHash);
+  const userVote = await getUserVoteFromStorage(proposalIpfsHash);
   if (userVote !== undefined) {
     const savedSingleUserVoteWithIpfsHash = userVote.votes.filter((_) => _.voteIpfsHash === voteIpfsHash)[0];
     if (savedSingleUserVoteWithIpfsHash === undefined) {
       const ipfsVote = await getIpfsJsonFile(voteIpfsHash);
-      console.log('ipfs vote', ipfsVote, userVote.votes);
       const savedUserVoteMatchingSignature = userVote.votes.filter((_) => _.userSignature === ipfsVote.userSignature)[0];
       if (savedUserVoteMatchingSignature !== undefined) {
         // vote is saved locally, but IPFS hash was not yet saved
@@ -47,7 +46,7 @@ export const fetchAndStoreIpfsVoteInStorage = async (proposalIpfsHash: string, v
           savedUserVoteMatchingSignature.voteIpfsHash = voteIpfsHash;
           // update votes
           userVote.votes.filter((_) => _.userSignature !== ipfsVote.userSignature).push(savedUserVoteMatchingSignature);
-          setUserVote(proposalIpfsHash, userVote);
+          await setUserVote(proposalIpfsHash, userVote);
           console.log(`Vote ${voteIpfsHash} for proposal ${proposalIpfsHash} validated and IPFS hash updated locally!`);
         } else {
           console.log(`Fatal: expected to find locally user vote having signature ${ipfsVote.userSignature}, but couldnt. There is something malicious happening by the server!`);
@@ -63,8 +62,8 @@ export const fetchAndStoreIpfsVoteInStorage = async (proposalIpfsHash: string, v
   }
 };
 
-export const verifyBackendReceivedVoteWithLocal = (proposalIpfsHash: string, voteIpfsHash: string, backendClientVote: any): boolean => {
-  const userVote = getUserVoteFromStorage(proposalIpfsHash);
+export const verifyBackendReceivedVoteWithLocal = async (proposalIpfsHash: string, voteIpfsHash: string, backendClientVote: any): Promise<boolean> => {
+  const userVote = await getUserVoteFromStorage(proposalIpfsHash);
   if (userVote !== undefined) {
     const singleUserVote = userVote.votes.filter((_) => _.voteIpfsHash === voteIpfsHash)[0];
     if (singleUserVote) {

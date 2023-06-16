@@ -10,8 +10,8 @@ const routes: RouteRecordRaw[] = [
     path: '/:daoIpfsHash',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: 'proposals', component: () => import('pages/BrowseProposalsPage.vue') },
-      { path: 'proposal/:id', component: () => import('pages/ProposalDetailsPage.vue') },
+      { path: '', component: () => import('pages/BrowseProposalsPage.vue') },
+      { path: ':id', component: () => import('pages/ProposalDetailsPage.vue') },
       { path: 'create-proposal', component: () => import('pages/CreateProposalPage.vue') },
 
     ],

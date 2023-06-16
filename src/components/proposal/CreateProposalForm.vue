@@ -1,20 +1,21 @@
 <template>
   <div>
-    <q-input square label="Title" v-model="title" class="q-pa-xs"></q-input>
-    <q-input type="textarea" counter square label="Description" v-model="description" class="q-pa-xs"></q-input>
+    <q-input square filled label="Title" v-model="title" maxlength="120" counter class="q-pa-xs"></q-input>
+    <q-input type="textarea" filled counter square label="Description" v-model="description" class="q-pa-xs q-pt-lg"></q-input>
     <div>
-      <div class="text-left text-subtitle2">Description preview</div>
+      <div class="text-left text-subtitle2 q-pa-xs">Description preview</div>
         <proposal-description-markdown
-          class="q-pt-md q-pb-md noise2"
-          :description="description"
+          class="q-pt-md q-pb-md q-ma-xs"
+          :description="calculateDescriptionValue()"
           >
         </proposal-description-markdown>
     </div>
-    <q-select :options="proposalTypeOptions" square v-model="proposalType" label="Proposal type" class="q-pa-xs q-mt-md"></q-select>
+    <q-select filled :options="proposalTypeOptions" square v-model="proposalType" label="Proposal type" class="q-pa-xs q-mt-md"></q-select>
     <define-voting-options-card v-if="proposalType.value === 'OPTIONS'" @proposal-option-added="proposalOptionAdded"></define-voting-options-card>
     <div class="row items-center">
       <div class="col-6 q-pa-xs">
         <q-input
+          filled
           v-model.number="durationHours"
           type="number"
           label="Duration"
@@ -26,7 +27,7 @@
       </div>
     </div>
     <file-reader class="q-pa-xs" label="Upload proposal attachments" @file-uploaded="onFileUploaded" @file-removed="onFileRemoved" :as-base="true"></file-reader>
-    <q-btn class="q-ma-xs old-button" square label="Create" color="black" @click="callCreateProposal"></q-btn>
+    <q-btn class="q-ma-xs old-button" square label="Create" color="primary" @click="callCreateProposal"></q-btn>
 
   </div>
 </template>
@@ -39,9 +40,10 @@ import FileReader from 'components/proposal/FileReader.vue';
 import dayjs from 'dayjs';
 import dayjsPluginUTC from 'dayjs-plugin-utc';
 import DefineVotingOptionsCard from 'components/proposal/DefineVotingOptionsCard.vue';
-import { Notify } from 'quasar';
+import { Notify, useQuasar } from 'quasar';
 import { useRoute, useRouter } from 'vue-router';
 import ProposalDescriptionMarkdown from 'components/proposal/ProposalDescriptionMarkdown.vue';
+import { getLatestBlockNumber } from 'src/api/services/eth-service';
 
 dayjs.extend(dayjsPluginUTC);
 const title = ref('New proposal');
@@ -125,8 +127,18 @@ function getDataObject() {
       throw new Error(`Unknown proposal type ${proposalType.value.value}`);
   }
 }
+const $q = useQuasar();
 
 const callCreateProposal = async () => {
+  $q.loading.show({
+    delay: 100, // ms
+    message: 'Reading latest block number...',
+    backgroundColor: 'black',
+    messageColor: 'white',
+  });
+  const latestBlockNumber = await getLatestBlockNumber();
+  $q.loading.hide();
+  Notify.create({ message: `Latest block number: ${latestBlockNumber}`, position: 'top', color: 'primary' });
   const fullDescription = calculateDescriptionValue();
   const startDateUtcString = startDate.utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
   const endDateUtcString = startDate.add(durationHours.value, 'h').utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
@@ -139,6 +151,7 @@ const callCreateProposal = async () => {
     startDateUtc: startDate.utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
     endDateUtc: startDate.add(durationHours.value, 'h').utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
     data: getDataObject(),
+    blockNumber: latestBlockNumber.toString(),
   };
 
   const signature = await signProposal(
@@ -149,6 +162,7 @@ const callCreateProposal = async () => {
     proposalType.value.value,
     startDateUtcString,
     endDateUtcString,
+    latestBlockNumber.toString(),
     proposalOptions.value,
   );
   api.post('/api/rest/v1/proposal', {
@@ -156,7 +170,7 @@ const callCreateProposal = async () => {
     creatorSignature: signature,
   }).then((response) => {
     Notify.create({ message: 'Successfuly created proposal!', position: 'top-right', color: 'green' });
-    router.push(`/${daoIpfsHash}/proposals`);
+    router.push(`/${daoIpfsHash}`);
     console.log('Proposal created!', response);
   }, (error) => {
     Notify.create({ message: 'Creating proposal failed - server problem!', position: 'top-right', color: 'red' });

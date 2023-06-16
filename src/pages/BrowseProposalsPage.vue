@@ -6,39 +6,63 @@
           image-src="/proposalsnoise.webp"
           alt="proposal image"
           :scroll-target-value="scrollTarget"
-          title="Proposals"
+          :title="dao !== null ? `${dao.name}` :''"
+          line-height="1.5rem"
+          text-class="text-h3 text-center q-pa-md"
           height="200">
         </picture-parallax>
       </div>
     </div>
-    <div class="row justify-center">
+    <div class="row justify-center q-mt-md" >
       <div class="col-8">
+        <q-breadcrumbs class="text-subtitle2 noise text-primary">
+          <q-breadcrumbs-el icon="home" to="/">
+            <span class="text-underline">Home</span>
+          </q-breadcrumbs-el>
+          <q-breadcrumbs-el :to="`/${daoIpfsHash}`" >
+            {{dao !== null ? `${dao.name}`: ''}}
+          </q-breadcrumbs-el>
+        </q-breadcrumbs>
         <div class="row">
-          <div class="col-4">
-            <dao-card class="q-mt-lg" :dao="dao" v-if="dao !== null" :is-full="true"></dao-card>
+          <div class="col-lg-3 col-md-5">
+            <dao-card :dao="dao" v-if="dao !== null" :is-full="true"></dao-card>
           </div>
-          <div class="col-8">
-            <q-scroll-area :style="`height: ${proposalScrollHeight}px; width: 100%;`" ref="proposalScrollArea"
-                           v-if="proposals.length > 0">
-              <div class="row justify-center" v-for="proposal in proposals" :key="proposal.ipfsHash"
-                   style="margin-bottom: 20px; justify-content: center; width: 100%;">
-                <div class="col-12 justify-center">
-                  <proposal-card :proposal="proposal" @click="$router.push(`/${daoIpfsHash}/proposal/${proposal.ipfsHash}`)"></proposal-card>
-                </div>
-              </div>
-            </q-scroll-area>
+          <div class="col-lg-9 col-md-7">
+            <q-table
+              id="proposalsTable"
+              v-if="proposals.length > 0 || hasData"
+              flat bordered
+              grid
+              v-model:pagination="initialPagination"
+              title="Proposals"
+              :rows="proposals"
+              :columns="columns"
+              row-key="name"
+              :filter="filter"
+              @request="onTableDataRequest"
+              hide-header
+            >
+              <template v-slot:top-right>
+                <q-input borderless dense debounce="500" v-model="filter" placeholder="Search">
+                  <template v-slot:append>
+                    <q-icon name="search"/>
+                  </template>
+                </q-input>
+              </template>
+              <template v-slot:item="props">
+                <proposal-card
+                  class="q-ma-xs"
+                  :style="`min-width:${tableEntryWidth}px` "
+                  :dao-ipfs-hash="daoIpfsHash"
+                  :proposal="props.row"
+                  @click="$router.push(`/${daoIpfsHash}/${props.row.ipfsHash}`)"></proposal-card>
+              </template>
+            </q-table>
             <div class="row items-center justify-center" v-else :style="`height:${proposalScrollHeight}px`">
               <div class="col-12 justify-center">
                 <div class="row justify-center">
                   <div class="col-auto">
                     <div class="text-h5 text-center">No proposals yet</div>
-                  </div>
-                </div>
-                <div class="row justify-center q-pt-xs">
-                  <div class="col-auto">
-                    <q-btn color="primary" @click="$router.push(`/${daoIpfsHash}/create-proposal`)">
-                      Create proposal
-                    </q-btn>
                   </div>
                 </div>
               </div>
@@ -49,57 +73,76 @@
     </div>
   </q-page>
 </template>
-<style lang="sass" scoped>
-.example-item
-  width: 800px
-</style>
 <script lang="ts" setup>
-import { ref, watch } from 'vue';
+import { onMounted, ref } from 'vue';
 import { api } from 'boot/axios';
 import ProposalCard from 'components/proposal/ProposalCard.vue';
 import PictureParallax from 'components/PictureParallax.vue';
 import { useRoute } from 'vue-router';
 import DaoCard from 'components/dao-features/DaoCard.vue';
+import { dom } from 'quasar';
+import width = dom.width;
+import { sleep } from 'src/api/services/sleep-service';
+import { getProposal } from 'src/api/services/proposal-service';
+import { Proposal } from 'src/api/model/proposal';
+import { getDao } from 'src/api/services/dao-service';
+import { Dao } from 'src/api/model/dao';
 
 // 200 picture height
 const proposalScrollHeight = ref(window.innerHeight - 50 - 200);
-const proposalScrollArea = ref(null);
+const tableEntryWidth = ref(0);
 const scrollTarget = ref(null);
-const proposals = ref([]);
+const proposals = ref(<Proposal[]>[]);
 const route = useRoute();
-const dao = ref(null);
-const daoIpfsHash: string = route.params.daoIpfsHash;
-api.get(`/api/rest/v1/dao/${daoIpfsHash}/proposals`).then((response) => {
-  console.log('proposale', response.data);
-  proposals.value = response.data;
+const dao = ref(<Dao | null>null);
+const filter = ref('');
+const daoIpfsHash: string = <string>route.params.daoIpfsHash;
+const hasData = ref(false);
+const initialPagination = ref({
+  sortBy: 'desc',
+  descending: false,
+  page: 1,
+  rowsPerPage: 2,
+  rowsNumber: 10
+});
+const loadProposals = async (limit: number, offset: number, filter?: string) => {
+  const res = await api.get(`/api/rest/v1/dao/${daoIpfsHash}/proposals?limit=${limit}&offset=${offset}${filter !== undefined ? `&filter=${filter}` : ''}`);
+  const localProposals: Proposal[] = [];
+  for (const proposalHeader of res.data) {
+    const proposal = await getProposal(proposalHeader.ipfsHash);
+    localProposals.push(proposal);
+  }
+  return localProposals;
+};
+
+onMounted(async () => {
+  proposals.value = await loadProposals(initialPagination.value.rowsPerPage, (initialPagination.value.page - 1) * initialPagination.value.rowsPerPage);
+  if (proposals.value.length > 0) {
+    hasData.value = true;
+  }
+  await sleep(50);
+  tableEntryWidth.value = width(document.getElementById('proposalsTable')!) - 10;
+});
+
+api.get(`/api/rest/v1/dao/${daoIpfsHash}/proposals/count`).then(async (response) => {
+  initialPagination.value.rowsNumber = Number(response.data.count);
 }, (error) => {
   console.log(error);
 });
 
-api.get('/api/rest/v1/dao').then((response) => {
-  dao.value = response.data.map((_: any) => {
-    return {
-      name: _.clientDao.name,
-      description: _.clientDao.description,
-      imageBase64: _.clientDao.imageBase64,
-      owners: _.clientDao.owners,
-      ownersMultisigThreshold: _.clientDao.ownersMultisigThreshold,
-      proposalTokenRequiredQuantity: _.clientDao.proposalTokenRequiredQuantity,
-      tokenName: _.clientDao.token.name,
-      tokenSymbol: _.clientDao.token.symbol,
-      tokenNetwork: _.clientDao.token.network,
-      tokenAddress: _.clientDao.token.address,
-      tokenType: _.clientDao.token.type,
-      ipfsHash: _.ipfsHash,
-    }
-  })[0];
-}, (error) => {
-  console.log(error);
-});
-
-
-watch(() => proposalScrollArea.value, async () => {
-  const target = proposalScrollArea.value.getScrollTarget();
-  scrollTarget.value = target;
-});
+getDao(daoIpfsHash).then(_ => dao.value = _);
+const onTableDataRequest = async ({ pagination, filter }: any) => {
+  console.log('hej request', filter);
+  proposals.value = await loadProposals(pagination.rowsPerPage, (pagination.page - 1) * pagination.rowsPerPage, filter);
+  initialPagination.value.page = pagination.page;
+};
+const columns = [
+  { name: 'title', required: true, align: 'left', sortable: true },
+  { name: 'description', align: 'center', label: 'Calories', field: 'calories', sortable: true },
+  { name: 'endDateUtc', label: 'Fat (g)', field: 'fat', sortable: true },
+  { name: 'startDateUtc', label: 'Fat (g)', field: 'fat', sortable: true },
+  { name: 'proposalType', label: 'Fat (g)', field: 'fat', sortable: true },
+  { name: 'ipfsHash', label: 'Fat (g)', field: 'fat', sortable: true },
+  { name: 'creatorAddress', label: 'Fat (g)', field: 'fat', sortable: true },
+]
 </script>

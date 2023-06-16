@@ -2,32 +2,31 @@
   <q-table
     square
     :class="allVotesValid ? '' : 'bg-red-1'"
-    class="stateborn-card"
+    class="stateborn-card "
     dense
-    title-class="text-bold"
     title="Your votes"
     :rows="rows"
     :columns="columns"
     row-key="name"
   >
     <template v-slot:top-right>
-      <span class="text-bold text-green text-subtitle2" v-if="allVotesValid && userVotes.length > 0">Validated</span>
+      <span class="text-bold text-green-8 text-subtitle2" v-if="allVotesValid && userVotes.length > 0">Validated</span>
       <span class="text-bold text-red" v-if="!allVotesValid && userVotes.length > 0">Votes invalid</span>
       <q-icon v-if="allVotesValid && userVotes.length > 0"
-              :color="allVotesValid ? 'green' : 'red'"
-              :name="allVotesValid ? 'fa-solid fa-square-check' : 'fa-solid fa-square-xmark'" class="q-pl-xs">
-        <q-tooltip v-if="allVotesValid">
+              color="primary"
+              name="fa-solid fa-circle-info" class="q-pl-xs">
+        <q-tooltip v-if="allVotesValid" class="stateborn-tooltip">
           All votes returned by server are client side validated. <br>
           All votes saved in IPFS decentralized storage matches the votes saved by user.
         </q-tooltip>
-        <q-tooltip v-else>
+        <q-tooltip v-else class="stateborn-tooltip">
           Some of votes returned by server are not valid.
         </q-tooltip>
       </q-icon>
     </template>
     <template v-slot:body="props">
-      <q-tr :props="props" class="text-subtitle1" :class="(props.row.vote === 'YES' || props.row.vote === 'NO') ? (props.row.vote === 'YES' ? 'bg-green-1' : 'bg-red-1') : 'bg-white'">
-        <q-td key="vote" :props="props"  :class="(props.row.vote === 'YES' || props.row.vote === 'NO') ? (props.row.vote === 'YES' ? 'text-green' : 'text-red') : 'text-black text-bold'">
+      <q-tr :props="props" class="text-subtitle1" :class="(props.row.vote === 'YES' || props.row.vote === 'NO') ? (props.row.vote === 'YES' ? 'noisegreen' : 'noisered') : 'bg-white'">
+        <q-td key="vote" :props="props"  :class="(props.row.vote === 'YES' || props.row.vote === 'NO') ? (props.row.vote === 'YES' ? 'text-green-8' : 'text-red ') : 'text-black text-bold'">
             {{ props.row.vote }}
         </q-td>
         <q-td key="votingPower" :props="props">
@@ -40,7 +39,7 @@
             {{ props.row.createdAt }}
         </q-td>
         <q-td key="validity" :props="props">
-          <q-icon :color="props.row.isValidated ? 'green' : 'red'"
+          <q-icon :color="props.row.isValidated ? 'green-8' : 'red'"
                   :name="props.row.isValidated ? 'fa-solid fa-square-check' : 'fa-solid fa-square-xmark'">
             <q-tooltip>
               The vote was verified client side.

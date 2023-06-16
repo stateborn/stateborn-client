@@ -5,7 +5,16 @@
         <picture-parallax image-src="statebornnoise.webp" alt="stateborn image" title="Create a DAO" height="600"></picture-parallax>
         <q-card class="stateborn-card" square>
           <q-card-section class="text-center">
-            <create-dao-form @proposal-changed="proposalChanged"></create-dao-form>
+            <div class="row justify-center">
+              <div class="col-lg-8 col-md-12 justify-center">
+                <q-breadcrumbs class="text-subtitle2 text-primary q-pb-md">
+                  <q-breadcrumbs-el icon="home" to="/">
+                    <span class="text-underline">Home</span>
+                  </q-breadcrumbs-el>
+                </q-breadcrumbs>
+                <create-dao-form @proposal-changed="proposalChanged"></create-dao-form>
+              </div>
+            </div>
           </q-card-section>
         </q-card>
       </div>

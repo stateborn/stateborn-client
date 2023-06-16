@@ -30,7 +30,7 @@
             <q-item-label v-if="!daoFileMode">
               <q-btn color="red" label="Remove from description"
                      v-if="emittedFileNames.filter(_ => _ === file.name).length > 0" @click="emitRemovedFile(file)"></q-btn>
-              <q-btn color="black" label="Add to description" v-else @click="emitFile(file)"></q-btn>
+              <q-btn color="primary" label="Add to description" v-else @click="emitFile(file)"></q-btn>
             </q-item-label>
           </q-item-section>
 

@@ -1,13 +1,13 @@
 <template>
-  <q-card class="stateborn-card" :class="proposalReportStorage.isValid ? 'bg-green-1' : 'bg-red-1'" square>
-    <q-card-section style="padding:5px;">
+  <q-card :class="reportIsValid ? 'noisegreencard' : 'noiseredcard'" square>
+    <q-card-section style="padding:0px;">
       <div class="row justify-center items-center">
         <div class="col-auto justify-center q-pa-xs">
           <q-icon name="fa-solid fa-list-check" style="font-size: 1.5rem !important;"></q-icon>
         </div>
         <div class="col-auto justify-center">
           <div class="text-h5 text-center">
-            Proposal Validity
+            Result validity
           </div>
         </div>
       </div>
@@ -22,29 +22,61 @@
         </div>
       </div>
       <div v-else>
-        <div class="text-bold text-center">Proposal summary IPFS hash</div>
-        <div class="text-center"><a href="google.pl">{{ props.proposalReportDto.ipfsHash }}</a></div>
-        <q-separator class="q-mb-xs q-mt-xs"/>
-        <div class="text-bold text-center">Proposal result validity
-          <q-icon name="fa-solid fa-circle-info">
-            <q-tooltip class="bg-black text-white">
-              Validity of the proposal result was verified client side.<br>
-            </q-tooltip>
-          </q-icon>
-        </div>
-        <div class="text-center">
-          <q-icon :color="proposalReportStorage.isValid ? 'green' : 'red'"
-                  :name="proposalReportStorage.isValid ? 'fa-solid fa-square-check' : 'fa-solid fa-square-xmark'"
-                  style="font-size: 2rem !important;">
-          </q-icon>
-        </div>
-        <div v-if="!proposalReportStorage.isValid">
-          <div class="text-bold text-center">Validation error</div>
-          <div class="text-center">{{ proposalReportStorage.error }}</div>
-        </div>
-        <q-separator class="q-mb-xs q-mt-xs"/>
-        <div class="text-bold text-center">Merkle root</div>
-        <div class="text-center">{{ proposalReportStorage.merkleRootHex }}</div>
+        <q-list>
+          <q-item clickable>
+            <q-item-section avatar>
+              <q-icon color="primary" size="xs" name="fa-solid fa-arrow-up-right-from-square"/>
+            </q-item-section>
+
+            <q-item-section>
+              <q-item-label>{{ proposalReport.ipfsHash }}</q-item-label>
+              <q-item-label caption class="text-primary">Proposal summary IPFS hash</q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item>
+            <q-item-section avatar>
+              <q-icon size="xs" :color="reportIsValid ? 'green' : 'red'" name="fa-solid fa-square-check"/>
+            </q-item-section>
+
+            <q-item-section>
+              <q-item-label :class="reportIsValid ? 'text-green-8 text-bold' : 'text-bold text-red'">{{
+                  reportIsValid ? 'VALID - your vote is correctly included in the proposal summary' : 'INVALID'
+                }}
+              </q-item-label>
+              <q-item-label caption class="text-primary">Proposal result validity</q-item-label>
+            </q-item-section>
+            <q-item-section side>
+              <q-icon size="xs" name="fa-solid fa-circle-info" color="primary" class="q-pl-xs">
+                <q-tooltip class="stateborn-tooltip">
+                  Your vote is correctly included in the proposal result report created by stateborn backend.<br>
+                  Validation was done client side. <br>
+                  Validation includes reading your vote from IPFS and checking if it was signed by you.<br>
+                  It was also verified that only your last (final) vote is included in the proposal result report.<br>
+                </q-tooltip>
+              </q-icon>
+            </q-item-section>
+          </q-item>
+          <q-item>
+            <q-item-section avatar>
+              <q-icon size="xs" color="primary" name="fa-solid fa-info"/>
+            </q-item-section>
+
+            <q-item-section>
+              <q-item-label>{{ reportCalculatedMerkleRootHex }}</q-item-label>
+              <q-item-label caption class="text-primary">Result merkle root</q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item v-if="reportError !== ''">
+            <q-item-section avatar>
+              <q-icon size="xs" color="primary" name="fa-solid fa-circle-exclamation"/>
+            </q-item-section>
+
+            <q-item-section>
+              <q-item-label>{{ reportError }}</q-item-label>
+              <q-item-label caption class="text-primary">Validation error</q-item-label>
+            </q-item-section>
+          </q-item>
+        </q-list>
       </div>
     </q-card-section>
   </q-card>
@@ -53,31 +85,26 @@
 <script lang="ts" setup>
 
 import { ref } from 'vue';
-import { calculateVotesAndGetProposalReportStorage } from 'src/api/services/calculate-votes-service';
+import { calculateUserVotesAndGetProposalReportStorage } from 'src/api/services/calculate-votes-service';
 import { useEthConnectionStore } from 'stores/eth-connection-store';
+import { ProposalReport } from 'src/api/model/proposal-report';
 
-const props = defineProps(['proposalResultDto', 'proposalReportDto', 'proposalIpfsHash']);
+const props = defineProps<{
+  proposalReport: ProposalReport,
+  proposalIpfsHash: string,
+}>();
+
 const isLoading = ref(true);
 const proposalReportStorage = ref({});
 const ethConnectionStore = useEthConnectionStore();
-calculateVotesAndGetProposalReportStorage(props.proposalReportDto.ipfsHash, props.proposalIpfsHash, ethConnectionStore.account).then((result) => {
+const reportCalculatedMerkleRootHex = ref('');
+const reportError = ref('');
+const reportIsValid = ref(true);
+calculateUserVotesAndGetProposalReportStorage(props.proposalReport.ipfsHash, props.proposalIpfsHash, ethConnectionStore.account).then((result) => {
   proposalReportStorage.value = result;
   // key-value object
-  if (proposalReportStorage.value.isValid) {
-    const results = proposalReportStorage.value.results!;
-    const resultsSum = Object.values(results).reduce((accumulator: number, currentValue: number) => accumulator + currentValue, 0);
-    if (Number(resultsSum).toString() !== props.proposalResultDto.totalVotes) {
-      proposalReportStorage.value.isValid = false;
-      proposalReportStorage.value.error = 'Calculated total votes sum is not equal to expected';
-    }
-    props.proposalResultDto.voteResults.forEach((voteResult) => {
-      if (Number(results[voteResult.option]).toString() !== voteResult.votes) {
-        proposalReportStorage.value.isValid = false;
-        proposalReportStorage.value.error = `Calculated option ${voteResult.option} votes sum is not equal to expected`;
-      }
-    });
-    props.proposalResultDto.voteResults = result.voteResults;
-    isLoading.value = false;
-  }
+  reportError.value = result.error !== undefined ? result.error : '';
+  reportCalculatedMerkleRootHex.value = result.merkleRootHex;
+  isLoading.value = false;
 });
 </script>

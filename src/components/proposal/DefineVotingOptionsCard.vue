@@ -1,9 +1,7 @@
 <template>
-  <q-card class="q-mt-md" square style="border: 0px !important; box-shadow: none">
-    <q-card-section class="text-center">
       <div class="row justify-center">
         <div class="col-12 justify-center">
-          <q-input label="Add option" v-model="proposalInput">
+          <q-input label="Add option" v-model="proposalInput" filled>
             <template v-slot:after>
               <q-btn round flat color="black" @click="addProposal()" :disable="proposalInput.trim() === ''" icon="fa-solid fa-plus" />
             </template>
@@ -16,11 +14,9 @@
           <q-radio checked-icon="task_alt" unchecked-icon="panorama_fish_eye" val="line" :label="proposal" />
         </div>
         <div class="col-2 text-right">
-          <q-btn round icon="fa-solid fa-xmark" size="xs" color="red" text-color="white" @click="removeProposal(proposal)" class="cursor-pointer" />
+          <q-btn round  icon="fa-solid fa-xmark" size="xs" color="red" text-color="white" @click="removeProposal(proposal)" class="cursor-pointer" />
         </div>
       </div>
-    </q-card-section>
-  </q-card>
 </template>
 
 <script lang="ts" setup>

@@ -1,18 +1,18 @@
 <template>
   <q-card class="stateborn-card" square>
-    <q-card-section style="padding:5px;">
+    <q-card-section style="padding:0px;">
       <div class="row justify-center items-center">
         <div class="col-auto justify-center q-pa-xs">
           <q-icon name="fa-solid fa-square-poll-vertical" style="font-size: 1.5rem !important;"></q-icon>
         </div>
         <div class="col-auto justify-center">
-          <div class="text-h5 text-center">
+          <div class="text-h6 text-center">
             Results
           </div>
         </div>
       </div>
       <q-separator class="q-mb-xs q-mt-xs"/>
-      <q-linear-progress stripe size="40px" class="q-mb-xs" :color="result.option === result.option ? 'green' : 'grey-8'" :value="result.value"
+      <q-linear-progress stripe size="40px" class="q-mb-xs" :color="result.option === highestResultOption ? 'green-5' : 'grey-8'" :value="result.value"
                          v-for="result of results" v-bind:key="result.label">
         <div class="absolute-full flex flex-center text-subtitle2">
           <q-chip square color="white" text-color="black" :label="result.label"/>
@@ -20,11 +20,11 @@
       </q-linear-progress>
       <div class="row text-subtitle2">
         <div class="col text-bold">All votes</div>
-        <div class="col text-right">{{ props.proposalResultDto.totalVotes }}</div>
+        <div class="col text-right">{{ props.proposalResultDto.totalVotes }} {{tokenSymbol}}</div>
       </div>
       <div class="row text-subtitle2" v-for="result of results" v-bind:key="result.label">
         <div class="col text-bold">{{ result.option }} votes</div>
-        <div class="col text-right">{{ result.votes }}</div>
+        <div class="col text-right">{{ result.votes }} {{tokenSymbol}}</div>
       </div>
       <div class="row text-subtitle2">
         <div class="col text-bold">Addresses voted</div>
@@ -36,30 +36,55 @@
 
 <script lang="ts" setup>
 
-import { computed, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
+import { ProposalResultDto } from 'src/api/dto/proposal-result-dto';
 
-const highestResultOption = ref('');
-const props = defineProps(['proposalResultDto', 'proposalOptions']);
-const results = computed(() => (props.proposalOptions ?? ['YES', 'NO']).map((option: string) => {
-  const resultOption = (props.proposalResultDto?.voteResults ?? []).filter((_) => option === _.option)[0];
-  if (resultOption !== undefined) {
-    const value = (Number(resultOption.votes) / Number(props.proposalResultDto.totalVotes));
-    return {
-      option: resultOption.option,
-      votes: resultOption.votes,
-      label: `${resultOption.option} - ${value * 100}%`,
-      value,
-    };
+class Result {
+  option: string;
+  votes: number;
+  label: string;
+  value: number;
+
+  constructor(option: string, votes: number, label: string, value: number) {
+    this.option = option;
+    this.votes = votes;
+    this.label = label;
+    this.value = value;
   }
-  return {
-    option,
-    votes: 0,
-    label: `${option} - ${0}%`,
-    value: 0,
-  };
-}));
-watch(results, () => {
+};
+const highestResultOption = ref('');
+const results = ref(<Result[]>[]);
+
+const props = defineProps<{
+  proposalResultDto: ProposalResultDto,
+  proposalOptions: string,
+  tokenSymbol: string,
+}>();
+const setHighestResultValue = () => {
   const highestResult = results.value.reduce((prev, current) => ((prev.value > current.value) ? prev : current));
-  highestResultOption.value = highestResult.option;
+  const duplicatingHighestResults = results.value.filter((_) => _.value === highestResult.value).length > 1;
+  if (duplicatingHighestResults) {
+    highestResultOption.value = '';
+  } else {
+    highestResultOption.value = highestResult.option;
+  }
+}
+const setResults = () => {
+  results.value = (props.proposalOptions ?? ['YES', 'NO']).map((option: string) => {
+    const resultOption = (props.proposalResultDto?.voteResults ?? []).filter((_) => option === _.option)[0];
+    if (resultOption !== undefined) {
+      const value = Number((Number(resultOption.votes) / Number(props.proposalResultDto.totalVotes)).toPrecision(4));
+      return new Result(resultOption.option, resultOption.votes, `${resultOption.option} - ${value * 100}%`, value);
+    }
+    return new Result(option, 0, `${option} - ${0}%`, 0);
+  });
+};
+setResults();
+setHighestResultValue();
+watch(() => [props.proposalOptions, props.proposalResultDto], () => {
+  setResults();
+});
+watch(() => results.value, () => {
+  setHighestResultValue();
 });
 </script>

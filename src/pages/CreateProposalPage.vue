@@ -23,7 +23,6 @@ import { ref, watch } from 'vue';
 import CreateProposalCard from 'components/proposal/CreateProposalCard.vue';
 import { useEthConnectionStore } from 'stores/eth-connection-store';
 import PictureParallax from 'components/PictureParallax.vue';
-import FullProposalCard from 'components/proposal/FullProposalCard.vue';
 import { useRoute } from 'vue-router';
 
 const route = useRoute();
