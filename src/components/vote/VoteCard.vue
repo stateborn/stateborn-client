@@ -64,14 +64,21 @@ import { useEthConnectionStore } from 'stores/eth-connection-store';
 import { api } from 'boot/axios';
 import { signVote } from 'src/api/services/signature-service';
 import { computed, ref, watch } from 'vue';
+import { Notify } from 'quasar';
 
-const props = defineProps(['tokenBalance', 'proposalIpfsHash', 'blockNumber', 'userVotes', 'proposalOptions', 'isProposalEnded', 'tokenSymbol']);
+const props = defineProps<{
+  proposalIpfsHash: string,
+  tokenBalance: string,
+  userVotes: any[],
+  proposalOptions: any[],
+  isProposalEnded: boolean,
+  tokenSymbol: string,
+}>();
 const emit = defineEmits(['voted']);
 const ethConnectionStore = useEthConnectionStore();
 const changeMyVote = ref(false);
 const options = ref([]);
 const option = ref('');
-import { Notify } from 'quasar';
 const userVote = computed(() => {
   if (props.userVotes.length > 0) {
     return props.userVotes[0].clientVote.vote;

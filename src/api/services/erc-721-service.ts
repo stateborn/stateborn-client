@@ -6,6 +6,7 @@ export class Erc721Service {
     // Some details about the token
     'function name() view returns (string)',
     'function symbol() view returns (string)',
+    'function balanceOf(address) view returns (uint)',
     'function tokenURI(uint256 tokenId) view returns (string)',
   ];
   async readTokenBalance(userAddress: string, tokenAddress: string): Promise<string> {
@@ -17,10 +18,8 @@ export class Erc721Service {
 
     // Call the balanceOf function for the user address
     const balance = await contract.balanceOf(userAddress);
-
     console.log('User balance is: ', ethers.formatUnits(balance, 18));
-    // return ethers.formatUnits(balance, 18);
-    return "800";
+    return ethers.formatUnits(balance, 18);
   }
 
   async readTokenData(tokenAddress: string): Promise<any> {

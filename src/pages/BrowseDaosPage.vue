@@ -6,8 +6,6 @@
           image-src="browsepropsnoise.webp"
           alt="proposal image"
           :text-class="$q.platform.is.mobile ? 'text-h5': 'text-h3 q-pa-md'"
-          v-if="scrollTarget !== null"
-          :scroll-target-value="scrollTarget"
           title="stateborn"
           :style="$q.platform.is.mobile ? 'height: 100px !important;' : ''"
           :height="$q.platform.is.mobile ? '336': '200'">
@@ -24,7 +22,8 @@
             <q-scroll-area :style="`height: ${proposalScrollHeight}px; width: 100%; min-width:300px`" ref="proposalScrollArea">
               <q-table
                 id="daosTable"
-                flat bordered
+                flat
+                bordered
                 grid
                 v-model:pagination="initialPagination"
                 title="DAOs"
@@ -43,7 +42,13 @@
                   </q-input>
                 </template>
                 <template v-slot:item="props">
-                  <dao-card-min :dao="props.row" :is-full="false" :width="$q.platform.is.mobile ? daoCardWidth : daoEntryWidth"></dao-card-min>
+
+                  <dao-card-min
+                    :dao="props.row"
+                    :is-full="false"
+                    :proposals-number="getProposalNumbers(props.row.ipfsHash)"
+                    :width="$q.platform.is.mobile ? daoCardWidth : daoEntryWidth"
+                  ></dao-card-min>
                 </template>
               </q-table>
             </q-scroll-area>
@@ -60,18 +65,17 @@ import PictureParallax from 'components/PictureParallax.vue';
 import DaoCardMin from 'components/dao-features/DaoCardMin.vue';
 import WelcomeToStatebornCard from 'components/WelcomeToStatebornCard.vue';
 import { getDao } from 'src/api/services/dao-service';
-import { Dao } from 'src/api/model/dao';
-import { dom } from 'quasar';
+import { DaoBackend } from 'src/api/model/dao-backend';
+import { dom, useMeta } from 'quasar';
 import width = dom.width;
 
 // 200 picture height, 50 toolbar height, 20 some spaces
 const proposalScrollHeight = ref(window.innerHeight - 50  - 200 - 20);
 const daoCardWidth = ref(window.innerWidth - 10 );
 const proposalScrollArea = ref(null);
-const scrollTarget = ref(null);
 const filter = ref('');
 const daoEntryWidth = ref(300);
-const daos = ref(<Dao[]>[]);
+const daos = ref(<DaoBackend[]>[]);
 const initialPagination = ref({
   sortBy: 'desc',
   descending: false,
@@ -80,6 +84,7 @@ const initialPagination = ref({
   rowsNumber: 10
 });
 const hasData = ref(false);
+
 onMounted(async () => {
   daoEntryWidth.value = width(document.getElementById('daosTable')!)  / 3 - 20;
   if (daoEntryWidth.value > 400) {
@@ -88,7 +93,6 @@ onMounted(async () => {
   if (daoEntryWidth.value <= 300) {
     daoEntryWidth.value = 400;
   }
-  console.log('wyszlo mi ', daoEntryWidth.value);
   daos.value = await loadDaos(initialPagination.value.rowsPerPage, (initialPagination.value.page - 1) * initialPagination.value.rowsPerPage);
   if (daos.value.length > 0) {
     hasData.value = true;
@@ -99,27 +103,32 @@ api.get(`/api/rest/v1/dao/all/count`).then(async (response) => {
 }, (error) => {
   console.log(error);
 });
-
+const proposalsNumber = ref(new Map<string, string>());
 const loadDaos = async (limit: number, offset: number, filter?: string) => {
   const res = await api.get(`/api/rest/v1/dao?limit=${limit}&offset=${offset}${filter !== undefined ? `&filter=${filter}` : ''}`);
-  const localDaos: Dao[] = [];
+  const localDaos: DaoBackend[] = [];
   console.log(res.data);
   for (const daoRes of res.data) {
     const dao = await getDao(daoRes.ipfsHash);
     localDaos.push(dao);
+    proposalsNumber.value.set(dao.ipfsHash, <string>daoRes.proposalsNumber);
   }
   return localDaos;
 };
+const getProposalNumbers = (ipfsHash: string) => {
+  //TODO weird thing, in fact this method is invoked all the time when i put here console.log it's visible
+  //todo its invoked many times when i just move mouse lol
+  if (proposalsNumber.value.has(ipfsHash)) {
+    return proposalsNumber.value.get(ipfsHash);
+  } else {
+    return '0';
+  }
+}
 
 const onTableDataRequest = async ({ pagination, filter }: any) => {
   daos.value = await loadDaos(pagination.rowsPerPage, (pagination.page - 1) * pagination.rowsPerPage, filter);
   initialPagination.value.page = pagination.page;
 };
-
-watch(() => proposalScrollArea.value, async () => {
-  const target = proposalScrollArea.value.getScrollTarget();
-  scrollTarget.value = target;
-});
 
 const columns = [
   {

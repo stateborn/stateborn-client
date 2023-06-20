@@ -14,7 +14,7 @@
 const { configure } = require('quasar/wrappers');
 
 
-module.exports = configure(function (/* ctx */) {
+module.exports = configure(function (ctx) {
   return {
     // eslint: {
     //   // fix: true,
@@ -71,7 +71,10 @@ module.exports = configure(function (/* ctx */) {
 
       // publicPath: '/',
       // analyze: true,
-      // env: {},
+      env: {
+        DEFAULT_IPFS_GATEWAY: ctx.dev ? 'http://localhost:5001/api/v0' : 'https://stateborn.org/api/v0',
+        IS_LOCALHOST: ctx.dev,
+      },
       // rawDefine: {}
       // ignorePublicFolder: true,
       // minify: false,
@@ -123,12 +126,13 @@ module.exports = configure(function (/* ctx */) {
       plugins: [
         'Notify',
         'Loading',
+        'Meta',
       ]
     },
 
     // animations: 'all', // --- includes all animations
     // https://v2.quasar.dev/options/animations
-    animations: [],
+    animations: 'all',
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#sourcefiles
     // sourceFiles: {

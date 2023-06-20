@@ -219,7 +219,7 @@ const callCreateProposal = async () => {
     $q.loading.hide();
     await sleep(100);
     router.push('/');
-    console.log('Proposal created!', response);
+    console.log('BackendProposal created!', response);
   }, async (error) => {
     Notify.create({ message: 'Creating DAO failed - server problem!', position: 'top-right', color: 'red' });
     $q.loading.hide();

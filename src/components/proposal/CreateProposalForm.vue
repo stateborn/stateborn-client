@@ -11,7 +11,7 @@
           >
         </proposal-description-markdown>
     </div>
-    <q-select filled :options="proposalTypeOptions" square v-model="proposalType" label="Proposal type" class="q-pa-xs q-mt-md"></q-select>
+    <q-select filled :options="proposalTypeOptions" square v-model="proposalType" label="BackendProposal type" class="q-pa-xs q-mt-md"></q-select>
     <define-voting-options-card v-if="proposalType.value === 'OPTIONS'" @proposal-option-added="proposalOptionAdded"></define-voting-options-card>
     <div class="row items-center">
       <div class="col-6 q-pa-xs">
@@ -47,6 +47,8 @@ import { Notify, useQuasar } from 'quasar';
 import { useRoute, useRouter } from 'vue-router';
 import ProposalDescriptionMarkdown from 'components/proposal/ProposalDescriptionMarkdown.vue';
 import { getLatestBlockNumber } from 'src/api/services/eth-service';
+import { ClientProposal } from 'src/api/model/ipfs/client-proposal';
+import { ProposalType } from 'src/api/model/ipfs/proposal-type';
 
 dayjs.extend(dayjsPluginUTC);
 const title = ref('New proposal');
@@ -143,38 +145,26 @@ const callCreateProposal = async () => {
   $q.loading.hide();
   Notify.create({ message: `Latest block number: ${latestBlockNumber}`, position: 'top', color: 'primary' });
   const fullDescription = calculateDescriptionValue();
-  const startDateUtcString = startDate.utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
-  const endDateUtcString = startDate.add(durationHours.value, 'h').utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
-  const clientProposal = {
-    creatorAddress: ethConnectionStore.account,
-    title: title.value,
-    description: fullDescription,
-    daoIpfsHash,
-    proposalType: proposalType.value.value,
-    startDateUtc: startDate.utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
-    endDateUtc: startDate.add(durationHours.value, 'h').utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
-    data: getDataObject(),
-    blockNumber: latestBlockNumber.toString(),
-  };
-
-  const signature = await signProposal(
+  const clientProposal: ClientProposal = new ClientProposal(
     ethConnectionStore.account,
     daoIpfsHash,
     title.value,
     fullDescription,
-    proposalType.value.value,
-    startDateUtcString,
-    endDateUtcString,
+    <ProposalType>proposalType.value.value,
+    startDate.utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+    startDate.add(durationHours.value, 'h').utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
     latestBlockNumber.toString(),
-    proposalOptions.value,
-  );
+    getDataObject(),
+);
+
+  const signature = await signProposal(clientProposal);
   api.post('/api/rest/v1/proposal', {
     clientProposal,
     creatorSignature: signature,
   }).then((response) => {
     Notify.create({ message: 'Successfuly created proposal!', position: 'top-right', color: 'green' });
     router.push(`/${daoIpfsHash}`);
-    console.log('Proposal created!', response);
+    console.log('BackendProposal created!', response);
   }, (error) => {
     Notify.create({ message: 'Creating proposal failed - server problem!', position: 'top-right', color: 'red' });
     console.log(error);

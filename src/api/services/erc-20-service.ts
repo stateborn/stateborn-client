@@ -24,8 +24,7 @@ export class Erc20Service {
     const balance = await contract.balanceOf(userAddress);
 
     console.log('User balance is: ', ethers.formatUnits(balance, 18));
-    // return ethers.formatUnits(balance, 18);
-    return "800";
+    return ethers.formatUnits(balance, 18);
   }
 
   async readTokenData(tokenAddress: string): Promise<any> {

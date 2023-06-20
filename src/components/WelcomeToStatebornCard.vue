@@ -9,8 +9,16 @@
       </div>
     </div>
     <q-card-section style="padding: 2px; margin:2px;" horizontal>
-      <div class="text-subtitle2 q-pa-md text-left">
-        Stateborn is a DAO building platform utilizing decentralized and trustless technology such as blockchain, IPFS and cryptography.
+      <div class="text-subtitle2 q-pa-md text-center">
+        Stateborn is a DAO governance platform using decentralized and trustless technology such as blockchain, IPFS and cryptography.
+      </div>
+    </q-card-section>
+    <q-card-section style="padding: 2px; margin:2px;" horizontal>
+      <div class="text-subtitle2 q-pa-md text-center">
+        <span class="text-bold">Define your DAO. </span><br>
+        <span class="text-bold">Create proposals. </span><br>
+        <span class="text-bold">Vote on them.</span><br><br>
+        Use simple, free, transparent and trusted governance.
       </div>
     </q-card-section>
     <q-card-section style="padding:0; margin:0; ">
@@ -19,6 +27,10 @@
         <q-btn align="center" class="full-width" color="primary" icon-right="fa-regular fa-square-plus"
                @click="$router.push(`/create-dao`)" label="Create a DAO"/>
       </q-card-section>
+      <q-card-section horizontal style="padding: 2px; margin:2px;">
+        <q-btn align="center" class="full-width" color="primary"
+               @click="$router.push(`/about`)" label="About stateborn"/>
+      </q-card-section>
     </q-card-section>
     <div class="row justify-center">
       <div class="col-auto">
@@ -26,7 +38,94 @@
         <q-btn icon="fa-brands fa-twitter" round flat/>
       </div>
     </div>
+    <q-card-section>
+      <q-input dense bottom-slots v-model="ipfsGateway" label="IPFS gateway" :readonly="!editMode"
+               :filled="editMode">
+        <template v-slot:before>
+          <q-icon name="fa-solid fa-server" />
+        </template>
+
+        <template v-slot:hint>
+          IPFS gateway address
+        </template>
+
+        <template v-slot:append>
+          <q-btn-dropdown
+            ref="dropdown"
+            dense
+            flat
+          >
+            <div class="row no-wrap q-pa-md noise2">
+              <div class="column">
+                <div class="text-subtitle2 text-center">IPFS gateway</div>
+               <q-btn class="q-ma-xs" color="primary" label="EDIT MODE" @click="enterEditMode()" v-if="!editMode" ></q-btn>
+               <q-btn class="q-ma-xs" outline label="SAVE" @click="saveNewIpfsGatewayAddress()" v-else></q-btn>
+               <q-btn class="q-ma-xs" color="primary" @click="resetIpfsGatewayAddress()">Reset to default</q-btn>
+              </div>
+
+            </div>
+          </q-btn-dropdown>
+        </template>
+        <q-tooltip class="stateborn-tooltip">
+          IPFS gateway address must be valid URL. <br>
+          /api/v0/cat API must be available and is only requirement.
+        </q-tooltip>
+      </q-input>
+    </q-card-section>
   </q-card>
 </template>
 <script lang="ts" setup>
+import {onMounted, ref } from 'vue';
+import { Settings } from 'src/api/model/settings';
+import {
+  getSettingsFromStorage,
+  resetIpfsGatewayAddressToDefault,
+  saveSettingsToLocalStorage
+} from 'src/api/services/settings-service';
+import { Notify } from 'quasar';
+import { reconnectToIpfs } from 'src/api/services/ipfs-service';
+
+const ipfsGateway = ref('');
+const dropdown = ref(null);
+const editMode = ref(false);
+onMounted(() => {
+  const settings: Settings = getSettingsFromStorage();
+  ipfsGateway.value = settings.ipfsGateway;
+});
+const saveNewIpfsGatewayAddress = async () => {
+  const settings: Settings = getSettingsFromStorage();
+  let newIpfsGateway = ipfsGateway.value.trim();
+  if (newIpfsGateway.endsWith('/')) {
+    newIpfsGateway = newIpfsGateway.substring(0, newIpfsGateway.length - 1);
+  }
+  if (!newIpfsGateway.endsWith('api/v0')) {
+    newIpfsGateway = `${newIpfsGateway}/api/v0`;
+  }
+  try {
+    await reconnectToIpfs(newIpfsGateway);
+    settings.ipfsGateway = newIpfsGateway;
+    saveSettingsToLocalStorage(settings);
+    ipfsGateway.value = newIpfsGateway;
+    editMode.value = false;
+    dropdown.value.hide();
+    Notify.create({ message: 'Successfully saved new IPFS gateway address', position: 'top-right', color: 'green' });
+  } catch (err) {
+    Notify.create({ message: 'IPFS gateway address incorrect. Is it valid URL?', position: 'top-right', color: 'red' });
+  }
+};
+
+const enterEditMode = () => {
+  editMode.value = true;
+}
+
+const resetIpfsGatewayAddress = async () => {
+  resetIpfsGatewayAddressToDefault();
+  const settings: Settings = getSettingsFromStorage();
+  ipfsGateway.value = settings.ipfsGateway;
+  await reconnectToIpfs(ipfsGateway.value);
+  editMode.value = false;
+  dropdown.value.hide();
+  Notify.create({ message: 'Successfully reset IPFS gateway address to default', position: 'top-right', color: 'green' });
+};
+
 </script>

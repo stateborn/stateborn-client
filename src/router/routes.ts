@@ -16,16 +16,11 @@ const routes: RouteRecordRaw[] = [
 
     ],
   },
-  // {
-  //   path: '/:daoIpfsHash/create-proposal',
-  //   component: () => import('layouts/MainLayout.vue'),
-  //   children: [{ path: '', component: () => import('pages/CreateProposalPage.vue') }],
-  // },
-  // {
-  //   path: '/proposal/:id',
-  //   component: () => import('layouts/MainLayout.vue'),
-  //   children: [{ path: '', component: () => import('pages/ProposalDetailsPage.vue') }],
-  // },
+  {
+    path: '/about',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [{ path: '', component: () => import('pages/AboutPage.vue') }],
+  },
   {
     path: '/create-dao',
     component: () => import('layouts/MainLayout.vue'),

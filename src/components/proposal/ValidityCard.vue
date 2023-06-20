@@ -30,7 +30,7 @@
 
             <q-item-section>
               <q-item-label>{{ proposalReport.ipfsHash }}</q-item-label>
-              <q-item-label caption class="text-primary">Proposal summary IPFS hash</q-item-label>
+              <q-item-label caption class="text-primary">BackendProposal summary IPFS hash</q-item-label>
             </q-item-section>
           </q-item>
           <q-item>
@@ -43,7 +43,7 @@
                   reportIsValid ? 'VALID - your vote is correctly included in the proposal summary' : 'INVALID'
                 }}
               </q-item-label>
-              <q-item-label caption class="text-primary">Proposal result validity</q-item-label>
+              <q-item-label caption class="text-primary">BackendProposal result validity</q-item-label>
             </q-item-section>
             <q-item-section side>
               <q-icon size="xs" name="fa-solid fa-circle-info" color="primary" class="q-pl-xs">

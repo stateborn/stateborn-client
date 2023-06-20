@@ -1,5 +1,5 @@
 <template>
-  <q-parallax :speed="1" :height="Number(height)">
+  <q-parallax :speed="speed === undefined ? 1 : speed " :height="Number(height)">
     <template v-slot:media>
         <img :src="imageSrc"
              :alt="alt"
@@ -16,6 +16,6 @@
 </template>
 <script lang="ts" setup>
 
-const props = defineProps(['imageSrc', 'alt', 'title', 'height', 'scrollTargetValue', 'textClass', 'opacity', 'lineHeight']);
+const props = defineProps(['imageSrc', 'alt', 'title', 'height', 'textClass', 'opacity', 'lineHeight', 'speed']);
 
 </script>

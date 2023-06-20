@@ -1,3 +1,5 @@
+import { getSettingsFromStorage } from 'src/api/services/settings-service';
+
 export const getTimeCounterColorDependingOTimeLeft = (days: number, hours: number) => {
   if (days > 0) {
     return '';
@@ -11,7 +13,8 @@ export const getTimeCounterColorDependingOTimeLeft = (days: number, hours: numbe
 }
 
 export const goToIpfs = (ipfsHash: string) => {
-  window.open(`https://stateborn.org/api/v0/cat?arg=${ipfsHash}`, '_blank');
+  const settings = getSettingsFromStorage();
+  window.open(`${settings.ipfsGateway}/cat?arg=${ipfsHash}`, '_blank');
 };
 
 export const goToEtherscan = (address: string) => {

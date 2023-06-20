@@ -1,10 +1,22 @@
 import { create, IPFSHTTPClient } from 'ipfs-http-client';
-import { IPFS_GATEWAY_URL } from 'src/api/properties';
 import { Buffer } from 'buffer';
+import { getSettingsFromStorage } from 'src/api/services/settings-service';
 
-export const IPFS_CLIENT: IPFSHTTPClient = create({ url: IPFS_GATEWAY_URL });
+const settings = getSettingsFromStorage();
+let IPFS_CLIENT: IPFSHTTPClient;
+try {
+  IPFS_CLIENT  = create({ url: settings.ipfsGateway });
+} catch (err) {
+  console.log(JSON.stringify(err));
+}
 
-export const sliceIpfsPrefix = (hash: string): string => hash.substring(7, hash.length);
+export const reconnectToIpfs = async (address: string) => {
+  try {
+    IPFS_CLIENT = await create({ url: address });
+  } catch (err) {
+    throw err;
+  }
+}
 
 export const getIpfsJsonFile = async (hash: string): Promise<any | undefined> => {
   const data = await IPFS_CLIENT.cat(hash);
@@ -16,13 +28,13 @@ export const getIpfsJsonFile = async (hash: string): Promise<any | undefined> =>
   return JSON.parse(new TextDecoder().decode(Buffer.from(content)).toString());
 };
 
-export const getIpfsImage = async (hash: string): Promise<Buffer> => {
-  console.log(hash);
-  const data = await IPFS_CLIENT.cat(hash);
-  let content: any[] = [];
-  // eslint-disable-next-line no-restricted-syntax
-  for await (const chunk of data) {
-    content = [...content, ...chunk];
-  }
-  return Buffer.from(content);
-};
+// export const getIpfsImage = async (hash: string): Promise<Buffer> => {
+//   console.log(hash);
+//   const data = await IPFS_CLIENT.cat(hash);
+//   let content: any[] = [];
+//   // eslint-disable-next-line no-restricted-syntax
+//   for await (const chunk of data) {
+//     content = [...content, ...chunk];
+//   }
+//   return Buffer.from(content);
+// };

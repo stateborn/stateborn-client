@@ -1,37 +1,33 @@
 import { encodeBytes32String, ethers } from 'ethers';
 import { ETH_CONNECTION_SERVICE } from 'src/api/services/eth-connection-service';
+import { ClientProposal } from 'src/api/model/ipfs/client-proposal';
+import { ProposalType } from 'src/api/model/ipfs/proposal-type';
 
-export const signProposal = async (
-  creatorAddress: string,
-  daoIpfsHash: string,
-  title: string,
-  description: string,
-  proposalType: string,
-  startDateUtc: string,
-  endDateUtc: string,
-  blockNumber: string,
-  data?: any,
-): Promise<string> => {
-  const types = ['address', 'bytes', 'bytes', 'bytes', 'bytes32', 'bytes32', 'bytes32', 'uint256'];
-  const values = [
-    creatorAddress,
-    ethers.toUtf8Bytes(daoIpfsHash),
-    ethers.toUtf8Bytes(title),
-    ethers.toUtf8Bytes(description),
-    encodeBytes32String(proposalType),
-    encodeBytes32String(startDateUtc),
-    encodeBytes32String(endDateUtc),
-    Number(blockNumber)];
-  if (proposalType === 'OPTIONS') {
-    types.push('bytes');
-    const options = (<[]>data).join('');
-    values.push(ethers.toUtf8Bytes(options));
-  }
-  const abiEncodedProposal = ethers.solidityPacked(types, values);
+export const signProposal = async (clientProposal :ClientProposal): Promise<string> => {
+  const abiEncodedProposal = abiEncodeProposal(clientProposal);
   const keccak256DataString = ethers.keccak256(abiEncodedProposal);
   // ethers.getBytes -> arrayify
   return ETH_CONNECTION_SERVICE.getSigner().signMessage(ethers.getBytes(keccak256DataString));
 };
+
+export const abiEncodeProposal = (clientProposal: ClientProposal) => {
+  const types = ['address', 'bytes', 'bytes', 'bytes', 'bytes32', 'bytes32', 'bytes32', 'uint256'];
+  const values = [
+    clientProposal.creatorAddress,
+    ethers.toUtf8Bytes(clientProposal.daoIpfsHash),
+    ethers.toUtf8Bytes(clientProposal.title),
+    ethers.toUtf8Bytes(clientProposal.description),
+    encodeBytes32String(clientProposal.proposalType),
+    encodeBytes32String(clientProposal.startDateUtc),
+    encodeBytes32String(clientProposal.endDateUtc),
+    Number(clientProposal.blockNumber)];
+  if (clientProposal.proposalType === ProposalType.OPTIONS) {
+    types.push('bytes');
+    const options = (<[]>clientProposal.data).join('');
+    values.push(ethers.toUtf8Bytes(options));
+  }
+  return ethers.solidityPacked(types, values);
+}
 
 export const abiEncodeVote = (voterAddress: string, proposalIpfsHash: string, vote: string, votingPower: string) => ethers.solidityPacked(
   ['address', 'bytes', 'bytes32', 'uint32'],
@@ -70,6 +66,13 @@ export const getEncodedReportVoteKeccak256 = async (
     ],
   );
   return ethers.keccak256(abiEncodedVote);
+};
+
+export const isProposalValid = (clientProposal: ClientProposal, signature: string): boolean => {
+  const abiEncodedProposal: string = abiEncodeProposal(clientProposal);
+  const keccak256DataString = ethers.keccak256(abiEncodedProposal);
+  const derivedAddress = ethers.verifyMessage(ethers.getBytes(keccak256DataString), signature);
+  return derivedAddress.toUpperCase() === clientProposal.creatorAddress.toUpperCase();
 };
 
 export const isVoteValid = (clientVoteDto: any, signature: string): boolean => {

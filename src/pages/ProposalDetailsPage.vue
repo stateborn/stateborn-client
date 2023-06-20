@@ -7,7 +7,7 @@
             <span class="text-underline">Home</span>
           </q-breadcrumbs-el>
           <q-breadcrumbs-el :to="`/${daoIpfsHash}`" class="text-underline">
-            {{ dao !== null ? `${dao.name}` : 'proposals' }}
+            {{ dao !== undefined ? `${dao.clientDao.name}` : 'proposals' }}
           </q-breadcrumbs-el>
           <q-breadcrumbs-el
             :label="`${$q.platform.is.mobile ? `${proposalIpfsHash.substring(0, 10)}...` : proposalIpfsHash}`"
@@ -15,9 +15,13 @@
         </q-breadcrumbs>
         <div class="row">
           <div class="col-lg-8 col-xs-grow">
-            <q-scroll-area :style="`height: ${proposalScrollHeight}px; max-width: 100%;`" v-if="!$q.platform.is.mobile">
+            <q-scroll-area
+              v-show="canShowScrollArea"
+              :style="`height: ${proposalScrollHeight}px; max-width: 100%; min-width:100px`"
+              v-if="!$q.platform.is.mobile">
               <FullProposalCard
                 class="q-ma-md"
+                :proposal-verification="proposal?.proposalVerification"
                 :proposal="proposal"
                 v-if="proposal !== undefined">
               </FullProposalCard>
@@ -25,32 +29,33 @@
             <FullProposalCard
               v-else
               class="q-ma-md"
+              :proposal-verification="proposal.proposalVerification"
               :proposal="proposal"
               v-if="proposal !== undefined">
             </FullProposalCard>
           </div>
           <div class="col-lg-4 col-xs-grow">
             <div id="other-info-row">
-              <dao-card-min :full-width="true" class="q-ma-md" :dao="dao" v-if="dao !== null" ></dao-card-min>
+              <dao-card-min :full-width="true" class="q-ma-md" :dao="dao" v-if="dao !== undefined" ></dao-card-min>
               <VoteCard
                 class="q-ma-md"
-                :proposal-options="proposal.data?.options"
+                :proposal-options="proposal.clientProposal.data?.options"
                 :token-balance="tokenBalance"
                 :proposal-ipfs-hash="proposalIpfsHash"
                 :user-votes="userVotes"
-                :token-symbol="dao?.tokenSymbol"
+                :token-symbol="dao !== undefined ? dao.clientDao.token.symbol : ''"
                 :is-proposal-ended="isProposalEnded"
                 @voted="onVoted"
                 v-if="proposal !== undefined">
               </VoteCard>
               <ProposalCountdownCard class="q-ma-md"
                                      :is-proposal-ended="isProposalEnded"
-                                     :end-date-utc="proposal.endDateUtc"
+                                     :end-date-utc="proposal.clientProposal.endDateUtc"
                                      v-if="proposal !== undefined"></ProposalCountdownCard>
               <ResultCard class="q-ma-md"
-                          :token-symbol="dao?.tokenSymbol"
+                          :token-symbol="dao !== undefined ? dao.clientDao.token.symbol : ''"
                           :proposal-result-dto="proposalResultDto"
-                          :proposal-options="proposal.data?.options"
+                          :proposal-options="proposal.clientProposal.data?.options"
                           v-if="proposal !== undefined && proposalResultDto !== undefined"></ResultCard>
               <UserVotesTable class="q-ma-md"
                               :proposal-ipfs-hash="proposalIpfsHash"
@@ -66,7 +71,9 @@
         </div>
         <div class="row" id="table-votes-row">
           <div class="col-12">
-            <VotesTable class="q-ma-md" :votes="votes" @rendered="onVotesRendered"></VotesTable>
+            <VotesTable class="q-ma-md" :votes-count="votesCount"
+                        :distinct-votes-count="distinctVotesCount"
+                        :votes="votes" @rendered="onVotesRendered" @votesTableRequest="onVotesTableRequest"></VotesTable>
           </div>
         </div>
       </div>
@@ -87,7 +94,7 @@ import UserVotesTable from 'components/vote/UserVotesTable.vue';
 import ResultCard from 'components/proposal/ResultCard.vue';
 import ProposalCountdownCard from 'components/proposal/ProposalCountdownCard.vue';
 import ValidityCard from 'components/proposal/ValidityCard.vue';
-import { dom } from 'quasar';
+import { dom, useQuasar } from 'quasar';
 import dayjs from 'dayjs';
 import {
   fetchAndStoreIpfsVoteInStorage,
@@ -96,15 +103,19 @@ import {
 import DaoCardMin from 'components/dao-features/DaoCardMin.vue';
 import { getDao } from 'src/api/services/dao-service';
 import height = dom.height;
-import { Dao } from 'src/api/model/dao';
-import { getProposal } from 'src/api/services/proposal-service';
+import { DaoBackend } from 'src/api/model/dao-backend';
+import { compareAndUpdateProposalWithIpfsProposalIfNeeded, getProposal } from 'src/api/services/proposal-service';
 import { ProposalReport } from 'src/api/model/proposal-report';
 import { getProposalReportFromStorage } from 'src/api/services/local-storage-service';
-import { Proposal } from 'src/api/model/proposal';
+import { BackendProposal } from 'src/api/model/backend-proposal';
 import { ProposalResultDto } from 'src/api/dto/proposal-result-dto';
+import { ClientProposal } from 'src/api/model/ipfs/client-proposal';
+import { TOKEN_SERVICE } from 'src/api/services/token-service';
+import { DaoTokenType } from 'src/api/model/ipfs/dao-token-type';
+import { sleep } from 'src/api/services/sleep-service';
 
 const route = useRoute();
-const proposal = ref(<Proposal | undefined> undefined);
+const proposal = ref(<BackendProposal | undefined> undefined);
 const proposalReport = ref(<ProposalReport | undefined> undefined);
 const tokenBalance = ref('');
 const proposalResultDto = ref(<ProposalResultDto | undefined>undefined);
@@ -114,10 +125,13 @@ const proposalIpfsHash: string = <string>route.params.id;
 const daoIpfsHash: string = <string>route.params.daoIpfsHash;
 const ethConnectionStore = useEthConnectionStore();
 const isProposalEnded = ref(false);
+const canShowScrollArea = ref(false);
+const votesCount = ref('1');
+const distinctVotesCount = ref('1');
 // eslint-disable-next-line
-const proposalScrollHeight = ref(window.innerHeight - 50 - 200);
-const dao = ref(<Dao | null > null);
-const onVotesRendered = () => {
+const proposalScrollHeight = ref(0);
+const dao = ref(<DaoBackend | undefined > undefined);
+const onVotesRendered = async () => {
   const otherInfoRowHeight = height(document.getElementById('other-info-row')!);
   // eslint-disable-next-line
   const scrollHeight = window.innerHeight - 90 - height(document.getElementById('table-votes-row')!);
@@ -126,28 +140,56 @@ const onVotesRendered = () => {
   } else {
     proposalScrollHeight.value = scrollHeight;
   }
+  canShowScrollArea.value = true;
+  sleep(100).then(() => {
+    $q.loading.hide();
+  });
 };
-
-const fetchProposalData = async () => {
-  dao.value = await getDao(daoIpfsHash);
-  if (ethConnectionStore.isConnected) {
-    getTokenBalance(dao.value.tokenAddress);
-    fetchUserVotes();
-  }
-  api.get(`/api/rest/v1/proposal/${proposalIpfsHash}/votes`).then(async (response) => {
+const fetchTableVotes = (limit: number, offset: number) => {
+  api.get(`/api/rest/v1/proposal/${proposalIpfsHash}/votes?limit=${limit}&offset=${offset}`).then(async (response) => {
     console.log('votes', response.data);
     votes.value = response.data;
   }, (error) => {
     console.log(error);
   });
+};
+const $q = useQuasar();
+$q.loading.show({
+  delay: 100, // ms
+  message: 'Reading proposal details...',
+  backgroundColor: 'black',
+  messageColor: 'white',
+});
+const fetchProposalData = async () => {
+
+  dao.value = await getDao(daoIpfsHash);
+  if (ethConnectionStore.isConnected) {
+    getTokenBalance(dao.value.clientDao.token.address, dao.value.clientDao.token.type);
+    fetchUserVotes();
+  }
+  // 5 comes from VotesTable.vue
+  fetchTableVotes(5, 0);
   api.get(`/api/rest/v1/proposal/${proposalIpfsHash}/result`).then((res) => {
     proposalResultDto.value = res.data;
   }, (error) => {
     console.log(error);
   });
+  api.get(`/api/rest/v1/proposal/${proposalIpfsHash}/votes/all/count`).then(async (response) => {
+    votesCount.value = response.data.count;
+  }, (error) => {
+    console.log(error);
+  });
+
+  api.get(`/api/rest/v1/proposal/${proposalIpfsHash}/votes/all/count/distinct`).then(async (response) => {
+    distinctVotesCount.value = response.data.count;
+  }, (error) => {
+    console.log(error);
+  });
   getProposal(proposalIpfsHash).then((_) => {
+    // no need await
+    compareAndUpdateProposalWithIpfsProposalIfNeeded(proposalIpfsHash);
     proposal.value = _;
-    isProposalEnded.value = dayjs().isAfter(proposal.value.endDateUtc);
+    isProposalEnded.value = dayjs().isAfter(proposal.value.clientProposal.endDateUtc);
     if (isProposalEnded.value) {
       getProposalReportFromStorage(proposalIpfsHash).then((proposalReportFromStorage) => {
         proposalReport.value = proposalReportFromStorage;
@@ -161,8 +203,8 @@ const fetchProposalData = async () => {
 };
 fetchProposalData();
 
-const getTokenBalance = async (tokenAddress: string) => {
-  ERC_20_SERVICE.readTokenBalance(ethConnectionStore.account, tokenAddress).then((res) => {
+const getTokenBalance = async (tokenAddress: string, tokenType: DaoTokenType) => {
+  TOKEN_SERVICE.readTokenBalance(ethConnectionStore.account, tokenAddress, tokenType).then((res) => {
     tokenBalance.value = res;
   }, (error) => {
     console.log(error);
@@ -182,12 +224,18 @@ const fetchUserVotes = async () => {
 }
 
 watch(() => ethConnectionStore.isConnected, async () => {
-  getTokenBalance(dao.value.tokenAddress);
+  if (tokenBalance.value === '') {
+    getTokenBalance(dao.value.clientDao.token.address,dao.value.clientDao.token.type);
+  }
   fetchUserVotes();
 });
 
 const onVoted = async (vote: any) => {
   await storeVoteCreatedByUser(proposalIpfsHash, vote.clientVote, vote.userSignature);
   await fetchProposalData();
+};
+
+const onVotesTableRequest = (pagination: any) => {
+  fetchTableVotes(pagination.rowsPerPage, (pagination.page - 1) * pagination.rowsPerPage);
 };
 </script>

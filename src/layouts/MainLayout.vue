@@ -5,7 +5,7 @@
 
         <q-toolbar-title>
           <router-link to="/">
-            <span :style="$q.platform.is.mobile ? 'font-size:12px': ''">stateborn - trustless democracy</span>
+            <span :style="$q.platform.is.mobile ? 'font-size:12px': ''">stateborn - minimum trust democracy</span>
           </router-link>
         </q-toolbar-title>
         <ConnectWithWallet></ConnectWithWallet>
@@ -18,75 +18,6 @@
   </q-layout>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref } from 'vue';
-import EssentialLink from 'components/EssentialLink.vue';
+<script setup lang="ts">
 import ConnectWithWallet from 'components/ConnectWithWallet.vue';
-
-const linksList = [
-  {
-    title: 'Browse DAOs',
-    caption: 'Browse stateborn DAOs',
-    icon: 'fa-solid fa-magnifying-glass',
-    link: '/',
-  },
-  // {
-  //   title: 'Browse proposals',
-  //   caption: 'Browse all active proposals',
-  //   icon: 'fa-solid fa-magnifying-glass',
-  //   link: '/',
-  // },
-  // {
-  //   title: 'Discord Chat Channel',
-  //   caption: 'chat.quasar.dev',
-  //   icon: 'chat',
-  //   link: 'https://chat.quasar.dev',
-  // },
-  // {
-  //   title: 'Forum',
-  //   caption: 'forum.quasar.dev',
-  //   icon: 'record_voice_over',
-  //   link: 'https://forum.quasar.dev',
-  // },
-  // {
-  //   title: 'Twitter',
-  //   caption: '@quasarframework',
-  //   icon: 'rss_feed',
-  //   link: 'https://twitter.quasar.dev',
-  // },
-  // {
-  //   title: 'Facebook',
-  //   caption: '@QuasarFramework',
-  //   icon: 'public',
-  //   link: 'https://facebook.quasar.dev',
-  // },
-  // {
-  //   title: 'Quasar Awesome',
-  //   caption: 'Community Quasar projects',
-  //   icon: 'favorite',
-  //   link: 'https://awesome.quasar.dev',
-  // },
-];
-
-export default defineComponent({
-  name: 'MainLayout',
-
-  components: {
-    ConnectWithWallet,
-    EssentialLink,
-  },
-  setup() {
-    const leftDrawerOpen = ref(false);
-    const account = ref('');
-    // eslint-disable-next-line max-len
-    return {
-      essentialLinks: linksList,
-      leftDrawerOpen,
-      toggleLeftDrawer() {
-        leftDrawerOpen.value = !leftDrawerOpen.value;
-      },
-      account,
-    };
-  },
-});
 </script>

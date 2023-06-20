@@ -1,9 +1,10 @@
 import { ProposalReportStorage } from 'src/api/model/proposal-report-storage';
 import { UserVoteStorage } from 'src/api/model/user-vote-storage';
 import Dexie from 'dexie';
-import { Proposal } from 'src/api/model/proposal';
-import { Dao } from 'src/api/model/dao';
+import { BackendProposal } from 'src/api/model/backend-proposal';
+import { DaoBackend } from 'src/api/model/dao-backend';
 import { ProposalReport } from 'src/api/model/proposal-report';
+import { Settings } from 'src/api/model/settings';
 
 const db = new Dexie('stateborndb');
 
@@ -13,7 +14,6 @@ db.version(1).stores({
   clientProposalReports: 'proposalIpfsHash, proposalReport',
   proposals: 'proposalIpfsHash, proposal',
   daos: 'daoIpfsHash, dao',
-  proposalReports: 'proposalIpfsHash, proposalReport'
 });
 
 export const getClientProposalReportFromStorage = async (proposalIpfsHash: string): Promise<ProposalReportStorage | undefined> => {
@@ -32,7 +32,6 @@ export const setClientProposalReport = async (proposalIpfsHash: string, proposal
     proposalReport: JSON.stringify(proposalReportStorage),
   });
 }
-// export const setUserVote = (proposalIpfsHash: string, userVoteStorage: UserVoteStorage) => localStorage.setItem(`vote_${proposalIpfsHash}`, JSON.stringify(userVoteStorage));
 export const setUserVote = async (proposalIpfsHash: string, userVoteStorage: UserVoteStorage) => {
   await db.votes.put({
     proposalIpfsHash,
@@ -40,27 +39,27 @@ export const setUserVote = async (proposalIpfsHash: string, userVoteStorage: Use
   });
 }
 
-export const setProposalInStorage = async (proposalIpfsHash: string, proposal: Proposal) => {
+export const setProposalInStorage = async (proposalIpfsHash: string, proposal: BackendProposal) => {
   await db.proposals.put({
     proposalIpfsHash,
     proposal,
   });
 };
 
-export const getProposalFromStorage = async (proposalIpfsHash: string): Promise<Proposal | undefined> => {
+export const getProposalFromStorage = async (proposalIpfsHash: string): Promise<BackendProposal | undefined> => {
   const item = await db.proposals.where("proposalIpfsHash").equals(proposalIpfsHash).first();
   return item !== undefined ? item.proposal : undefined;
 };
 
 
-export const setDaoInStorage = async (daoIpfsHash: string, dao: Dao) => {
+export const setDaoInStorage = async (daoIpfsHash: string, dao: DaoBackend) => {
   await db.daos.put({
     daoIpfsHash,
     dao,
   });
 };
 
-export const getDaoFromStorage = async (daoIpfsHash: string): Promise<Dao | undefined> => {
+export const getDaoFromStorage = async (daoIpfsHash: string): Promise<DaoBackend | undefined> => {
   const item = await db.daos.where("daoIpfsHash").equals(daoIpfsHash).first();
   return item !== undefined ? item.dao : undefined;
 };
@@ -76,5 +75,3 @@ export const getProposalReportFromStorage = async (proposalIpfsHash: string): Pr
   const item = await db.proposalReports.where("proposalIpfsHash").equals(proposalIpfsHash).first();
   return item !== undefined ? item.proposalReport : undefined;
 };
-
-

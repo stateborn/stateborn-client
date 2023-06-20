@@ -1,40 +1,60 @@
 <template>
-    <q-table
-      square
-      class="stateborn-card"
-      dense
-      title="All votes"
-      :rows="rows"
-      :columns="columns"
-      row-key="name"
-    >
+  <q-table
+    square
+    class="stateborn-card"
+    dense
+    title="All votes"
+    :rows="rows"
+    :columns="columns"
+    row-key="name"
+    :filter="filter"
+    @request="onTableDataRequest"
+    v-model:pagination="initialPagination"
+  >
+    <template v-slot:top-right>
+      <div class="text-subtitle2 text-left">
+        All votes: <span class="text-bold">{{votesCount}}</span><br>
+        Unique votes: <span class="text-bold">{{props.distinctVotesCount}}</span>
+        <q-icon color="primary" name="fa-solid fa-circle-info" class="q-pl-xs" style="margin-bottom: 3px">
+          <q-tooltip class="stateborn-tooltip">
+            All votes - all user's votes including changed votes<br>
+            Unique votes - only final user's votes (last submitted), single vote per user
+          </q-tooltip>
+        </q-icon>
+      </div>
+    </template>
       <template v-slot:body="props">
-        <q-tr :props="props" class="text-subtitle2" :class="(props.row.vote === 'YES' || props.row.vote === 'NO') ? (props.row.vote === 'YES' ? 'noisegreen' : 'noisered') : 'bg-white'">
-          <q-td key="voterAddress"  :props="props" >
-            {{ props.row.voterAddress }}
-            <q-btn flat round color="primary" size="xs" class="q-pl-xs" icon="fa-solid fa-arrow-up-right-from-square" @click="goToEtherscan(props.row.voterAddress)"/>
-          </q-td>
-          <q-td key="vote" :props="props" :class="(props.row.vote === 'YES' || props.row.vote === 'NO') ? (props.row.vote === 'YES' ? 'text-green' : 'text-red') : 'text-black'">
-              {{ props.row.vote }}
-          </q-td>
-          <q-td key="votingPower" :props="props">
-            {{ props.row.votingPower }}
-          </q-td>
-          <q-td key="ipfsHash" :props="props">
-            {{ props.row.ipfsHash }}
-            <q-btn flat round color="primary" size="xs" class="q-pl-xs" icon="fa-solid fa-arrow-up-right-from-square" @click="goToIpfs(props.row.ipfsHash)"/>
-          </q-td>
-          <q-td key="createdAt" :props="props">
-              {{ props.row.createdAt }}
-          </q-td>
-        </q-tr>
-      </template>
-    </q-table>
+      <q-tr :props="props" class="text-subtitle2"
+            :class="(props.row.vote === 'YES' || props.row.vote === 'NO') ? (props.row.vote === 'YES' ? 'noisegreen' : 'noisered') : 'bg-white'">
+        <q-td key="voterAddress" :props="props">
+          {{ props.row.voterAddress }}
+          <q-btn flat round color="primary" size="xs" class="q-pl-xs" icon="fa-solid fa-arrow-up-right-from-square"
+                 @click="goToEtherscan(props.row.voterAddress)"/>
+        </q-td>
+        <q-td key="vote" :props="props"
+              :class="(props.row.vote === 'YES' || props.row.vote === 'NO') ? (props.row.vote === 'YES' ? 'text-green' : 'text-red') : 'text-black'">
+          {{ props.row.vote }}
+        </q-td>
+        <q-td key="votingPower" :props="props">
+          {{ props.row.votingPower }}
+        </q-td>
+        <q-td key="ipfsHash" :props="props">
+          {{ props.row.ipfsHash }}
+          <q-btn flat round color="primary" size="xs" class="q-pl-xs" icon="fa-solid fa-arrow-up-right-from-square"
+                 @click="goToIpfs(props.row.ipfsHash)"/>
+        </q-td>
+        <q-td key="createdAt" :props="props">
+          {{ props.row.createdAt }}
+        </q-td>
+      </q-tr>
+    </template>
+  </q-table>
 </template>
 <script lang="ts" setup>
-import { ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { sleep } from 'src/api/services/sleep-service';
 import { goToEtherscan, goToIpfs } from 'src/api/services/utils-service';
+import { api } from 'boot/axios';
 
 const columns = [
   {
@@ -54,8 +74,26 @@ const columns = [
   },
 ];
 const rows = ref([]);
-const props = defineProps(['votes']);
-const emit = defineEmits(['rendered']);
+const props = defineProps(['votes', 'votesCount', 'distinctVotesCount']);
+const emit = defineEmits(['rendered', 'votesTableRequest']);
+const initialPagination = ref({
+  sortBy: 'desc',
+  descending: false,
+  page: 1,
+  // must match value in ProposalDetailsPage!
+  rowsPerPage: 5,
+  rowsNumber: 5,
+});
+const calculateTablePagination = () => {
+  initialPagination.value.rowsNumber = Number(props.votesCount);
+};
+onMounted(() => {
+  calculateTablePagination();
+});
+watch(() => props.votesCount, async () => {
+  calculateTablePagination();
+});
+
 watch(() => props.votes, async () => {
   rows.value = props.votes.map((vote: any) => {
     const row = {
@@ -70,4 +108,9 @@ watch(() => props.votes, async () => {
   await sleep(200);
   emit('rendered', true);
 });
+
+const onTableDataRequest = ({pagination}: any) => {
+  emit('votesTableRequest', pagination);
+};
+
 </script>
