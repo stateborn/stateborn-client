@@ -6,7 +6,7 @@
           image-src="/proposal2noise.webp"
           alt="proposal image"
           :text-class="$q.platform.is.mobile ? 'text-h5': undefined"
-          title="Create BackendProposal"
+          title="Create proposal"
           :style="$q.platform.is.mobile ? 'height: 100px !important;' :''"
           :height="$q.platform.is.mobile ? '323': '300'"
         ></picture-parallax>

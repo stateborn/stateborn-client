@@ -166,34 +166,4 @@ const columns = [
   { name: 'ipfsHash', label: 'Fat (g)', field: 'fat', sortable: true },
   { name: 'creatorAddress', label: 'Fat (g)', field: 'fat', sortable: true },
 ];
-
-
-</script>
-<script lang="ts">
-import { useMeta } from 'quasar';
-import { getDao } from 'src/api/services/dao-service';
-import { useRoute } from 'vue-router';
-export default {
-  setup () {
-    const route = useRoute();
-    const daoIpfsHash: string = <string>route.params.daoIpfsHash;
-
-    getDao(daoIpfsHash).then(_ => {
-      const metaData = {
-        // sets document title
-        title: `stateborn.org - DAO ${_.clientDao.name}`,
-
-        // meta tags
-        meta: {
-          description: { name: 'description', content: `Stateborn DAO proposals of ${_.clientDao.name}` },
-          keywords: { name: 'keywords', content: 'dao,blockchain voting' },
-          equiv: { 'http-equiv': 'Content-Type', content: 'text/html; charset=UTF-8' },
-          // note: for Open Graph type metadata you will need to use SSR, to ensure page is rendered by the server
-        },
-      };
-
-      useMeta(metaData);
-    });
-  }
-}
 </script>

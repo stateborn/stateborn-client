@@ -6,13 +6,16 @@ export class ClientDaoToken {
   name: string;
   symbol: string;
   type: DaoTokenType;
-  network: string;
+  chainId: string;
+  // only for ERC-20
+  totalSupply?: string;
 
-  constructor(address: string, name: string, symbol: string, type: DaoTokenType, network: string) {
+  constructor(address: string, name: string, symbol: string, type: DaoTokenType, chainId: string, totalSupply?: string) {
     this.address = address;
     this.name = name;
     this.symbol = symbol;
     this.type = type;
-    this.network = network;
+    this.chainId = chainId;
+    this.totalSupply = totalSupply;
   }
 }

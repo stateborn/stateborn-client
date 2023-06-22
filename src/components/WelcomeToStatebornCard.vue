@@ -8,18 +8,19 @@
         />
       </div>
     </div>
-    <q-card-section style="padding: 2px; margin:2px;" horizontal>
+    <q-card-section style="padding: 2px; margin:2px;">
       <div class="text-subtitle2 q-pa-md text-center">
         Stateborn is a DAO governance platform using decentralized and trustless technology such as blockchain, IPFS and cryptography.
       </div>
-    </q-card-section>
-    <q-card-section style="padding: 2px; margin:2px;" horizontal>
-      <div class="text-subtitle2 q-pa-md text-center">
+      <div class="text-subtitle2 text-center">
         <span class="text-bold">Define your DAO. </span><br>
         <span class="text-bold">Create proposals. </span><br>
         <span class="text-bold">Vote on them.</span><br><br>
         Use simple, free, transparent and trusted governance.
       </div>
+    </q-card-section>
+    <q-card-section style="padding: 2px; margin:2px;" horizontal>
+
     </q-card-section>
     <q-card-section style="padding:0; margin:0; ">
 
@@ -72,6 +73,26 @@
         </q-tooltip>
       </q-input>
     </q-card-section>
+    <div class="row justify-center">
+      <div class="col-auto">
+        <span class="text-subtitle2">Supported networks</span>
+        <q-img src="/ethereum.svg" style="height: 25px; width:25px">
+          <q-tooltip class="stateborn-tooltip">
+            Ethereum Mainnet
+          </q-tooltip>
+        </q-img>
+        <q-img src="/arbitrum.svg" style="height: 25px; width:25px">
+          <q-tooltip class="stateborn-tooltip">
+            Arbitrum One
+          </q-tooltip>
+        </q-img>
+        <q-img src="/polygon.svg" style="height: 25px; width:25px">
+          <q-tooltip class="stateborn-tooltip">
+            Polygon Mainnet
+          </q-tooltip>
+        </q-img>
+      </div>
+    </div>
   </q-card>
 </template>
 <script lang="ts" setup>

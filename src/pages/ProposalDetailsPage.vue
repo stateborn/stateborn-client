@@ -41,6 +41,7 @@
                 class="q-ma-md"
                 :proposal-options="proposal.clientProposal.data?.options"
                 :token-balance="tokenBalance"
+                :token-chain-id="dao !== undefined ? dao.clientDao.token.chainId : ''"
                 :proposal-ipfs-hash="proposalIpfsHash"
                 :user-votes="userVotes"
                 :token-symbol="dao !== undefined ? dao.clientDao.token.symbol : ''"
@@ -82,12 +83,11 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
 import { api } from 'boot/axios';
 import FullProposalCard from 'components/proposal/FullProposalCard.vue';
 import { useRoute } from 'vue-router';
 import VoteCard from 'components/vote/VoteCard.vue';
-import { ERC_20_SERVICE } from 'src/api/services/erc-20-service';
 import { useEthConnectionStore } from 'stores/eth-connection-store';
 import VotesTable from 'components/vote/VotesTable.vue';
 import UserVotesTable from 'components/vote/UserVotesTable.vue';
@@ -102,17 +102,16 @@ import {
 } from 'src/api/services/get-and-store-ipfs-vote-service';
 import DaoCardMin from 'components/dao-features/DaoCardMin.vue';
 import { getDao } from 'src/api/services/dao-service';
-import height = dom.height;
 import { DaoBackend } from 'src/api/model/dao-backend';
 import { compareAndUpdateProposalWithIpfsProposalIfNeeded, getProposal } from 'src/api/services/proposal-service';
 import { ProposalReport } from 'src/api/model/proposal-report';
 import { getProposalReportFromStorage } from 'src/api/services/local-storage-service';
 import { BackendProposal } from 'src/api/model/backend-proposal';
 import { ProposalResultDto } from 'src/api/dto/proposal-result-dto';
-import { ClientProposal } from 'src/api/model/ipfs/client-proposal';
 import { TOKEN_SERVICE } from 'src/api/services/token-service';
 import { DaoTokenType } from 'src/api/model/ipfs/dao-token-type';
 import { sleep } from 'src/api/services/sleep-service';
+import height = dom.height;
 
 const route = useRoute();
 const proposal = ref(<BackendProposal | undefined> undefined);
@@ -204,6 +203,7 @@ const fetchProposalData = async () => {
 fetchProposalData();
 
 const getTokenBalance = async (tokenAddress: string, tokenType: DaoTokenType) => {
+  console.log('no nakruwiam');
   TOKEN_SERVICE.readTokenBalance(ethConnectionStore.account, tokenAddress, tokenType).then((res) => {
     tokenBalance.value = res;
   }, (error) => {
@@ -223,11 +223,14 @@ const fetchUserVotes = async () => {
   });
 }
 
-watch(() => ethConnectionStore.isConnected, async () => {
-  if (tokenBalance.value === '') {
-    getTokenBalance(dao.value.clientDao.token.address,dao.value.clientDao.token.type);
+watch(() => [ethConnectionStore.isConnected, ethConnectionStore.networkName], async () => {
+  console.log('moj ojciec makumba', ethConnectionStore.networkName);
+  if (ethConnectionStore.isConnected) {
+    if (tokenBalance.value === '') {
+      getTokenBalance(dao.value.clientDao.token.address,dao.value.clientDao.token.type);
+    }
+    fetchUserVotes();
   }
-  fetchUserVotes();
 });
 
 const onVoted = async (vote: any) => {

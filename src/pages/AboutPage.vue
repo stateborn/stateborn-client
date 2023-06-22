@@ -49,8 +49,35 @@
             Every DAO definition document is an immutable document saved in IPFS.
             <div class="q-pt-md q-pb-xs" :class="$q.platform.is.mobile ? 'text-h5' : 'text-h4'">Governance token</div>
             Every DAO has a blockchain token which represents the share of the DAO.
-            Users owning a token can create proposals and vote on them.
-            DAO token can be ERC-20 or NFT.
+            Users owning a token can create proposals and vote on them. The amount of tokens owned by a user is the voting power.
+            Stateborn supports different token standards on various blockchain networks.<br>
+            Supported DAO token standards:
+            <ul>
+              <li>ERC-20 - voting power is amount of tokens user owns</li>
+              <li>NFT - 1 NFT is 1 voting power</li>
+            </ul>
+            Supported blockchain networks:
+            <q-list dense>
+              <q-item>
+                <q-item-section avatar>
+                  <q-img src="/ethereum.svg" style="height: 25px; width:25px;"/>
+                </q-item-section>
+                <q-item-section>Ethereum Mainnet</q-item-section>
+              </q-item>
+              <q-item>
+                <q-item-section avatar>
+                  <q-img src="/arbitrum.svg" style="height: 25px; width:25px;"/>
+                </q-item-section>
+                <q-item-section>Arbitrum One</q-item-section>
+              </q-item>
+              <q-item>
+                <q-item-section avatar>
+                  <q-img src="/polygon.svg" style="height: 25px; width:25px;"/>
+                </q-item-section>
+                <q-item-section>Polygon Mainnet</q-item-section>
+              </q-item>
+            </q-list>
+
             <div class="q-pt-md q-pb-xs" :class="$q.platform.is.mobile ? 'text-h5' : 'text-h4'">Proposals</div>
             Users owning a DAO token can create proposals. It can be anything that requires a voting from the DAO community.
             Every proposal is an immutable document saved in IPFS.

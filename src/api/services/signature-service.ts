@@ -2,6 +2,7 @@ import { encodeBytes32String, ethers } from 'ethers';
 import { ETH_CONNECTION_SERVICE } from 'src/api/services/eth-connection-service';
 import { ClientProposal } from 'src/api/model/ipfs/client-proposal';
 import { ProposalType } from 'src/api/model/ipfs/proposal-type';
+import { ClientDao } from 'src/api/model/ipfs/client-dao';
 
 export const signProposal = async (clientProposal :ClientProposal): Promise<string> => {
   const abiEncodedProposal = abiEncodeProposal(clientProposal);
@@ -23,7 +24,7 @@ export const abiEncodeProposal = (clientProposal: ClientProposal) => {
     Number(clientProposal.blockNumber)];
   if (clientProposal.proposalType === ProposalType.OPTIONS) {
     types.push('bytes');
-    const options = (<[]>clientProposal.data).join('');
+    const options = (<[]>clientProposal.data.options).join('');
     values.push(ethers.toUtf8Bytes(options));
   }
   return ethers.solidityPacked(types, values);
@@ -86,29 +87,19 @@ export const isVoteValid = (clientVoteDto: any, signature: string): boolean => {
   return derivedAddress.toUpperCase() === clientVoteDto.voterAddress.toUpperCase();
 };
 
-export const signDao = async (
-  name: string,
-  description: string,
-  imageBase64: string,
-  owners: string[],
-  ownersMultisigThreshold: string,
-  proposalTokenRequiredQuantity: string,
-  tokenAddress: string,
-  tokenType: string,
-  tokenNetwork: string,
-): Promise<string> => {
+export const signDao = async (clientDao: ClientDao): Promise<string> => {
   const types = ['bytes', 'bytes', 'bytes', 'uint32', 'uint32', 'bytes32', 'address', 'bytes32'];
   const values = [
-    ethers.toUtf8Bytes(name),
-    ethers.toUtf8Bytes(description),
-    ethers.toUtf8Bytes(imageBase64),
-    Number(proposalTokenRequiredQuantity),
-    Number(ownersMultisigThreshold),
-    encodeBytes32String(tokenType),
-    tokenAddress,
-    encodeBytes32String(tokenNetwork),
+    ethers.toUtf8Bytes(clientDao.name),
+    ethers.toUtf8Bytes(clientDao.description),
+    ethers.toUtf8Bytes(clientDao.imageBase64),
+    Number(clientDao.proposalTokenRequiredQuantity),
+    Number(clientDao.ownersMultisigThreshold),
+    encodeBytes32String(clientDao.token.type),
+    clientDao.token.address,
+    encodeBytes32String(clientDao.token.chainId),
   ];
-  for (const owner of owners) {
+  for (const owner of clientDao.owners) {
     types.push('address');
     values.push(owner);
   }

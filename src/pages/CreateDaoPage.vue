@@ -16,7 +16,7 @@
                     <span class="text-underline">Home</span>
                   </q-breadcrumbs-el>
                 </q-breadcrumbs>
-                <create-dao-form @proposal-changed="proposalChanged"></create-dao-form>
+                <create-dao-form></create-dao-form>
               </div>
             </div>
           </q-card-section>
@@ -27,33 +27,6 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, watch } from 'vue';
-import { useEthConnectionStore } from 'stores/eth-connection-store';
 import CreateDaoForm from 'components/proposal/CreateDaoForm.vue';
 import PictureParallax from 'components/PictureParallax.vue';
-
-const ethConnectionStore = useEthConnectionStore();
-const proposal = ref({
-  clientProposal: {
-    title: ' ',
-    description: ' ',
-    sequencerAddress: ethConnectionStore.account,
-    startDateUtc: '',
-    endDateUtc: '',
-  },
-});
-watch(() => ethConnectionStore.account, () => {
-  proposal.value.clientProposal.sequencerAddress = ethConnectionStore.account;
-});
-const proposalChanged = (changedProposal: any) => {
-  proposal.value = {
-    clientProposal: {
-      title: changedProposal.title,
-      description: changedProposal.description,
-      sequencerAddress: ethConnectionStore.account,
-      startDateUtc: changedProposal.startDateUtc,
-      endDateUtc: changedProposal.endDateUtc,
-    },
-  };
-};
 </script>

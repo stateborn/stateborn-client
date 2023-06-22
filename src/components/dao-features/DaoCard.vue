@@ -68,6 +68,18 @@
           </q-item-section>
         </q-item>
 
+        <q-item>
+          <q-item-section avatar>
+            <q-img :src="TOKEN_SERVICE.getNetworkIcon(props.dao.clientDao.token.chainId)" style="height: 20px; width:20px;"/>
+          </q-item-section>
+
+          <q-item-section>
+            <q-item-label>{{ TOKEN_SERVICE.getNetworkName(props.dao.clientDao.token.chainId) }}</q-item-label>
+            <q-item-label caption class="text-primary">Token network</q-item-label>
+          </q-item-section>
+        </q-item>
+
+
         <q-item clickable v-if="props.isFull" @click="goToEtherscan(props.dao.clientDao.token.address)">
           <q-item-section avatar>
             <q-icon color="primary" size="xs" name="fa-solid fa-arrow-up-right-from-square"/>
@@ -112,6 +124,7 @@
 
 import { goToEtherscan, goToIpfs } from 'src/api/services/utils-service';
 import { DaoBackend } from 'src/api/model/dao-backend';
+import { TOKEN_SERVICE } from 'src/api/services/token-service';
 
 const props = defineProps<{
   dao: DaoBackend,

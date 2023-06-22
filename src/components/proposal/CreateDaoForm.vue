@@ -3,12 +3,28 @@
     <span class="text-subtitle2 text-red text-bold" v-if="!ethConnectionStore.isConnected">Please connect first</span>
     <q-input square outlined filled label="Name" v-model="name" class="q-pa-xs" maxlength="60" counter :disable="!ethConnectionStore.isConnected"></q-input>
     <q-input counter filled square label="Description" v-model="description" maxlength="120" class="q-pa-xs q-pt-lg" :disable="!ethConnectionStore.isConnected"></q-input>
+    <q-banner class="noisegreen text-primary text-center text-subtitle2 q-pa-xs q-mt-lg" v-if="ethConnectionStore.isConnected" dense>
+      <template v-slot:avatar>
+        <q-img :src="ethConnectionStore.networkIcon" style="height: 25px; width:25px; margin-top:27px"/>
+      </template>
+      You are connected to {{ethConnectionStore.networkName}} network. <br>Please provide {{ethConnectionStore.networkName}} token address. <br>
+      <b>Important:</b> your DAO will use a governance token on {{ethConnectionStore.networkName}}.<br>
+      Please reconnect wallet if you want to change the blockchain network.
+
+    </q-banner>
     <q-input square filled label="Token address" v-model="tokenAddress" class="q-pa-xs q-pt-lg" :disable="!ethConnectionStore.isConnected"></q-input>
     <div v-if="tokenName !== ''">
       <q-input square dense readonly filled outlined prefix="Token name:" v-model="tokenName" class="q-pa-xs" debounce="500"></q-input>
       <q-input square dense readonly filled prefix="Token symbol:" v-model="tokenSymbol" class="q-pa-xs"></q-input>
       <q-input square dense readonly filled prefix="Token type:" v-model="tokenType" class="q-pa-xs"></q-input>
       <q-input square dense readonly filled prefix="Token supply:" v-model="tokenSupply" v-if="tokenSupply !== ''" class="q-pa-xs"></q-input>
+      <q-input square dense readonly filled prefix="Token network:" v-model="ethConnectionStore.networkName" class="q-pa-xs">
+        <template v-slot:prepend>
+          <q-avatar>
+            <img :src="ethConnectionStore.networkIcon" style="height: 25px; width: 25px;">
+          </q-avatar>
+        </template>
+      </q-input>
     </div>
     <q-input square label="DAO owner" readonly v-model="daoOwner" class="q-pa-xs"></q-input>
     <define-voting-options-card v-if="proposalType.value === 'OPTIONS'" @proposal-option-added="proposalOptionAdded" :disable="!ethConnectionStore.isConnected"></define-voting-options-card>
@@ -28,6 +44,7 @@
                      label="Upload DAO image/logo"
                      @file-uploaded="onFileUploaded"
                      @file-removed="onFileRemoved"
+                     size-kb-limit="500"
                      :dao-file-mode="true"
                      :as-base="true"></file-reader>
       </div>
@@ -61,6 +78,9 @@ import { useRouter } from 'vue-router';
 import { ERC_721_SERVICE } from 'src/api/services/erc-721-service';
 import { ERC_20_SERVICE } from 'src/api/services/erc-20-service';
 import { sleep } from 'src/api/services/sleep-service';
+import { ClientDao } from 'src/api/model/ipfs/client-dao';
+import { ClientDaoToken } from 'src/api/model/ipfs/client-dao-token';
+import { DaoTokenType } from 'src/api/model/ipfs/dao-token-type';
 
 dayjs.extend(dayjsPluginUTC);
 const ethConnectionStore = useEthConnectionStore();
@@ -70,7 +90,7 @@ const description = ref('Description of your DAO...');
 const tokenAddress = ref('');
 const tokenName = ref('');
 const tokenSymbol = ref('');
-const tokenType = ref('');
+const tokenType = ref(DaoTokenType.ERC20);
 const tokenSupply = ref('');
 const image = ref('');
 const daoOwner = ref(ethConnectionStore.account);
@@ -78,17 +98,29 @@ const proposalType = ref({ value: 'YES/NO', label: 'YES / NO - vote YES or NO' }
 const minimalTokens = ref(100);
 const proposalOptions = ref(<string[]>[]);
 const emit = defineEmits(['proposalChanged']);
-const imagesMap = new Map();
-const startDate = dayjs();
 const router = useRouter();
 watch(() => ethConnectionStore.account, async () => {
   daoOwner.value = ethConnectionStore.account;
-  tokenAddress.value = '0xD33526068D116cE69F19A9ee46F0bd304F21A51f';
+  setTokenAddress();
 });
+
+const setTokenAddress = () => {
+  if (ethConnectionStore.isConnected) {
+    if (ethConnectionStore.chainId === '1') {
+      tokenAddress.value = '0xdAC17F958D2ee523a2206206994597C13D831ec7';
+    } else if (ethConnectionStore.chainId === '42161') {
+      //Tether Arbitrum
+      tokenAddress.value = '0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9';
+    } else {
+      //polygon
+      tokenAddress.value = '0x7FFB3d637014488b63fb9858E279385685AFc1e2';
+    }
+  }
+}
 const $q = useQuasar();
 onMounted(() => {
   if (ethConnectionStore.isConnected) {
-    tokenAddress.value = '0xD33526068D116cE69F19A9ee46F0bd304F21A51f';
+    setTokenAddress();
   }
 });
 watch(() => tokenAddress.value, async () => {
@@ -102,7 +134,8 @@ watch(() => tokenAddress.value, async () => {
     const { nameRes, symbolRes } = await ERC_721_SERVICE.readTokenData(tokenAddress.value);
     tokenName.value = nameRes;
     tokenSymbol.value = symbolRes;
-    tokenType.value = 'NFT';
+    tokenType.value = DaoTokenType.NFT;
+    tokenSupply.value = '';
     minimalTokens.value = 1;
     $q.loading.hide();
     Notify.create({ message: 'Successfully fetched NFT token data!', position: 'top-right', color: 'green' });
@@ -112,7 +145,7 @@ watch(() => tokenAddress.value, async () => {
       tokenName.value = nameRes;
       tokenSymbol.value = symbolRes;
       tokenSupply.value = supplyRes;
-      tokenType.value = 'ERC-20';
+      tokenType.value = DaoTokenType.ERC20;
       $q.loading.hide();
       Notify.create({ message: 'Successfully fetched ERC-20 token data!', position: 'top-right', color: 'green' });
     } catch (err) {
@@ -127,83 +160,38 @@ watch(() => tokenAddress.value, async () => {
 const proposalOptionAdded = (currentProposalOptions: string[]) => {
   proposalOptions.value = currentProposalOptions;
 };
-const calculateCommentPrefix = (fileName: string) => `// attachment: ${fileName}`;
-const calculateDescriptionValue = () => {
-  let result = description.value;
-  imagesMap.forEach((file) => {
-    result = result.replace(calculateCommentPrefix(file.fileName), file.file);
-  });
-  return result;
-};
-const emitProposalChanged = () => {
-  emit('proposalChanged', {
-    title: name.value,
-    description: calculateDescriptionValue(),
-    durationHours: minimalTokens.value,
-    startDateUtc: startDate.utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
-    endDateUtc: startDate.add(minimalTokens.value, 'h').utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
-  });
-};
-emitProposalChanged();
-watch([name, description, minimalTokens], async () => {
-  emitProposalChanged();
-});
-
 const onFileUploaded = (res: any) => {
   if (res.fileName.endsWith('.webp') || res.fileName.endsWith('.png') || res.fileName.endsWith('.jpg') || res.fileName.endsWith('.jpeg') || res.fileName.endsWith('.gif')) {
-    image.value = `data:image/jpeg;base64, ${res.base64File}`;
+    image.value = `data:image/svg;base64, ${res.base64File}`;
   } else {
-    Notify.create({ message: 'Incorrect picture format. Try .jpg .jpeg or .gif', position: 'top-right', color: 'red' });
+    Notify.create({ message: 'Incorrect picture format. Try .png .jpg .jpeg .webp or .gif', position: 'top-right', color: 'red' });
   }
 };
 const onFileRemoved = () => {
   image.value = '';
 };
 
-function getDataObject() {
-  switch (proposalType.value.value) {
-    case 'YES/NO':
-      return undefined;
-    case 'OPTIONS':
-      return {
-        options: proposalOptions.value,
-      };
-    default:
-      throw new Error(`Unknown proposal type ${proposalType.value.value}`);
-  }
-}
-
 const callCreateProposal = async () => {
-  const startDateUtcString = startDate.utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
-  const endDateUtcString = startDate.add(minimalTokens.value, 'h').utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
-  const clientDao = {
-    name: name.value.trim(),
-    description: description.value.trim(),
-    imageBase64: image.value,
-    owners: [ethConnectionStore.account],
-    ownersMultisigThreshold: "1",
-    proposalTokenRequiredQuantity: "1",
-    token: {
-      address: tokenAddress.value,
-      name: tokenName.value,
-      symbol: tokenSymbol.value,
-      type: tokenType.value,
-      network: 'mainnet',
-    },
-    data: getDataObject(),
-  };
-
-  const signature = await signDao(
-    clientDao.name,
-    clientDao.description,
-    clientDao.imageBase64,
-    clientDao.owners,
-    clientDao.ownersMultisigThreshold,
-    clientDao.proposalTokenRequiredQuantity,
-    clientDao.token.address,
-    clientDao.token.type,
-    clientDao.token.network,
+  const creationDateUtc = dayjs().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
+  const clientDao = new ClientDao(
+    name.value.trim(),
+    description.value.trim(),
+    image.value,
+    [ethConnectionStore.account],
+    "1",
+    "1",
+    creationDateUtc,
+    new ClientDaoToken(
+      tokenAddress.value,
+      tokenName.value,
+      tokenSymbol.value,
+      tokenType.value,
+      ethConnectionStore.chainId,
+      tokenSupply.value !== '' ? tokenSupply.value : undefined,
+    ),
   );
+
+  const signature = await signDao(clientDao);
   $q.loading.show({
     delay: 100, // ms
     message: 'Creating the DAO...',

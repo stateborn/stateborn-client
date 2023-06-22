@@ -4,7 +4,6 @@ import Dexie from 'dexie';
 import { BackendProposal } from 'src/api/model/backend-proposal';
 import { DaoBackend } from 'src/api/model/dao-backend';
 import { ProposalReport } from 'src/api/model/proposal-report';
-import { Settings } from 'src/api/model/settings';
 
 const db = new Dexie('stateborndb');
 

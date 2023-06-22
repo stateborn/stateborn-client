@@ -32,7 +32,8 @@ export class Erc20Service {
       const contract = new ethers.Contract(tokenAddress, this.abi, ETH_CONNECTION_SERVICE.getProvider());
       const nameRes = await contract.name();
       const symbolRes = await contract.symbol();
-      const supplyRes = await contract.totalSupply();
+      // big int
+      const supplyRes = (await contract.totalSupply()).toString();
       console.log(`Token ${tokenAddress} data : ${nameRes} ${symbolRes} ${supplyRes}`);
       return { nameRes, symbolRes, supplyRes };
     } catch (err) {

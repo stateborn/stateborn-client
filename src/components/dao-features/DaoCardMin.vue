@@ -23,19 +23,20 @@
             </q-item-section>
 
             <q-item-section >
-              <q-item-label>{{ props.dao.clientDao.token.symbol }}</q-item-label>
-              <q-item-label caption class="text-primary">Token symbol</q-item-label>
+              <q-item-label>{{ props.dao.clientDao.token.symbol }} | {{props.dao.clientDao.token.type}}</q-item-label>
+              <q-item-label caption class="text-primary">Token symbol | type</q-item-label>
             </q-item-section>
           </q-item>
 
-          <q-item dense style="">
+
+          <q-item dense>
             <q-item-section avatar>
-              <q-icon color="primary" size="xs" name="fa-solid fa-circle"/>
+              <q-img :src="TOKEN_SERVICE.getNetworkIcon(props.dao.clientDao.token.chainId)" style="height: 20px; width: 20px;"/>
             </q-item-section>
 
             <q-item-section>
-              <q-item-label>{{ props.dao.clientDao.token.type }}</q-item-label>
-              <q-item-label caption class="text-primary">Token type</q-item-label>
+              <q-item-label>{{ TOKEN_SERVICE.getNetworkName(props.dao.clientDao.token.chainId) }}</q-item-label>
+              <q-item-label caption class="text-primary">Token network</q-item-label>
             </q-item-section>
           </q-item>
 
@@ -63,6 +64,7 @@
 </template>
 <script lang="ts" setup>
 import { DaoBackend } from 'src/api/model/dao-backend';
+import { TOKEN_SERVICE } from 'src/api/services/token-service';
 
 const props = defineProps<{
   dao: DaoBackend,
