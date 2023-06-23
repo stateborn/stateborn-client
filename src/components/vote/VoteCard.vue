@@ -37,8 +37,10 @@
              :style="$q.platform.is.mobile ? 'height:50px': `height: 100%`">
           <div class="col-lg-12 col-xs-grow justify-center">
             <div class="row justify-center" v-if="!$q.platform.is.mobile">
-              <div class="col-lg-auto col-xs-12 justify-center">
-                <div class="text-subtitle2 text-bold text-red">Please connect to vote</div>
+              <div class="col-lg-grow col-xs-12 justify-center">
+                <q-banner class="text-black text-subtitle2 text-center noisered">
+                  <span class="text-bold text-red">Please connect to vote</span>
+                </q-banner>
               </div>
             </div>
             <div class="text-center text-subtitle2 text-red" v-else>Please connect to vote</div>
@@ -74,7 +76,7 @@
         </div>
         <div class="row justify-center">
           <div class="col-grow justify-center text-center">
-            <q-btn color="primary" class="q-ma-md" icon="fa-solid fa-shuffle" @click="switchNetwork" :label="`Switch to ${TOKEN_SERVICE.getNetworkName(props.tokenChainId)}`"></q-btn>
+            <q-btn color="primary" class="q-mt-md" icon="fa-solid fa-shuffle" @click="switchNetwork" :label="`Switch to ${TOKEN_SERVICE.getNetworkName(props.tokenChainId)}`"></q-btn>
           </div>
         </div>
       </q-banner>

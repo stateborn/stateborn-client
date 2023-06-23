@@ -40,6 +40,29 @@
             </q-item-section>
           </q-item>
 
+          <q-item v-if="showRequiredTokenQuantity">
+            <q-item-section avatar>
+              <q-icon color="primary" size="xs" name="fa-solid fa-circle-exclamation"/>
+            </q-item-section>
+
+            <q-item-section>
+              <q-item-label>{{ props.dao.clientDao.proposalTokenRequiredQuantity }}</q-item-label>
+              <q-item-label caption class="text-primary">Required tokens for creating proposal</q-item-label>
+            </q-item-section>
+          </q-item>
+
+          <q-item clickable v-if="showTokenAddress" @click="goToEtherscan(props.dao.clientDao.token.address)">
+            <q-item-section avatar>
+              <q-icon color="primary" size="xs" name="fa-solid fa-arrow-up-right-from-square"/>
+            </q-item-section>
+
+            <q-item-section>
+              <q-item-label>{{ `${props.dao.clientDao.token.address.substring(0, 20)}...` }}</q-item-label>
+              <q-item-label caption class="text-primary">Token address</q-item-label>
+            </q-item-section>
+          </q-item>
+
+
           <q-item dense v-if="props.proposalsNumber !== undefined">
             <q-item-section avatar class="text-bold" >
               <div style="margin-left: 5px">{{props.proposalsNumber}}</div>
@@ -65,6 +88,7 @@
 <script lang="ts" setup>
 import { DaoBackend } from 'src/api/model/dao-backend';
 import { TOKEN_SERVICE } from 'src/api/services/token-service';
+import { goToEtherscan } from 'src/api/services/utils-service';
 
 const props = defineProps<{
   dao: DaoBackend,
@@ -79,6 +103,16 @@ const props = defineProps<{
   proposalsNumber: {
     type: Number,
     default: undefined,
+  },
+  showRequiredTokenQuantity: {
+    type: Boolean,
+    optional: true,
+    default: false,
+  },
+  showTokenAddress: {
+    type: Boolean,
+    optional: true,
+    default: false,
   },
 }>();
 </script>

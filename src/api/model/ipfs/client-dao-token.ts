@@ -7,15 +7,14 @@ export class ClientDaoToken {
   symbol: string;
   type: DaoTokenType;
   chainId: string;
-  // only for ERC-20
-  totalSupply?: string;
+  decimals: string;
 
-  constructor(address: string, name: string, symbol: string, type: DaoTokenType, chainId: string, totalSupply?: string) {
+  constructor(address: string, name: string, symbol: string, type: DaoTokenType, chainId: string, decimals: string) {
     this.address = address;
     this.name = name;
     this.symbol = symbol;
     this.type = type;
     this.chainId = chainId;
-    this.totalSupply = totalSupply;
+    this.decimals = decimals;
   }
 }

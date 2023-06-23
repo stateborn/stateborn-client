@@ -50,6 +50,14 @@
         </q-td>
       </q-tr>
     </template>
+    <template v-slot:no-data="{ icon, message, filter }">
+      <div class="full-width row flex-center q-gutter-sm text-primary">
+        <span>
+           No data found
+          </span>
+        <q-icon name="fa-solid fa-triangle-exclamation" />
+      </div>
+    </template>
   </q-table>
 </template>
 <script lang="ts" setup>

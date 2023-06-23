@@ -50,6 +50,14 @@
                     :width="$q.platform.is.mobile ? daoCardWidth : daoEntryWidth"
                   ></dao-card-min>
                 </template>
+                <template v-slot:no-data="{ icon, message, filter }">
+                  <div class="full-width row flex-center q-gutter-sm text-primary">
+                <span>
+                   No data found
+                  </span>
+                    <q-icon name="fa-solid fa-triangle-exclamation"/>
+                  </div>
+                </template>
               </q-table>
             </q-scroll-area>
           </div>

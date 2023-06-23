@@ -1,10 +1,43 @@
 <template>
   <div>
-    <span class="text-subtitle2 text-red text-bold" v-if="!ethConnectionStore.isConnected">Please connect first</span>
-    <q-input square filled label="Title" v-model="title" maxlength="120" counter class="q-pa-xs"></q-input>
-    <q-input type="textarea" filled counter square label="Description" v-model="description" class="q-pa-xs q-pt-lg"></q-input>
+    <q-banner class="text-primary text-subtitle2 text-center noisegreen q-ma-xs q-mb-md">
+      DAO proposal creation is <b>free</b>.<br>
+      Proposal definition file is stored off-chain.<br>
+      Total proposal size (with attachments) cannot be greater than 2MB.
+    </q-banner>
+    <q-banner class="text-black text-subtitle2 text-center noisered q-ma-xs" v-if="!ethConnectionStore.isConnected">
+      <span class="text-bold text-red">Please connect first</span>
+    </q-banner>
+    <q-banner class="text-black text-subtitle2 text-center noisered q-ma-xs q-mt-md q-mb-md" v-if="ethConnectionStore.isConnected && !hasRequiredAmountOfTokens">
+      You need at least <span class="text-bold">{{props.dao.clientDao.proposalTokenRequiredQuantity}} {{props.dao.clientDao.token.symbol}} to create a proposal </span><br>
+      You have: <span class="text-bold">{{tokenBalance}} {{props.dao.clientDao.token.symbol}}</span>
+    </q-banner>
+    <q-banner class="text-black text-bold text-subtitle2 text-center noisered items-center" v-if="ethConnectionStore.isConnected && !connectedNetworkMatchesTokenNetwork">
+      <div class="row">
+        <div class="col-grow">
+          You are connected to: {{TOKEN_SERVICE.getNetworkName(ethConnectionStore.chainId)}}<q-img style="width: 25px; height: 25px;" :src="TOKEN_SERVICE.getNetworkIcon(ethConnectionStore.chainId)"/> <br>
+          DAO token network: {{TOKEN_SERVICE.getNetworkName(props.dao.clientDao.token.chainId) }}<q-img style="width: 25px; height: 25px;" :src="TOKEN_SERVICE.getNetworkIcon(props.dao.clientDao.token.chainId)"/><br>
+          Please switch your wallet to {{TOKEN_SERVICE.getNetworkName(props.dao.clientDao.token.chainId) }} to create proposal.
+        </div>
+      </div>
+      <div class="row justify-center">
+        <div class="col-grow justify-center text-center">
+          <q-btn color="primary" class="q-mt-md" icon="fa-solid fa-shuffle" @click="switchNetwork" :label="`Switch to ${TOKEN_SERVICE.getNetworkName(props.dao.clientDao.token.chainId)}`"></q-btn>
+        </div>
+      </div>
+    </q-banner>
+    <q-input square filled label="Title" v-model="title" maxlength="120" counter class="q-pa-xs" :error="title.trim() === ''">
+      <template v-slot:error>
+        Proposal title is required.
+      </template>
+    </q-input>
+    <q-input type="textarea" filled counter square label="Description" v-model="description" class="q-pa-xs q-pt-lg" :error="description.trim() === ''">
+      <template v-slot:error>
+        Proposal description is required.
+      </template>
+    </q-input>
     <div>
-      <div class="text-left text-subtitle2 q-pa-xs">Description preview</div>
+      <div class="text-left text-subtitle2 q-pa-xs q-pt-lg">Description preview</div>
         <proposal-description-markdown
           class="q-pt-md q-pb-md q-ma-xs"
           :description="calculateDescriptionValue()"
@@ -19,19 +52,38 @@
           filled
           v-model.number="durationHours"
           type="number"
-          label="Duration"
+          label="Duration (time for voting)"
           suffix="hours"
-        />
+          :error="durationHours <= 1"
+        >
+          <template v-slot:error>
+            Proposal duration must be at least 1 hour.
+          </template>
+        </q-input>
       </div>
       <div class="col-6 q-pa-xs text-subtitle2">
         <span class="text-bold">Duration:</span> {{durationString}}
       </div>
     </div>
-    <file-reader class="q-pa-xs" label="Upload proposal attachments" @file-uploaded="onFileUploaded" @file-removed="onFileRemoved" :as-base="true"></file-reader>
+    <file-reader class="q-ma-xs q-mt-md" label="Upload proposal attachments" @file-uploaded="onFileUploaded" @file-removed="onFileRemoved" :as-base="true" size-kb-limit="1000"></file-reader>
     <q-btn class="q-ma-xs old-button" square label="Create" color="primary"
-           :disable="!ethConnectionStore.isConnected"
+           :disable="!isFormValid"
            @click="callCreateProposal"></q-btn>
-
+    <q-dialog v-model="showSignProposalDialog">
+      <q-card class="noisegreen text-subtitle2">
+        <q-card-section class="row items-center">
+          <q-avatar icon="fa-solid fa-info" size='md' color="primary" text-color="white" square/>
+          <span class="q-ml-lg text-h5" >Sign proposal data</span>
+          <q-space />
+          <q-btn icon="close" flat round dense v-close-popup />
+        </q-card-section>
+        <q-card-section style="padding-top: 0; margin-top:0;">
+          Your browser wallet just requested you to digitally sign a data.
+          The data contains all the information you just provided in the form.
+          This operation is free and doesn't interact with blockchain.
+        </q-card-section>
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 <script lang="ts" setup>
@@ -49,6 +101,9 @@ import ProposalDescriptionMarkdown from 'components/proposal/ProposalDescription
 import { getLatestBlockNumber } from 'src/api/services/eth-service';
 import { ClientProposal } from 'src/api/model/ipfs/client-proposal';
 import { ProposalType } from 'src/api/model/ipfs/proposal-type';
+import { TOKEN_SERVICE } from 'src/api/services/token-service';
+import { changeNetwork } from 'src/api/services/change-network-service';
+import { DaoBackend } from 'src/api/model/dao-backend';
 
 dayjs.extend(dayjsPluginUTC);
 const title = ref('New proposal');
@@ -56,15 +111,24 @@ const description = ref('This proposal is about...');
 const proposalTypeOptions = ref([{ value: 'YES/NO', label: 'YES / NO - vote YES or NO' }, { value: 'OPTIONS', label: 'OPTIONS - vote for one of the options' }]);
 const proposalType = ref({ value: 'YES/NO', label: 'YES / NO - vote YES or NO' });
 const durationHours = ref(72);
+const tokenBalance = ref('');
+const hasRequiredAmountOfTokens = ref(true);
 const proposalOptions = ref(<string[]>[]);
 const ethConnectionStore = useEthConnectionStore();
 const emit = defineEmits(['proposalChanged']);
 const imagesMap = new Map();
+const showSignProposalDialog = ref(false);
 const startDate = dayjs();
-const route = useRoute();
 const router = useRouter();
 
-const daoIpfsHash: string = route.params.daoIpfsHash;
+const props = defineProps<{
+  dao: DaoBackend,
+}>();
+
+const isFormValid = computed(() => {
+  return ethConnectionStore.isConnected && hasRequiredAmountOfTokens.value === true && title.value.trim() !== ''
+  && description.value.trim() !== '' && durationHours.value > 1;
+});
 
 const proposalOptionAdded = (currentProposalOptions: string[]) => {
   proposalOptions.value = currentProposalOptions;
@@ -88,8 +152,8 @@ const durationString = computed(() => {
 });
 const emitProposalChanged = () => {
   emit('proposalChanged', {
-    title: title.value,
-    description: calculateDescriptionValue(),
+    title: title.value.trim(),
+    description: calculateDescriptionValue().trim(),
     durationHours: durationHours.value,
     startDateUtc: startDate.utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
     endDateUtc: startDate.add(durationHours.value, 'h').utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
@@ -120,6 +184,39 @@ const onFileRemoved = (fileName: string) => {
   description.value = description.value.replace(calculateCommentPrefix(fileName), '');
 };
 
+const readTokenBalance = async () => {
+  if (ethConnectionStore.isConnected) {
+    TOKEN_SERVICE.readTokenBalance(ethConnectionStore.account,
+      props.dao.clientDao.token.address,
+      props.dao.clientDao.token.type,
+      props.dao.clientDao.token.decimals).then((res) => {
+      tokenBalance.value = res;
+      console.log('mam se balance', tokenBalance.value);
+    }, (error) => {
+      console.log(error);
+    });
+  }
+};
+readTokenBalance();
+
+watch(() => [ethConnectionStore.isConnected, ethConnectionStore.chainId], () => {
+  readTokenBalance();
+});
+
+watch(() => tokenBalance.value, () => {
+  hasRequiredAmountOfTokens.value = Number(tokenBalance.value) >= Number(props.dao.clientDao.proposalTokenRequiredQuantity);
+});
+
+
+const connectedNetworkMatchesTokenNetwork = computed(() => {
+  if (ethConnectionStore.isConnected) {
+    return ethConnectionStore.chainId === props.dao.clientDao.token.chainId;
+  } else {
+    return true;
+  }
+});
+
+
 function getDataObject() {
   switch (proposalType.value.value) {
     case 'YES/NO':
@@ -147,7 +244,7 @@ const callCreateProposal = async () => {
   const fullDescription = calculateDescriptionValue();
   const clientProposal: ClientProposal = new ClientProposal(
     ethConnectionStore.account,
-    daoIpfsHash,
+    props.dao.ipfsHash,
     title.value,
     fullDescription,
     <ProposalType>proposalType.value.value,
@@ -156,18 +253,27 @@ const callCreateProposal = async () => {
     latestBlockNumber.toString(),
     getDataObject(),
 );
-
+  showSignProposalDialog.value = true;
   const signature = await signProposal(clientProposal);
   api.post('/api/rest/v1/proposal', {
     clientProposal,
     creatorSignature: signature,
   }).then((response) => {
     Notify.create({ message: 'Successfuly created proposal!', position: 'top-right', color: 'green' });
-    router.push(`/${daoIpfsHash}`);
+    router.push(`/${props.dao.ipfsHash}`);
     console.log('BackendProposal created!', response);
   }, (error) => {
     Notify.create({ message: 'Creating proposal failed - server problem!', position: 'top-right', color: 'red' });
     console.log(error);
   });
 };
+
+const switchNetwork = async () => {
+  try {
+    await changeNetwork(props.dao.clientDao.token.chainId);
+    Notify.create({ message: `Successfuly changed network to ${TOKEN_SERVICE.getNetworkName(props.dao.clientDao.token.chainId)}!`, position: 'top-right', color: 'green' });
+  } catch (err) {
+    Notify.create({ message: 'Changing network failed. Please change network directly in wallet (e.g. Metamask)', position: 'top-right', color: 'red' });
+  }
+}
 </script>

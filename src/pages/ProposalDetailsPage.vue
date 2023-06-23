@@ -36,7 +36,7 @@
           </div>
           <div class="col-lg-4 col-xs-grow">
             <div id="other-info-row">
-              <dao-card-min :full-width="true" class="q-ma-md" :dao="dao" v-if="dao !== undefined" ></dao-card-min>
+              <dao-card-min :full-width="true" class="q-ma-md" :dao="dao" v-if="dao !== undefined" :show-token-address="true"></dao-card-min>
               <VoteCard
                 class="q-ma-md"
                 :proposal-options="proposal.clientProposal.data?.options"
@@ -163,7 +163,7 @@ const fetchProposalData = async () => {
 
   dao.value = await getDao(daoIpfsHash);
   if (ethConnectionStore.isConnected) {
-    getTokenBalance(dao.value.clientDao.token.address, dao.value.clientDao.token.type);
+    getTokenBalance(dao.value.clientDao.token.address, dao.value.clientDao.token.type, dao.value.clientDao.token.decimals);
     fetchUserVotes();
   }
   // 5 comes from VotesTable.vue
@@ -202,9 +202,8 @@ const fetchProposalData = async () => {
 };
 fetchProposalData();
 
-const getTokenBalance = async (tokenAddress: string, tokenType: DaoTokenType) => {
-  console.log('no nakruwiam');
-  TOKEN_SERVICE.readTokenBalance(ethConnectionStore.account, tokenAddress, tokenType).then((res) => {
+const getTokenBalance = async (tokenAddress: string, tokenType: DaoTokenType, decimals?: string) => {
+  TOKEN_SERVICE.readTokenBalance(ethConnectionStore.account, tokenAddress, tokenType, decimals).then((res) => {
     tokenBalance.value = res;
   }, (error) => {
     console.log(error);
@@ -224,10 +223,9 @@ const fetchUserVotes = async () => {
 }
 
 watch(() => [ethConnectionStore.isConnected, ethConnectionStore.networkName], async () => {
-  console.log('moj ojciec makumba', ethConnectionStore.networkName);
   if (ethConnectionStore.isConnected) {
     if (tokenBalance.value === '') {
-      getTokenBalance(dao.value.clientDao.token.address,dao.value.clientDao.token.type);
+      getTokenBalance(dao.value.clientDao.token.address,dao.value.clientDao.token.type, dao.value.clientDao.token.decimals);
     }
     fetchUserVotes();
   }

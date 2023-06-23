@@ -8,8 +8,10 @@ export class Erc721Service {
     'function symbol() view returns (string)',
     'function balanceOf(address) view returns (uint)',
     'function tokenURI(uint256 tokenId) view returns (string)',
+    // OPTIONALLY, mostly NFTs will have it as 0
+    'function decimals() public view returns (uint8)',
   ];
-  async readTokenBalance(userAddress: string, tokenAddress: string): Promise<string> {
+  async readTokenBalance(userAddress: string, tokenAddress: string, decimals: string): Promise<string> {
     // Define the ABI for the ERC20 contract
     console.log('user address', userAddress, tokenAddress);
 
@@ -18,8 +20,9 @@ export class Erc721Service {
 
     // Call the balanceOf function for the user address
     const balance = await contract.balanceOf(userAddress);
-    console.log('User balance is: ', ethers.formatUnits(balance, 18));
-    return ethers.formatUnits(balance, 18);
+    // TODO obtain correct value
+    console.log('User balance is: ', ethers.formatUnits(balance, Number(decimals)));
+    return ethers.formatUnits(balance, Number(decimals));
   }
 
   async readTokenData(tokenAddress: string): Promise<any> {
@@ -27,9 +30,15 @@ export class Erc721Service {
       const contract = new ethers.Contract(tokenAddress, this.abi, ETH_CONNECTION_SERVICE.getProvider());
       const nameRes = await contract.name();
       const symbolRes = await contract.symbol();
-      await contract.tokenURI(0);
-      console.log(`Token ${tokenAddress} data : ${nameRes} ${symbolRes}`);
-      return { nameRes, symbolRes };
+      await contract.tokenURI(1);
+      let decimalsRes = '0';
+      try {
+        decimalsRes = (await contract.decimals()).toString();
+      } catch (err) {
+        // ignore it, probably will be thrown
+      }
+      console.log(`Token ${tokenAddress} data : ${nameRes} ${symbolRes} ${decimalsRes}`);
+      return { nameRes, symbolRes, decimalsRes };
     } catch (err) {
       console.log(`Error reading token ${tokenAddress} data`, err);
       throw new Error(`Error reading token ${tokenAddress} data`);

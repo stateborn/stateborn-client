@@ -1,5 +1,5 @@
 <template>
-  <q-page class="noise text-subtitle1" :class="$q.platform.is.mobile ? 'q-pa-xs' : ''">
+  <q-page class="noise" :class="$q.platform.is.mobile ? 'q-pa-xs text-subtitle2' : 'text-subtitle1'">
     <div class="row justify-center q-pt-lg">
       <div class="col-lg-6 col-xs-grow">
         <div class="row">
@@ -53,8 +53,8 @@
             Stateborn supports different token standards on various blockchain networks.<br>
             Supported DAO token standards:
             <ul>
-              <li>ERC-20 - voting power is amount of tokens user owns</li>
-              <li>NFT - 1 NFT is 1 voting power</li>
+              <li>ERC-20 - voting power units is amount of tokens user owns</li>
+              <li>NFT - 1 NFT is 1 voting power unit</li>
             </ul>
             Supported blockchain networks:
             <q-list dense>

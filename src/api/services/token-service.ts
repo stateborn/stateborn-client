@@ -31,14 +31,14 @@ export class TokenService {
     },
   ]
 
-  async readTokenBalance(userAddress: string, tokenAddress: string, tokenType: DaoTokenType): Promise<string> {
-    // if (process.env.IS_LOCALHOST) {
-    //   return '800';
-    // }
+  async readTokenBalance(userAddress: string, tokenAddress: string, tokenType: DaoTokenType, decimals: string): Promise<string> {
+    if (process.env.IS_LOCALHOST) {
+      return '200';
+    }
     if (tokenType === DaoTokenType.ERC20) {
-      return await ERC_20_SERVICE.readTokenBalance(userAddress, tokenAddress);
+      return await ERC_20_SERVICE.readTokenBalance(userAddress, tokenAddress, decimals);
     } else {
-      return await ERC_721_SERVICE.readTokenBalance(userAddress, tokenAddress);
+      return await ERC_721_SERVICE.readTokenBalance(userAddress, tokenAddress, decimals);
     }
   }
 

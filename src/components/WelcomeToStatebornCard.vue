@@ -4,7 +4,7 @@
       <div class="col-auto justify-center items-center">
         <q-img
           style="height: 100px; width: 100px;"
-          src="/stateborn9.png"
+          src="/stateborn-logo.webp"
         />
       </div>
     </div>
@@ -35,8 +35,16 @@
     </q-card-section>
     <div class="row justify-center">
       <div class="col-auto">
-        <q-btn icon="fa-brands fa-github" round flat/>
-        <q-btn icon="fa-brands fa-twitter" round flat/>
+        <q-btn  round flat>
+          <q-avatar size="25px">
+            <img src="/brands/icons8-github-50.png">
+          </q-avatar>
+        </q-btn>
+        <q-btn  round flat>
+          <q-avatar size="25px">
+            <img src="/brands/icons8-twitter-50.png">
+          </q-avatar>
+        </q-btn>
       </div>
     </div>
     <q-card-section>
@@ -54,6 +62,7 @@
           <q-btn-dropdown
             ref="dropdown"
             dense
+            dropdown-icon="fa-solid fa-caret-down"
             flat
           >
             <div class="row no-wrap q-pa-md noise2">

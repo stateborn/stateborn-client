@@ -59,6 +59,14 @@
                   :proposal="props.row"
                   @click="$router.push(`/${daoIpfsHash}/${props.row.ipfsHash}`)"></proposal-card>
               </template>
+              <template v-slot:no-data="{ icon, message, filter }">
+                <div class="full-width row flex-center q-gutter-sm text-primary">
+                <span>
+                   No data found
+                  </span>
+                  <q-icon name="fa-solid fa-triangle-exclamation"/>
+                </div>
+              </template>
             </q-table>
             <div class="row items-center justify-center" v-else
                  :style="$q.platform.is.mobile ? 'height:100px': `height:${proposalScrollHeight}px`">

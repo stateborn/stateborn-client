@@ -1,8 +1,26 @@
 <template>
   <div>
-    <span class="text-subtitle2 text-red text-bold" v-if="!ethConnectionStore.isConnected">Please connect first</span>
-    <q-input square outlined filled label="Name" v-model="name" class="q-pa-xs" maxlength="60" counter :disable="!ethConnectionStore.isConnected"></q-input>
-    <q-input counter filled square label="Description" v-model="description" maxlength="120" class="q-pa-xs q-pt-lg" :disable="!ethConnectionStore.isConnected"></q-input>
+    <q-banner class="text-primary text-subtitle2 text-center noisegreen q-ma-xs">
+      Stateborn DAO creation is <b>free</b>.<br>
+      DAO definition file is stored off-chain.<br>
+      You only need to provide the address of your governance token (ERC-20 or NFT).
+    </q-banner>
+    <q-banner class="text-black text-subtitle2 text-center noisered q-ma-xs" v-if="!ethConnectionStore.isConnected">
+      <span class="text-bold text-red">Please connect first</span>
+    </q-banner>
+    <q-input square outlined filled label="DAO name" v-model="name" class="q-pa-xs" maxlength="60" counter :disable="!ethConnectionStore.isConnected"
+    :error="name.trim() === ''">
+      <template v-slot:error>
+        Please provide a name for your DAO.
+      </template>
+    </q-input>
+    <q-input counter filled square label="DAO description" v-model="description" maxlength="120" class="q-pa-xs q-pt-lg" :disable="!ethConnectionStore.isConnected"
+     :error="description.trim() === ''">
+      <template v-slot:error>
+        Please provide a short description of your DAO.
+      </template>
+
+    </q-input>
     <q-banner class="noisegreen text-primary text-center text-subtitle2 q-pa-xs q-mt-lg" v-if="ethConnectionStore.isConnected" dense>
       <template v-slot:avatar>
         <q-img :src="ethConnectionStore.networkIcon" style="height: 25px; width:25px; margin-top:27px"/>
@@ -12,13 +30,19 @@
       Please reconnect wallet if you want to change the blockchain network.
 
     </q-banner>
-    <q-input square filled label="Token address" v-model="tokenAddress" class="q-pa-xs q-pt-lg" :disable="!ethConnectionStore.isConnected"></q-input>
+    <q-input square filled label="DAO governance token address" v-model="tokenAddress"
+             :error="tokenAddress.trim() === '' && ethConnectionStore.isConnected"
+             class="q-pa-xs q-pt-lg" :disable="!ethConnectionStore.isConnected">
+      <template v-slot:error>
+        Please provide address of your DAO governance token (ERC-20 or NFT).
+      </template>
+    </q-input>
     <div v-if="tokenName !== ''">
-      <q-input square dense readonly filled outlined prefix="Token name:" v-model="tokenName" class="q-pa-xs" debounce="500"></q-input>
-      <q-input square dense readonly filled prefix="Token symbol:" v-model="tokenSymbol" class="q-pa-xs"></q-input>
-      <q-input square dense readonly filled prefix="Token type:" v-model="tokenType" class="q-pa-xs"></q-input>
-      <q-input square dense readonly filled prefix="Token supply:" v-model="tokenSupply" v-if="tokenSupply !== ''" class="q-pa-xs"></q-input>
-      <q-input square dense readonly filled prefix="Token network:" v-model="ethConnectionStore.networkName" class="q-pa-xs">
+      <q-input square dense readonly outlined prefix="Token name:" v-model="tokenName" class="q-pa-xs" debounce="500"></q-input>
+      <q-input square dense readonly outlined prefix="Token symbol:" v-model="tokenSymbol" class="q-pa-xs"></q-input>
+      <q-input square dense readonly outlined prefix="Token type:" v-model="tokenType" class="q-pa-xs"></q-input>
+      <q-input square dense readonly outlined prefix="Token decimals:" v-model="decimals" v-if="decimals !== ''" class="q-pa-xs"></q-input>
+      <q-input square dense readonly outlined prefix="Token network:" v-model="ethConnectionStore.networkName" class="q-pa-xs">
         <template v-slot:prepend>
           <q-avatar>
             <img :src="ethConnectionStore.networkIcon" style="height: 25px; width: 25px;">
@@ -26,18 +50,33 @@
         </template>
       </q-input>
     </div>
-    <q-input square label="DAO owner" readonly v-model="daoOwner" class="q-pa-xs"></q-input>
-    <define-voting-options-card v-if="proposalType.value === 'OPTIONS'" @proposal-option-added="proposalOptionAdded" :disable="!ethConnectionStore.isConnected"></define-voting-options-card>
     <q-input
+      v-if="ethConnectionStore.isConnected && tokenSymbol.trim() !== ''"
       :disable="!ethConnectionStore.isConnected"
       filled
-      class="q-pa-xs"
+      class="q-pa-xs q-pt-lg"
       v-model.number="minimalTokens"
       type="number"
+      :error="minimalTokens <= 0"
       label="Minimal tokens required for proposal creation"
       :suffix="tokenType === 'NFT' ? `${tokenSymbol} NFTs` : `${tokenSymbol} tokens`"
-    />
-    <div class="row justify-center items-center">
+    >
+      <template v-slot:error>
+        Amount of tokens must be greater than 0.
+      </template>
+      <q-tooltip class="stateborn-tooltip">
+        Provide amount of {{tokenSymbol !== '' ? tokenSymbol : 'DAO governance'}} tokens required to own in order to create
+        a public DAO proposal for voting.
+      </q-tooltip>
+    </q-input>
+    <q-input square dense outlined prefix="DAO owner:" readonly v-model="daoOwner" class="q-pa-xs" v-if="ethConnectionStore.isConnected && tokenSymbol.trim() !== ''">
+      <q-tooltip class="stateborn-tooltip">
+         Your current account {{ethConnectionStore.account}} will be the DAO owner. <br>
+         The DAO owner has the possibility to upgrade DAO settings.
+      </q-tooltip>
+    </q-input>
+
+    <div class="row justify-center items-center" v-if="!skipDaoPicture">
       <div class="col-6">
         <file-reader class="q-pa-xs"
                      :disable="!ethConnectionStore.isConnected"
@@ -50,22 +89,46 @@
       </div>
       <div class="col-6">
         <div class="text-subtitle2 text-bold" v-if="image !== ''">Image preview</div>
-        <div class="text-subtitle2 text-bold" v-else>No image</div>
+        <div class="text-subtitle2 text-bold text-red" v-else>No image</div>
         <q-img
           :src="image"
           spinner-color="white"
-          style="height: 150px; max-width: 150px; border: 1px solid #9E9E9E"
+          :style="`border: 1px solid ${image !== '' ? '#9E9E9E' : '#F44336'}`"
+          style="height: 150px; max-width: 150px; "
+        />
+      </div>
+    </div>
+    <div class="row justify-left">
+      <div class="col-auto justify-left">
+        <q-toggle
+          v-model="skipDaoPicture"
+          label="I don't want a DAO image"
         />
       </div>
     </div>
     <q-btn class="q-ma-xs old-button" square label="Create" color="primary"
-           :disable="!ethConnectionStore.isConnected"
+           :disable="!isFormValid"
            @click="callCreateProposal"></q-btn>
 
   </div>
+  <q-dialog v-model="showSignDaoDialog">
+    <q-card class="noisegreen text-subtitle2">
+      <q-card-section class="row items-center">
+        <q-avatar icon="fa-solid fa-info" size='md' color="primary" text-color="white" square/>
+        <span class="q-ml-lg text-h5" >Sign DAO definition data</span>
+        <q-space />
+        <q-btn icon="close" flat round dense v-close-popup />
+      </q-card-section>
+      <q-card-section style="padding-top: 0; margin-top:0;">
+        Your browser wallet just requested you to digitally sign a data.
+        The data contains all the information you just provided in the form.
+        This operation is free and doesn't interact with blockchain.
+      </q-card-section>
+    </q-card>
+  </q-dialog>
 </template>
 <script lang="ts" setup>
-import { onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { api } from 'boot/axios';
 import { useEthConnectionStore } from 'stores/eth-connection-store';
 import { signDao } from 'src/api/services/signature-service';
@@ -91,11 +154,13 @@ const tokenAddress = ref('');
 const tokenName = ref('');
 const tokenSymbol = ref('');
 const tokenType = ref(DaoTokenType.ERC20);
-const tokenSupply = ref('');
+const decimals = ref('');
 const image = ref('');
-const daoOwner = ref(ethConnectionStore.account);
+const daoOwner = ref(' ');
+const showSignDaoDialog = ref(false);
 const proposalType = ref({ value: 'YES/NO', label: 'YES / NO - vote YES or NO' });
 const minimalTokens = ref(100);
+const skipDaoPicture = ref(false);
 const proposalOptions = ref(<string[]>[]);
 const emit = defineEmits(['proposalChanged']);
 const router = useRouter();
@@ -103,6 +168,9 @@ watch(() => ethConnectionStore.account, async () => {
   daoOwner.value = ethConnectionStore.account;
   setTokenAddress();
 });
+if (ethConnectionStore.isConnected) {
+  daoOwner.value = ethConnectionStore.account;
+}
 
 const setTokenAddress = () => {
   if (ethConnectionStore.isConnected) {
@@ -113,7 +181,7 @@ const setTokenAddress = () => {
       tokenAddress.value = '0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9';
     } else {
       //polygon
-      tokenAddress.value = '0x7FFB3d637014488b63fb9858E279385685AFc1e2';
+      tokenAddress.value = '0xc2132D05D31c914a87C6611C10748AEb04B58e8F';
     }
   }
 }
@@ -123,6 +191,14 @@ onMounted(() => {
     setTokenAddress();
   }
 });
+
+const isFormValid = computed(() => {
+  return ethConnectionStore.isConnected && name.value.trim() !== '' && name.value.trim().length <= 60 && description.value.trim() !== '' && description.value.trim().length <= 120 &&
+    tokenAddress.value !== '' && tokenName.value !== '' && tokenAddress.value.trim() !== ''
+    && tokenSymbol.value !== '' && minimalTokens.value > 0
+  && (skipDaoPicture.value ? true : image.value !== '');
+});
+
 watch(() => tokenAddress.value, async () => {
   $q.loading.show({
     delay: 100, // ms
@@ -131,29 +207,29 @@ watch(() => tokenAddress.value, async () => {
     messageColor: 'white',
   });
   try {
-    const { nameRes, symbolRes } = await ERC_721_SERVICE.readTokenData(tokenAddress.value);
+    const { nameRes, symbolRes, decimalsRes } = await ERC_721_SERVICE.readTokenData(tokenAddress.value);
     tokenName.value = nameRes;
     tokenSymbol.value = symbolRes;
     tokenType.value = DaoTokenType.NFT;
-    tokenSupply.value = '';
+    decimals.value = decimalsRes;
     minimalTokens.value = 1;
     $q.loading.hide();
     Notify.create({ message: 'Successfully fetched NFT token data!', position: 'top-right', color: 'green' });
   } catch (err2) {
     try {
-      const { nameRes, symbolRes, supplyRes } = await ERC_20_SERVICE.readTokenData(tokenAddress.value);
+      const { nameRes, symbolRes, decimalsRes } = await ERC_20_SERVICE.readTokenData(tokenAddress.value);
       tokenName.value = nameRes;
       tokenSymbol.value = symbolRes;
-      tokenSupply.value = supplyRes;
+      decimals.value = decimalsRes;
       tokenType.value = DaoTokenType.ERC20;
       $q.loading.hide();
       Notify.create({ message: 'Successfully fetched ERC-20 token data!', position: 'top-right', color: 'green' });
     } catch (err) {
       tokenName.value = '';
       tokenSymbol.value = '';
-      tokenSupply.value = '';
+      decimals.value = '';
       $q.loading.hide();
-      Notify.create({ message: 'Incorrect token address', position: 'top-right', color: 'red' });
+      Notify.create({ message: `Incorrect token address. Is it valid ERC-20/NFT token address on ${ethConnectionStore.networkName}?`, position: 'top-right', color: 'red' });
     }
   }
 });
@@ -172,14 +248,15 @@ const onFileRemoved = () => {
 };
 
 const callCreateProposal = async () => {
+  showSignDaoDialog.value = true;
   const creationDateUtc = dayjs().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
   const clientDao = new ClientDao(
     name.value.trim(),
     description.value.trim(),
-    image.value,
+    skipDaoPicture.value === true ? '' : image.value,
     [ethConnectionStore.account],
     "1",
-    "1",
+    minimalTokens.value.toString(),
     creationDateUtc,
     new ClientDaoToken(
       tokenAddress.value,
@@ -187,7 +264,7 @@ const callCreateProposal = async () => {
       tokenSymbol.value,
       tokenType.value,
       ethConnectionStore.chainId,
-      tokenSupply.value !== '' ? tokenSupply.value : undefined,
+      decimals.value,
     ),
   );
 

@@ -6,14 +6,14 @@ export class Erc20Service {
     // Some details about the token
     'function name() view returns (string)',
     'function symbol() view returns (string)',
-
+    'function decimals() public view returns (uint8)',
     // Get the account balance
     'function balanceOf(address) view returns (uint)',
 
     // Some details about the token supply
     'function totalSupply() view returns (uint256)',
   ];
-  async readTokenBalance(userAddress: string, tokenAddress: string): Promise<string> {
+  async readTokenBalance(userAddress: string, tokenAddress: string, decimals: string): Promise<string> {
     // Define the ABI for the ERC20 contract
     console.log('user address', userAddress, tokenAddress);
 
@@ -23,8 +23,9 @@ export class Erc20Service {
     // Call the balanceOf function for the user address
     const balance = await contract.balanceOf(userAddress);
 
-    console.log('User balance is: ', ethers.formatUnits(balance, 18));
-    return ethers.formatUnits(balance, 18);
+    console.log('User balance is: ', ethers.formatUnits(balance, Number(decimals)));
+    console.log('User balance is given: ', balance);
+    return ethers.formatUnits(balance, Number(decimals));
   }
 
   async readTokenData(tokenAddress: string): Promise<any> {
@@ -32,10 +33,9 @@ export class Erc20Service {
       const contract = new ethers.Contract(tokenAddress, this.abi, ETH_CONNECTION_SERVICE.getProvider());
       const nameRes = await contract.name();
       const symbolRes = await contract.symbol();
-      // big int
-      const supplyRes = (await contract.totalSupply()).toString();
-      console.log(`Token ${tokenAddress} data : ${nameRes} ${symbolRes} ${supplyRes}`);
-      return { nameRes, symbolRes, supplyRes };
+      const decimalsRes = (await contract.decimals()).toString();
+      console.log(`Token ${tokenAddress} data : ${nameRes} ${symbolRes} ${decimalsRes}`);
+      return { nameRes, symbolRes, decimalsRes };
     } catch (err) {
       console.log(`Error reading token ${tokenAddress} data`, err);
       throw new Error(`Error reading token ${tokenAddress} data`);
