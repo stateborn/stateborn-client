@@ -4,7 +4,7 @@
         <img :src="imageSrc"
              :alt="alt"
              :style="$q.platform.is.mobile ?
-                   'max-width: 100%;' : `opacity: 0.8`"/>
+                   'max-width: 100%;' : `${opacity === undefined ? 'opacity: 0.8': `opacity: ${opacity}`}`"/>
     </template>
 
     <div class="text-primary" :class="textClass === undefined ? 'text-h3 q-pa-md': textClass"

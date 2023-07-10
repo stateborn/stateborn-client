@@ -31,7 +31,7 @@ export const abiEncodeProposal = (clientProposal: ClientProposal) => {
 }
 
 export const abiEncodeVote = (voterAddress: string, proposalIpfsHash: string, vote: string, votingPower: string) => ethers.solidityPacked(
-  ['address', 'bytes', 'bytes32', 'uint32'],
+  ['address', 'bytes', 'bytes32', 'uint256'],
   [
     voterAddress,
     ethers.toUtf8Bytes(proposalIpfsHash),
@@ -58,7 +58,7 @@ export const getEncodedReportVoteKeccak256 = async (
   votingPower: string,
 ): Promise<string> => {
   const abiEncodedVote = ethers.solidityPacked(
-    ['address', 'bytes', 'bytes32', 'uint32'],
+    ['address', 'bytes', 'bytes32', 'uint256'],
     [
       voterAddress,
       ethers.toUtf8Bytes(proposalIpfsHash),
@@ -88,7 +88,7 @@ export const isVoteValid = (clientVoteDto: any, signature: string): boolean => {
 };
 
 export const signDao = async (clientDao: ClientDao): Promise<string> => {
-  const types = ['bytes', 'bytes', 'bytes', 'uint32', 'uint32', 'bytes32', 'address', 'bytes32'];
+  const types = ['bytes', 'bytes', 'bytes', 'uint256', 'uint256', 'bytes32', 'address', 'bytes32'];
   const values = [
     ethers.toUtf8Bytes(clientDao.name),
     ethers.toUtf8Bytes(clientDao.description),

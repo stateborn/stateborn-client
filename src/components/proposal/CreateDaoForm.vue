@@ -114,15 +114,15 @@
   <q-dialog v-model="showSignDaoDialog">
     <q-card class="noisegreen text-subtitle2">
       <q-card-section class="row items-center">
-        <q-avatar icon="fa-solid fa-info" size='md' color="primary" text-color="white" square/>
+        <q-avatar icon="fa-solid fa-key" size='md' color="primary" text-color="white" square/>
         <span class="q-ml-lg text-h5" >Sign DAO definition data</span>
         <q-space />
         <q-btn icon="close" flat round dense v-close-popup />
       </q-card-section>
       <q-card-section style="padding-top: 0; margin-top:0;">
-        Your browser wallet just requested you to digitally sign a data.
-        The data contains all the information you just provided in the form.
-        This operation is free and doesn't interact with blockchain.
+          Your browser wallet just requested you to digitally sign a data.
+          The data contains all the information you just provided in the form.
+          This operation is free and doesn't interact with blockchain.
       </q-card-section>
     </q-card>
   </q-dialog>

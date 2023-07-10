@@ -63,14 +63,14 @@ export const getDaoFromStorage = async (daoIpfsHash: string): Promise<DaoBackend
   return item !== undefined ? item.dao : undefined;
 };
 
-export const setProposalReportInStorage = async (proposalIpfsHash: string, proposalReport: ProposalReport) => {
-  await db.proposalReports.put({
-    proposalIpfsHash,
-    proposalReport,
-  });
-};
-
-export const getProposalReportFromStorage = async (proposalIpfsHash: string): Promise<ProposalReport | undefined> => {
-  const item = await db.proposalReports.where("proposalIpfsHash").equals(proposalIpfsHash).first();
-  return item !== undefined ? item.proposalReport : undefined;
-};
+// export const setProposalReportInStorage = async (proposalIpfsHash: string, proposalReport: ProposalReport) => {
+//   await db.proposalReports.put({
+//     proposalIpfsHash,
+//     proposalReport,
+//   });
+// };
+//
+// export const getProposalReportFromStorage = async (proposalIpfsHash: string): Promise<ProposalReport | undefined> => {
+//   const item = await db.proposalReports.where("proposalIpfsHash").equals(proposalIpfsHash).first();
+//   return item !== undefined ? item.proposalReport : undefined;
+// };

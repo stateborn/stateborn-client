@@ -1,6 +1,6 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header elevated class="noise2 text-primary">
+    <q-header elevated class="headernoise text-primary">
       <q-toolbar>
 
         <q-toolbar-title>

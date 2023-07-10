@@ -3,7 +3,7 @@
     <div class="row justify-center" :class="$q.platform.is.mobile ? '' : 'q-pa-md'" >
       <div class="col-lg-6 col-xs-grow justify-center q-pa-xs">
         <picture-parallax
-          image-src="/proposal2noise.webp"
+          image-src="/proposalbody2noise.webp"
           alt="proposal image"
           :text-class="$q.platform.is.mobile ? 'text-h5': undefined"
           title="Create proposal"

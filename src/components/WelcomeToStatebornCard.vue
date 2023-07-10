@@ -65,7 +65,7 @@
             dropdown-icon="fa-solid fa-caret-down"
             flat
           >
-            <div class="row no-wrap q-pa-md noise2">
+            <div class="row no-wrap q-pa-md bodynoise">
               <div class="column">
                 <div class="text-subtitle2 text-center">IPFS gateway</div>
                <q-btn class="q-ma-xs" color="primary" label="EDIT MODE" @click="enterEditMode()" v-if="!editMode" ></q-btn>

@@ -11,11 +11,9 @@ import dayjs from 'dayjs';
 export const calculateUserVotesAndGetProposalReportStorage = async (proposalReportIpfsHash: string, proposalIpfsHash: string, userAddress: string): Promise<ProposalReportStorage> => {
   let proposalReportStorage: ProposalReportStorage | undefined = await getClientProposalReportFromStorage(proposalIpfsHash);
   if (proposalReportStorage === undefined) {
-    // 1 call
     const ipfsProposalReport = await getIpfsJsonFile(proposalReportIpfsHash);
     const merkleTreeService = new MerkleTreeService();
     const merkleTreeLeafs: string[] = [];
-    const votingResults = new Map<string, number>();
     const userIpfsVotes = [];
     let userVoteLeaf = '';
     for (const ipfsVote of ipfsProposalReport.userVotes) {
@@ -26,17 +24,26 @@ export const calculateUserVotesAndGetProposalReportStorage = async (proposalRepo
       }
       merkleTreeLeafs.push(ipfsVote.leafEncoded);
     }
+    if (userIpfsVotes.length  === 0) {
+      proposalReportStorage = new ProposalReportStorage(
+        true,
+        ipfsProposalReport.merkleRootHex,
+        dayjs().toISOString(),
+        undefined,
+        undefined,
+        true
+      );
     // If there is more than one user vote in report, it means backend included more than should and it's not correct
-    if (userIpfsVotes.length > 0) {
+    } else if (userIpfsVotes.length > 0) {
       proposalReportStorage = new ProposalReportStorage(
         false,
         'not calculated',
         dayjs().toISOString(),
-        undefined,
         `Expected only 1 user vote in the IPFS result, but found ${userIpfsVotes.length}!`,
         userIpfsVotes,
       );
-    } else {
+    }
+    else {
       const userIpfsVote = userIpfsVotes[0];
       // Fetch user vote from IPFS
       const ipfsUserVote = await getIpfsJsonFile(userIpfsVote.ipfsHash);
@@ -47,7 +54,6 @@ export const calculateUserVotesAndGetProposalReportStorage = async (proposalRepo
           false,
           'not calculated',
           dayjs().toISOString(),
-          undefined,
           `Invalid IPFS vote of user ${ipfsUserVote.clientVote.voterAddress} for proposal ${proposalIpfsHash}. It's not signed by ${userAddress}.`,
           ipfsUserVote
         );
@@ -66,7 +72,6 @@ export const calculateUserVotesAndGetProposalReportStorage = async (proposalRepo
               false,
               'not calculated',
               dayjs().toISOString(),
-              undefined,
               `Invalid IPFS vote of user ${ipfsUserVote.clientVote.voterAddress} for proposal ${proposalIpfsHash}. It's not a final vote ${userAddress} submitted.`,
               ipfsUserVote
             );
@@ -82,7 +87,6 @@ export const calculateUserVotesAndGetProposalReportStorage = async (proposalRepo
                 false,
                 'not calculated',
                 dayjs().toISOString(),
-                undefined,
                 `Invalid merkle leaf encoded of user ${ipfsUserVote.clientVote.voterAddress} for proposal ${proposalIpfsHash}. The leaf value provided by backend doesn't match leaf value of last user vote.`,
                 ipfsUserVote
               );
@@ -101,7 +105,6 @@ export const calculateUserVotesAndGetProposalReportStorage = async (proposalRepo
               false,
               'not calculated',
               dayjs().toISOString(),
-              undefined,
               `Invalid merkle leaf encoded of user ${ipfsUserVote.clientVote.voterAddress} for proposal ${proposalIpfsHash}. Merkle leaf value for user vote in the report is wrongly calculated.`,
               ipfsUserVote
             );
@@ -109,27 +112,29 @@ export const calculateUserVotesAndGetProposalReportStorage = async (proposalRepo
         }
       }
     }
-    merkleTreeService.initializeMerkleTree(merkleTreeLeafs);
-    // If client side calculated merkle root is not the same as the one from IPFS report, it means backend changed the votes and it's incorrect
-    // Because we calculated user leaf on client side, it is verified that included user vote is correct and matches the one user submitted
-    // * - note that if user cleared their storage, the step of verification if it the last vote of user was
-    if (merkleTreeService.getHexRoot() !== ipfsProposalReport.merkleRootHex) {
-      console.log(`Invalid merkle root for proposal ${proposalIpfsHash}. Got '${merkleTreeService.getHexRoot()}, expected '${ipfsProposalReport.merkleRootHex}'`);
-      proposalReportStorage = new ProposalReportStorage(
-        false,
-        merkleTreeService.getHexRoot(),
-        dayjs().toISOString(),
-        undefined,
-        `Invalid merkle root for proposal ${proposalIpfsHash}. Got '${merkleTreeService.getHexRoot()}, expected '${ipfsProposalReport.merkleRootHex}'`,
-      );
-    } else {
-      console.log(`Proposal ${proposalIpfsHash} was client side validated. Calculated merkle root hex ${merkleTreeService.getHexRoot()} as expected. User votes validated too.`);
-      proposalReportStorage = new ProposalReportStorage(
-        true,
-        merkleTreeService.getHexRoot(),
-        dayjs().toISOString(),
-        Object.fromEntries(votingResults),
-      );
+    // if not voted -> don't verify merkle root
+    if (proposalReportStorage?.userNotVoted !== true) {
+      merkleTreeService.initializeMerkleTree(merkleTreeLeafs);
+      // If client side calculated merkle root is not the same as the one from IPFS report, it means backend changed the votes and it's incorrect
+      // Because we calculated user leaf on client side, it is verified that included user vote is correct and matches the one user submitted
+      // * - note that if user cleared their storage, the step of verification if it the last vote of user was
+      if (merkleTreeService.getHexRoot() !== ipfsProposalReport.merkleRootHex) {
+        console.log(`Invalid merkle root for proposal ${proposalIpfsHash}. Got '${merkleTreeService.getHexRoot()}, expected '${ipfsProposalReport.merkleRootHex}'`);
+        proposalReportStorage = new ProposalReportStorage(
+          false,
+          merkleTreeService.getHexRoot(),
+          dayjs().toISOString(),
+          undefined,
+          `Invalid merkle root for proposal ${proposalIpfsHash}. Got '${merkleTreeService.getHexRoot()}, expected '${ipfsProposalReport.merkleRootHex}'`,
+        );
+      } else {
+        console.log(`Proposal ${proposalIpfsHash} was client side validated. Calculated merkle root hex ${merkleTreeService.getHexRoot()} as expected. User votes validated too.`);
+        proposalReportStorage = new ProposalReportStorage(
+          true,
+          merkleTreeService.getHexRoot(),
+          dayjs().toISOString(),
+        );
+      }
     }
     await setClientProposalReport(proposalIpfsHash, proposalReportStorage);
     return proposalReportStorage;
@@ -140,67 +145,67 @@ export const calculateUserVotesAndGetProposalReportStorage = async (proposalRepo
 
 
 // eslint-disable
-export const calculateVotesAndGetProposalReportStorage = async (proposalReportIpfsHash: string, proposalIpfsHash: string, userAddress: string): Promise<ProposalReportStorage> => {
-  let proposalReportStorage: ProposalReportStorage | undefined = await getClientProposalReportFromStorage(proposalIpfsHash);
-  if (proposalReportStorage === undefined) {
-    const ipfsProposalReport = await getIpfsJsonFile(proposalReportIpfsHash);
-    const merkleTreeService = new MerkleTreeService();
-    const merkleTreeLeafs: string[] = [];
-    const votingResults = new Map<string, number>();
-    for (const reportUserVote of ipfsProposalReport.userVotes) {
-      const ipfsUserVote = await getIpfsJsonFile(reportUserVote.ipfsHash);
-      const isUserVoteValid = isVoteValid(ipfsUserVote.clientVote, ipfsUserVote.userSignature);
-
-      if (votingResults.has(ipfsUserVote.clientVote.vote)) {
-        let decisionVote: number = votingResults.get(ipfsUserVote.clientVote.vote)!;
-        decisionVote += Number(ipfsUserVote.clientVote.votingPower);
-        votingResults.set(ipfsUserVote.clientVote.vote, decisionVote);
-      } else {
-        votingResults.set(ipfsUserVote.clientVote.vote, Number(ipfsUserVote.clientVote.votingPower));
-      }
-
-      if (!isUserVoteValid) {
-        console.log(`Invalid vote of user ${ipfsUserVote.clientVote.voterAddress} for proposal ${proposalIpfsHash}`);
-        proposalReportStorage = new ProposalReportStorage(
-          false,
-          merkleTreeService.getHexRoot(),
-          dayjs().toISOString(),
-          undefined,
-          `Invalid vote of user ${ipfsUserVote.clientVote.voterAddress} for proposal ${proposalIpfsHash}`,
-        );
-        await setClientProposalReport(proposalIpfsHash, proposalReportStorage);
-        return proposalReportStorage;
-      }
-      const encodedVoteKeccak256 = await getEncodedReportVoteKeccak256(
-        ipfsUserVote.clientVote.voterAddress,
-        proposalIpfsHash,
-        ipfsUserVote.clientVote.vote,
-        ipfsUserVote.clientVote.votingPower,
-      );
-      merkleTreeLeafs.push(encodedVoteKeccak256);
-    }
-    merkleTreeService.initializeMerkleTree(merkleTreeLeafs);
-    if (merkleTreeService.getHexRoot() !== ipfsProposalReport.merkleRootHex) {
-      console.log(`Invalid merkle root for proposal ${proposalIpfsHash}. Got '${merkleTreeService.getHexRoot()}, expected '${ipfsProposalReport.merkleRootHex}'`);
-      proposalReportStorage = new ProposalReportStorage(
-        false,
-        merkleTreeService.getHexRoot(),
-        dayjs().toISOString(),
-        undefined,
-        `Invalid merkle root for proposal ${proposalIpfsHash}. Got '${merkleTreeService.getHexRoot()}, expected '${ipfsProposalReport.merkleRootHex}'`,
-      );
-    } else {
-      console.log(`Proposal ${proposalIpfsHash} was client side validated. Calculated merkle root hex ${merkleTreeService.getHexRoot()} as expected. User votes validated too.`);
-      proposalReportStorage = new ProposalReportStorage(
-        true,
-        merkleTreeService.getHexRoot(),
-        dayjs().toISOString(),
-        Object.fromEntries(votingResults),
-      );
-    }
-    await setClientProposalReport(proposalIpfsHash, proposalReportStorage);
-    return proposalReportStorage;
-  }
-  console.log(`Proposal ${proposalIpfsHash} was already client side validated at ${proposalReportStorage.validationDate}`);
-  return proposalReportStorage;
-};
+// export const calculateVotesAndGetProposalReportStorage = async (proposalReportIpfsHash: string, proposalIpfsHash: string, userAddress: string): Promise<ProposalReportStorage> => {
+//   let proposalReportStorage: ProposalReportStorage | undefined = await getClientProposalReportFromStorage(proposalIpfsHash);
+//   if (proposalReportStorage === undefined) {
+//     const ipfsProposalReport = await getIpfsJsonFile(proposalReportIpfsHash);
+//     const merkleTreeService = new MerkleTreeService();
+//     const merkleTreeLeafs: string[] = [];
+//     const votingResults = new Map<string, number>();
+//     for (const reportUserVote of ipfsProposalReport.userVotes) {
+//       const ipfsUserVote = await getIpfsJsonFile(reportUserVote.ipfsHash);
+//       const isUserVoteValid = isVoteValid(ipfsUserVote.clientVote, ipfsUserVote.userSignature);
+//
+//       if (votingResults.has(ipfsUserVote.clientVote.vote)) {
+//         let decisionVote: number = votingResults.get(ipfsUserVote.clientVote.vote)!;
+//         decisionVote += Number(ipfsUserVote.clientVote.votingPower);
+//         votingResults.set(ipfsUserVote.clientVote.vote, decisionVote);
+//       } else {
+//         votingResults.set(ipfsUserVote.clientVote.vote, Number(ipfsUserVote.clientVote.votingPower));
+//       }
+//
+//       if (!isUserVoteValid) {
+//         console.log(`Invalid vote of user ${ipfsUserVote.clientVote.voterAddress} for proposal ${proposalIpfsHash}`);
+//         proposalReportStorage = new ProposalReportStorage(
+//           false,
+//           merkleTreeService.getHexRoot(),
+//           dayjs().toISOString(),
+//           undefined,
+//           `Invalid vote of user ${ipfsUserVote.clientVote.voterAddress} for proposal ${proposalIpfsHash}`,
+//         );
+//         await setClientProposalReport(proposalIpfsHash, proposalReportStorage);
+//         return proposalReportStorage;
+//       }
+//       const encodedVoteKeccak256 = await getEncodedReportVoteKeccak256(
+//         ipfsUserVote.clientVote.voterAddress,
+//         proposalIpfsHash,
+//         ipfsUserVote.clientVote.vote,
+//         ipfsUserVote.clientVote.votingPower,
+//       );
+//       merkleTreeLeafs.push(encodedVoteKeccak256);
+//     }
+//     merkleTreeService.initializeMerkleTree(merkleTreeLeafs);
+//     if (merkleTreeService.getHexRoot() !== ipfsProposalReport.merkleRootHex) {
+//       console.log(`Invalid merkle root for proposal ${proposalIpfsHash}. Got '${merkleTreeService.getHexRoot()}, expected '${ipfsProposalReport.merkleRootHex}'`);
+//       proposalReportStorage = new ProposalReportStorage(
+//         false,
+//         merkleTreeService.getHexRoot(),
+//         dayjs().toISOString(),
+//         undefined,
+//         `Invalid merkle root for proposal ${proposalIpfsHash}. Got '${merkleTreeService.getHexRoot()}, expected '${ipfsProposalReport.merkleRootHex}'`,
+//       );
+//     } else {
+//       console.log(`Proposal ${proposalIpfsHash} was client side validated. Calculated merkle root hex ${merkleTreeService.getHexRoot()} as expected. User votes validated too.`);
+//       proposalReportStorage = new ProposalReportStorage(
+//         true,
+//         merkleTreeService.getHexRoot(),
+//         dayjs().toISOString(),
+//         Object.fromEntries(votingResults),
+//       );
+//     }
+//     await setClientProposalReport(proposalIpfsHash, proposalReportStorage);
+//     return proposalReportStorage;
+//   }
+//   console.log(`Proposal ${proposalIpfsHash} was already client side validated at ${proposalReportStorage.validationDate}`);
+//   return proposalReportStorage;
+// };

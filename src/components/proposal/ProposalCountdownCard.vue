@@ -3,7 +3,7 @@
     <q-card-section class="text-center" style="padding:0px;">
       <div class="row justify-center items-center">
         <div class="col-auto q-pa-xs justify-center">
-          <q-icon name="fa-solid fa-clock"  style="font-size: 1.5rem !important;"></q-icon>
+          <q-icon name="fa-solid fa-clock" color="primary" style="font-size: 1.5rem !important;"></q-icon>
         </div>
         <div class="col-auto justify-center">
           <div class="text-h6 text-center" >
@@ -11,7 +11,6 @@
           </div>
         </div>
       </div>
-      <q-separator class="q-mb-xs q-mt-xs"/>
       <vue-countdown class="text-bold text-subtitle2"
                      :time="new Date(props.endDateUtc).getTime() - new Date().getTime()" v-slot="{ days, hours, minutes, seconds }"
                      v-if="!isProposalEnded">

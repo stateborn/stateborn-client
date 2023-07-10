@@ -3,20 +3,27 @@
     <q-card-section style="padding:0;">
       <div class="row justify-center items-center">
         <div class="col-auto q-pa-xs justify-center">
-          <q-icon name="fa-solid fa-square-check"  style="font-size: 1.5rem !important;"></q-icon>
+          <q-icon name="fa-solid fa-square-check"  color="primary" style="font-size: 1.5rem !important;"></q-icon>
         </div>
         <div class="col-auto justify-center">
-          <div class="text-h6 text-center" >
+          <div class="text-h6 text-center">
             Vote on proposal
           </div>
         </div>
       </div>
-      <q-separator class="q-mb-xs q-mt-xs"/>
       <q-banner class="text-black text-subtitle2 text-center noisered" v-if="isProposalEnded">
         <span class="text-bold">Voting ended</span>
       </q-banner>
       <div v-if="ethConnectionStore.isConnected && !isProposalEnded && connectedNetworkMatchesTokenNetwork">
-          <div class="row text-subtitle2" v-if=" (props.userVotes.length === 0 || changeMyVote)"><div class="col text-bold">Your voting power</div><div class="col text-right">{{ props.tokenBalance }} {{tokenSymbol}}</div></div>
+          <div class="row text-subtitle2 items-center" v-if="(props.userVotes.length === 0 || changeMyVote)">
+            <div class="col text-bold">Your voting power</div><div class="col text-right">~{{ props.tokenBalance }} {{tokenSymbol}}</div>
+            <q-icon color="primary" name="fa-solid fa-circle-info" class="q-pl-xs">
+              <q-tooltip  class="stateborn-tooltip">
+                This is your voting power based on latest block balance. <br>
+                Voting power available for this proposal will be validated by backend based on proposal creation block {{props.proposalBlockNumber}}.
+              </q-tooltip>
+            </q-icon>
+          </div>
           <q-banner :class="userVote === 'NO' ? 'noisered': 'noisegreen'" class="text-black text-bold text-subtitle2 text-center" v-if="props.userVotes.length > 0 && !changeMyVote">
             <span class="text-bold">You already voted: </span><q-chip square color="white" class="text-bold" :text-color="userVote === 'NO' ? 'red': 'green'"> {{ userVote }}</q-chip>
           </q-banner>
@@ -101,8 +108,11 @@ const props = defineProps<{
   isProposalEnded: boolean,
   tokenSymbol: string,
   tokenChainId: string,
+  proposalBlockNumber: string,
+  triggerVotingAfterDifferentVotingPowerAcceptance: boolean,
+  decisionAfterDifferentPowerAcceptance: string,
 }>();
-const emit = defineEmits(['voted']);
+const emit = defineEmits(['voted', 'differentVotingPower']);
 const ethConnectionStore = useEthConnectionStore();
 const changeMyVote = ref(false);
 const options = ref([]);
@@ -136,6 +146,12 @@ watch(() => props.proposalOptions, () => {
   setOptions();
 });
 
+watch(() => props.triggerVotingAfterDifferentVotingPowerAcceptance, () => {
+  if (props.triggerVotingAfterDifferentVotingPowerAcceptance) {
+    callVote(props.decisionAfterDifferentPowerAcceptance);
+  }
+});
+
 const callVote = async (decision: string) => {
   const signature = await signVote(ethConnectionStore.account, props.proposalIpfsHash, decision, props.tokenBalance);
   const vote = {
@@ -147,12 +163,21 @@ const callVote = async (decision: string) => {
     },
     userSignature: signature,
   };
-  api.post(`/api/rest/v1/proposal/${props.proposalIpfsHash}/vote`, vote).then((response) => {
+  api.post(`/api/rest/v1/proposal/${props.proposalIpfsHash}/vote`, vote).then(() => {
     emit('voted', vote);
-    Notify.create({ message: 'Successfuly voted on proposal!', position: 'top-right', color: 'green' });
+    Notify.create({ message: 'Successfully voted on proposal!', position: 'top-right', color: 'green' });
   }, (error) => {
-    Notify.create({ message: 'Voting failed - server problem!', position: 'top-right', color: 'red' });
-    console.log(error);
+    if (error.response.status === 400 && error.response.data?.errorCode === '1') {
+      emit('differentVotingPower', {
+        votingPower: error.response.data.readVotingPower,
+        proposalBlock: error.response.data.proposalBlock,
+        decision,
+      });
+      return;
+    } else {
+      Notify.create({ message: 'Voting failed - server problem.', position: 'top-right', color: 'red' });
+      console.log(error);
+    }
   });
 };
 

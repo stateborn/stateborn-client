@@ -1,16 +1,8 @@
 <template>
   <q-card class="stateborn-card" square>
-    <picture-parallax
-      image-src="/proposalbody2noise.webp"
-      alt="proposal body image"
-      :text-class="$q.platform.is.mobile ? 'text-subtitle2 text-black q-pa-xs': 'text-h5 text-black text-center q-pa-md'"
-      opacity="0.83"
-      :line-height="$q.platform.is.mobile ? '1.1rem' : '1.5rem'"
-      :title="props.proposal.clientProposal.title"
-      :style="$q.platform.is.mobile ? 'height: 100px !important;' :''"
-      :height="$q.platform.is.mobile ? '406': '150'">
-    height="150">
-    </picture-parallax>
+    <q-card-section class="" style="border-bottom: 10px solid white">
+      <span class="text-subtitle2 text-bold">Title:</span> <span class="text-bold text-h5">{{props.proposal.clientProposal.title}}</span>
+    </q-card-section>
     <q-card-section>
       <div class="row text-subtitle2" v-if="props.proposal.ipfsHash"><div class="col text-bold">IPFS hash</div>
         <div class="col text-right">{{ $q.platform.is.mobile ? `${props.proposal.ipfsHash.substring(0, 10)}...` : props.proposal.ipfsHash }}</div>
@@ -34,7 +26,7 @@
               Proposal content and validity is confirmed based on IPFS document data.
             </q-tooltip>
             <q-tooltip v-else class="stateborn-tooltip">
-              Some of votes returned by server are not valid.
+              Proposal returned by backend is not equal to IPFS document data. This can be caused by a backend error or by a malicious backend.
             </q-tooltip>
           </q-icon>
         </div>
@@ -54,8 +46,9 @@
       </div>
 
     </q-card-section>
-    <q-card-section>
-      <proposal-description-markdown :description="props.proposal.clientProposal.description"></proposal-description-markdown>
+    <q-card-section class="text-h5" style="border-bottom: 10px solid white">
+      <div class="row text-subtitle2 text-bold"><div class="col text-bold">Description</div></div>
+      <proposal-description-markdown class="q-pt-md" :description="props.proposal.clientProposal.description"></proposal-description-markdown>
     </q-card-section>
   </q-card>
 </template>

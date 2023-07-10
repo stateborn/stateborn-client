@@ -3,7 +3,7 @@
     <q-card-section style="padding:0px;">
       <div class="row justify-center items-center">
         <div class="col-auto justify-center q-pa-xs">
-          <q-icon name="fa-solid fa-square-poll-vertical" style="font-size: 1.5rem !important;"></q-icon>
+          <q-icon name="fa-solid fa-square-poll-vertical" color="primary" style="font-size: 1.5rem !important;"></q-icon>
         </div>
         <div class="col-auto justify-center">
           <div class="text-h6 text-center">
@@ -11,7 +11,6 @@
           </div>
         </div>
       </div>
-      <q-separator class="q-mb-xs q-mt-xs"/>
       <q-linear-progress stripe size="40px" class="q-mb-xs" :color="result.option === highestResultOption ? 'green-5' : 'grey-8'" :value="result.value"
                          v-for="result of results" v-bind:key="result.label">
         <div class="absolute-full flex flex-center text-subtitle2">

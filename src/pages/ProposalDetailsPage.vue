@@ -39,7 +39,10 @@
               <dao-card-min :full-width="true" class="q-ma-md" :dao="dao" v-if="dao !== undefined" :show-token-address="true"></dao-card-min>
               <VoteCard
                 class="q-ma-md"
+                :trigger-voting-after-different-voting-power-acceptance="triggerVotingAfterDifferentVotingPowerAcceptance"
+                :decision-after-different-power-acceptance="decisionAfterDifferentPowerAcceptance"
                 :proposal-options="proposal.clientProposal.data?.options"
+                :proposal-block-number="proposal.clientProposal.blockNumber"
                 :token-balance="tokenBalance"
                 :token-chain-id="dao !== undefined ? dao.clientDao.token.chainId : ''"
                 :proposal-ipfs-hash="proposalIpfsHash"
@@ -47,6 +50,7 @@
                 :token-symbol="dao !== undefined ? dao.clientDao.token.symbol : ''"
                 :is-proposal-ended="isProposalEnded"
                 @voted="onVoted"
+                @different-voting-power="onDifferentVotingPower"
                 v-if="proposal !== undefined">
               </VoteCard>
               <ProposalCountdownCard class="q-ma-md"
@@ -64,6 +68,7 @@
                               v-if="proposal !== undefined"></UserVotesTable>
               <ValidityCard class="q-ma-md"
                             :proposal-ipfs-hash="proposalIpfsHash"
+                            :token-chain-id="dao !== undefined ? dao.clientDao.token.chainId : ''"
                             :proposal-report="proposalReport"
                             v-if="proposal !== undefined && proposalReport !== undefined && isProposalEnded">
               </ValidityCard>
@@ -74,11 +79,32 @@
           <div class="col-12">
             <VotesTable class="q-ma-md" :votes-count="votesCount"
                         :distinct-votes-count="distinctVotesCount"
-                        :votes="votes" @rendered="onVotesRendered" @votesTableRequest="onVotesTableRequest"></VotesTable>
+                        :votes="votes" @rendered="onVotesRendered" @votesTableRequest="onVotesTableRequest">
+            </VotesTable>
           </div>
         </div>
       </div>
     </div>
+    <q-dialog v-model="showDifferentVotingPowerDialog">
+      <q-card class="noisered text-subtitle2">
+        <q-card-section class="row items-center">
+          <q-avatar icon="fa-solid fa-info" size='md' color="primary" text-color="white" square/>
+          <span class="q-ml-lg text-h5" >Confirm vote</span>
+          <q-space />
+          <q-btn icon="close" flat round dense v-close-popup />
+        </q-card-section>
+        <q-card-section style="padding-top: 0; margin-top:0;">
+          Your voting power is different than previously estimated. <br>
+          Your token balance at proposal block <b>{{readProposalBlock}}</b> is <b>{{tokenBalance}}</b>. <br>
+          This value will be used as your voting power for proposal vote.
+          Please confirm the value and vote or cancel.
+        </q-card-section>
+        <q-card-actions align="right">
+          <q-btn label="Cancel" color="red" v-close-popup />
+          <q-btn label="Vote" color="primary" @click="triggerVotingAfterDifferentVotingPowerAcceptance = true" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -105,13 +131,13 @@ import { getDao } from 'src/api/services/dao-service';
 import { DaoBackend } from 'src/api/model/dao-backend';
 import { compareAndUpdateProposalWithIpfsProposalIfNeeded, getProposal } from 'src/api/services/proposal-service';
 import { ProposalReport } from 'src/api/model/proposal-report';
-import { getProposalReportFromStorage } from 'src/api/services/local-storage-service';
 import { BackendProposal } from 'src/api/model/backend-proposal';
 import { ProposalResultDto } from 'src/api/dto/proposal-result-dto';
 import { TOKEN_SERVICE } from 'src/api/services/token-service';
 import { DaoTokenType } from 'src/api/model/ipfs/dao-token-type';
 import { sleep } from 'src/api/services/sleep-service';
 import height = dom.height;
+import { getProposalReport } from 'src/api/services/proposal-report-service';
 
 const route = useRoute();
 const proposal = ref(<BackendProposal | undefined> undefined);
@@ -127,6 +153,10 @@ const isProposalEnded = ref(false);
 const canShowScrollArea = ref(false);
 const votesCount = ref('1');
 const distinctVotesCount = ref('1');
+const showDifferentVotingPowerDialog = ref(false);
+const readProposalBlock = ref('0');
+const triggerVotingAfterDifferentVotingPowerAcceptance = ref(false);
+const decisionAfterDifferentPowerAcceptance = ref('');
 // eslint-disable-next-line
 const proposalScrollHeight = ref(0);
 const dao = ref(<DaoBackend | undefined > undefined);
@@ -189,9 +219,10 @@ const fetchProposalData = async () => {
     compareAndUpdateProposalWithIpfsProposalIfNeeded(proposalIpfsHash);
     proposal.value = _;
     isProposalEnded.value = dayjs().isAfter(proposal.value.clientProposal.endDateUtc);
-    if (isProposalEnded.value) {
-      getProposalReportFromStorage(proposalIpfsHash).then((proposalReportFromStorage) => {
-        proposalReport.value = proposalReportFromStorage;
+    if (isProposalEnded.value === true) {
+      getProposalReport(proposalIpfsHash).then((_) => {
+        console.log(_);
+        proposalReport.value = _;
       }, (error) => {
         console.log(error);
       });
@@ -238,5 +269,12 @@ const onVoted = async (vote: any) => {
 
 const onVotesTableRequest = (pagination: any) => {
   fetchTableVotes(pagination.rowsPerPage, (pagination.page - 1) * pagination.rowsPerPage);
+};
+
+const onDifferentVotingPower = (data: any) => {
+  tokenBalance.value = data.votingPower;
+  readProposalBlock.value = data.proposalBlock;
+  decisionAfterDifferentPowerAcceptance.value = data.decision;
+  showDifferentVotingPowerDialog.value = true;
 };
 </script>

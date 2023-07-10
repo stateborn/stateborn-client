@@ -5,7 +5,6 @@ import { getIpfsJsonFile } from 'src/api/services/ipfs-service';
 import { ProposalVerification } from 'src/api/model/proposal-verification';
 import { abiEncodeProposal, isProposalValid } from 'src/api/services/signature-service';
 import { ClientProposal } from 'src/api/model/ipfs/client-proposal';
-import { ProposalReport } from 'src/api/model/proposal-report';
 
 export const getProposal = async (proposalIpfsHash: string): Promise<BackendProposal> => {
   const proposal: BackendProposal | undefined = await getProposalFromStorage(proposalIpfsHash);

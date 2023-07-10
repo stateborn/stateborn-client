@@ -3,11 +3,10 @@
     <div class="row justify-center text-center items-center q-pt-xs" style="height:50px" >
       <div class="col-auto justify-center items-center">
         <div class="text-subtitle2" style="line-height: 1.5rem">
-         <span class="text-bold"> <span v-if="props.fullWidth">DAO:</span> {{ props.dao.clientDao.name }}</span>
+         <span class="text-bold">  {{ props.dao.clientDao.name }}</span>
         </div>
       </div>
     </div>
-    <q-separator class="q-mt-xs q-mb-md"></q-separator>
     <div class="row items-center">
       <div class="col-auto">
         <q-img
@@ -17,7 +16,7 @@
       </div>
       <div class="col-grow" style="padding:0; margin:0;">
         <q-list style="padding: 2px; margin:2px;">
-          <q-item dense style="">
+          <q-item dense>
             <q-item-section avatar  >
               <q-icon color="primary" size="xs" name="fa-solid fa-circle-info"/>
             </q-item-section>
@@ -51,7 +50,7 @@
             </q-item-section>
           </q-item>
 
-          <q-item clickable v-if="showTokenAddress" @click="goToEtherscan(props.dao.clientDao.token.address)">
+          <q-item dense clickable v-if="showTokenAddress" @click="goToEtherscan(props.dao.clientDao.token.address)">
             <q-item-section avatar>
               <q-icon color="primary" size="xs" name="fa-solid fa-arrow-up-right-from-square"/>
             </q-item-section>

@@ -15,15 +15,18 @@ body {
   background-repeat: repeat;
 }
 
-.noise2 {
-  background-color: white;
+.headernoise {
   background-image: url('/noise6.webp');
   background-repeat: repeat;
 }
 
 .noise {
-  background-color: white;
   background-image: url('/noise5.webp');
+  background-repeat: repeat;
+}
+
+.bodynoise {
+  background-image: url('/noise4.webp');
   background-repeat: repeat;
 }
 
@@ -44,7 +47,7 @@ body {
 }
 
 .noiseredcard {
-  background-image: url('/noisered.png');
+  background-image: url('/noisered.webp');
   background-repeat: repeat;
   box-shadow: 0px 0px 0px 0px #9E9E9E;
 }

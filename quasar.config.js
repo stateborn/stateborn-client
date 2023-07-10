@@ -72,7 +72,7 @@ module.exports = configure(function (ctx) {
       // publicPath: '/',
       // analyze: true,
       env: {
-        DEFAULT_IPFS_GATEWAY: ctx.dev ? 'http://localhost:5001/api/v0' : 'https://stateborn.org/api/v0',
+        DEFAULT_IPFS_GATEWAY: ctx.dev ? 'http://localhost:8080/api/v0' : 'https://stateborn.org/api/v0',
         IS_LOCALHOST: ctx.dev,
       },
       // rawDefine: {}

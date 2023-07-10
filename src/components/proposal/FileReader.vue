@@ -10,7 +10,7 @@
     style="width: 100%"
     :filter="checkFileType"
     color="grey-3"
-    class="noise2"
+    class="bodynoise"
     text-color="primary"
     :hide-upload-btn="true"
   >

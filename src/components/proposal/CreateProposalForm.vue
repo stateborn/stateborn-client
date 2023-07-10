@@ -9,7 +9,7 @@
       <span class="text-bold text-red">Please connect first</span>
     </q-banner>
     <q-banner class="text-black text-subtitle2 text-center noisered q-ma-xs q-mt-md q-mb-md" v-if="ethConnectionStore.isConnected && !hasRequiredAmountOfTokens">
-      You need at least <span class="text-bold">{{props.dao.clientDao.proposalTokenRequiredQuantity}} {{props.dao.clientDao.token.symbol}} to create a proposal </span><br>
+      You need at least <span class="text-bold">{{props.dao.clientDao.proposalTokenRequiredQuantity}} {{props.dao.clientDao.token.symbol}}</span> to create a proposal <br>
       You have: <span class="text-bold">{{tokenBalance}} {{props.dao.clientDao.token.symbol}}</span>
     </q-banner>
     <q-banner class="text-black text-bold text-subtitle2 text-center noisered items-center" v-if="ethConnectionStore.isConnected && !connectedNetworkMatchesTokenNetwork">
@@ -54,7 +54,7 @@
           type="number"
           label="Duration (time for voting)"
           suffix="hours"
-          :error="durationHours <= 1"
+          :error="durationHours < 1"
         >
           <template v-slot:error>
             Proposal duration must be at least 1 hour.
@@ -72,15 +72,15 @@
     <q-dialog v-model="showSignProposalDialog">
       <q-card class="noisegreen text-subtitle2">
         <q-card-section class="row items-center">
-          <q-avatar icon="fa-solid fa-info" size='md' color="primary" text-color="white" square/>
+          <q-avatar icon="fa-solid fa-key" size='md' color="primary" text-color="white" square/>
           <span class="q-ml-lg text-h5" >Sign proposal data</span>
           <q-space />
           <q-btn icon="close" flat round dense v-close-popup />
         </q-card-section>
         <q-card-section style="padding-top: 0; margin-top:0;">
-          Your browser wallet just requested you to digitally sign a data.
-          The data contains all the information you just provided in the form.
-          This operation is free and doesn't interact with blockchain.
+            Your browser wallet just requested you to digitally sign a data.
+            The data contains all the information you just provided in the form.
+            This operation is free and doesn't interact with blockchain.
         </q-card-section>
       </q-card>
     </q-dialog>
@@ -127,7 +127,7 @@ const props = defineProps<{
 
 const isFormValid = computed(() => {
   return ethConnectionStore.isConnected && hasRequiredAmountOfTokens.value === true && title.value.trim() !== ''
-  && description.value.trim() !== '' && durationHours.value > 1;
+  && description.value.trim() !== '' && durationHours.value >= 1;
 });
 
 const proposalOptionAdded = (currentProposalOptions: string[]) => {
@@ -174,7 +174,7 @@ const onFileUploaded = (res: any) => {
   } else {
     imagesMap.set(res.fileName, {
       fileName: res.fileName,
-      file: `\n<a href="data:application/pdf;base64,${res.base64File}" download="${res.fileName}">${res.fileName}</a>`,
+      file: `\n<a href="data:application/pdf;base64,${res.base64File}" download="${res.fileName}" style='text-decoration: underline;'>${res.fileName}</a>`,
     });
     description.value += calculateCommentPrefixWithSpace(res.fileName);
   }
@@ -191,7 +191,7 @@ const readTokenBalance = async () => {
       props.dao.clientDao.token.type,
       props.dao.clientDao.token.decimals).then((res) => {
       tokenBalance.value = res;
-      console.log('mam se balance', tokenBalance.value);
+      console.log('token balance', tokenBalance.value);
     }, (error) => {
       console.log(error);
     });

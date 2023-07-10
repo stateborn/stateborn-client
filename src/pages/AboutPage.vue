@@ -84,10 +84,10 @@
             <div class="q-pt-md q-pb-xs" :class="$q.platform.is.mobile ? 'text-h5' : 'text-h4'">Votes</div>
             Users owning a DAO token can vote on proposals.
             Every vote is an immutable document saved in IPFS.
-            <div class="q-pt-md q-pb-xs" :class="$q.platform.is.mobile ? 'text-h5' : 'text-h4'">Proposal reports</div>
-            A proposal report is a proposal voting summary generated when the proposal voting period ends.
+            <div class="q-pt-md q-pb-xs" :class="$q.platform.is.mobile ? 'text-h5' : 'text-h4'">Proposal summary reports</div>
+            A proposal summary report is a proposal voting summary generated when the proposal voting period ends.
             It allows to validate all the votes and obtain final proposal decision result.
-            Every proposal report is an immutable document saved in IPFS.<br><br><br>
+            Every proposal summary report is an immutable document saved in IPFS.<br><br><br>
 
             Creating DAOs, proposals and votes is cryptographically client side signed by the users. This provides a digital data seal
             which allows to prove validity, authenticity and ownership of every single DAO related data.<br><br>
@@ -100,7 +100,7 @@
               <template v-slot:avatar>
                 <q-icon name="fa-regular fa-lightbulb" color="primary" />
               </template>
-              Every DAO, proposal, vote and proposal report is an immutable document saved in IPFS. Every DAO, proposal and vote
+              Every DAO, proposal, vote and proposal summary report is an immutable document saved in IPFS. Every DAO, proposal and vote
               is cryptographically client side signed by the users. This provides a digital data seal which allows to prove validity, authenticity and ownership of every single DAO related data.
             </q-banner>
 
@@ -128,13 +128,13 @@
             only validates the data before saving it to IPFS. It is possible to retrieve all the DAOs, proposals and votes related information directly from
             blockchain and IPFS. Proposals attachments like images or PDF documents are directly encoded in IPFS document.
 
-            <div class="q-pt-md q-pb-xs" :class="$q.platform.is.mobile ? 'text-h5' : 'text-h4'"> Every DAO, proposal, user vote and proposal report is client side validated with IPFS</div>
+            <div class="q-pt-md q-pb-xs" :class="$q.platform.is.mobile ? 'text-h5' : 'text-h4'"> Every DAO, proposal, user vote and proposal summary report is client side validated with IPFS</div>
             Data returned by stateborn backend is validated with data saved in IPFS. It eliminates the possibility to rely on malformed
             or incorrect data from the backend. In any case of stateborn backend data manipulation, user will see the validation result in stateborn.org interface.
             Moreover, users have the possibility to <b>set custom IPFS gateway address in stateborn.org user interface</b> in order to validate the data with custom IPFS gateway.
 
-            <div class="q-pt-md q-pb-xs" :class="$q.platform.is.mobile ? 'text-h5' : 'text-h4'"> Every DAO, proposal, user vote and proposal report is stored in the client side database (IndexedDB)</div>
-            Every DAO, proposal and user vote related data is saved to user's Internet browser database (IndexedDB). DAOs, proposals and proposal reports are
+            <div class="q-pt-md q-pb-xs" :class="$q.platform.is.mobile ? 'text-h5' : 'text-h4'"> Every DAO, proposal, user vote and proposal summary report is stored in the client side database (IndexedDB)</div>
+            Every DAO, proposal and user vote related data is saved to user's Internet browser database (IndexedDB). DAOs, proposals and proposal summary reports are
             saved to client database after first fetching from backend and validation with IPFS. User votes are saved to client database
             even before sent to backend in order to examine the possibility of stateborn backend votes censorship (not submission).
             This enhances the process of client side validation but also provides theoretically the possibility to rebuild the DAO
@@ -194,22 +194,22 @@
 
 
             <div class="q-pt-md q-pb-xs" :class="$q.platform.is.mobile ? 'text-h5' : 'text-h4'">
-              3. Voting period ends. A proposal report is generated.
+              3. Voting period ends. A proposal summary report is generated.
             </div>
-            Proposal report is an IPFS document describing the result of the voting process. It contains the list of users votes
-            with references to IPFS documents containing the votes. Based on the proposal report, the final result and voting
+            Proposal summary report is an IPFS document describing the result of the voting process. It contains the list of users votes
+            with references to IPFS documents containing the votes. Based on the proposal summary report, the final result and voting
             decision can be obtained.
 
-            Every user previewing the ended proposal in stateborn.org interface fetches the proposal report from backend and then directly from IPFS.
-            Then the proposal report is validated to include correct single vote of user previewing the proposal.
-            In any case of invalid vote inclusion in the proposal report, user will see the validation result in stateborn.org interface.
+            Every user previewing the ended proposal in stateborn.org interface fetches the proposal summary report from backend and then directly from IPFS.
+            Then the proposal summary report is validated to include correct single vote of user previewing the proposal.
+            In any case of invalid vote inclusion in the proposal summary report, user will see the validation result in stateborn.org interface.
 
             <q-banner dense class="q-mt-xs q-mb-xs noisegreencard">
               <template v-slot:avatar>
                 <q-icon name="fa-regular fa-lightbulb" color="primary" />
               </template>
-              For every ended proposal previewed on stateborn.org interface the proposal report is fetched from backend.
-              Then the proposal report document is fetched from IPFS and is verified to include the correct single vote of user previewing the proposal.
+              For every ended proposal previewed on stateborn.org interface the proposal summary report is fetched from backend.
+              Then the proposal summary report document is fetched from IPFS and is verified to include the correct single vote of user previewing the proposal.
             </q-banner>
           </div>
         </div>

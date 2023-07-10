@@ -17,15 +17,15 @@
         Unique votes: <span class="text-bold">{{props.distinctVotesCount}}</span>
         <q-icon color="primary" name="fa-solid fa-circle-info" class="q-pl-xs" style="margin-bottom: 3px">
           <q-tooltip class="stateborn-tooltip">
-            All votes - all user's votes including changed votes<br>
-            Unique votes - only final user's votes (last submitted), single vote per user
+            All votes - all addresses votes including changed votes<br>
+            Unique votes - only final address votes (last submitted), 1 vote/address
           </q-tooltip>
         </q-icon>
       </div>
     </template>
       <template v-slot:body="props">
       <q-tr :props="props" class="text-subtitle2"
-            :class="(props.row.vote === 'YES' || props.row.vote === 'NO') ? (props.row.vote === 'YES' ? 'noisegreen' : 'noisered') : 'bg-white'">
+            :class="(props.row.vote === 'YES' || props.row.vote === 'NO') ? (props.row.vote === 'YES' ? 'noisegreen' : 'noisered') : 'bodynoise'">
         <q-td key="voterAddress" :props="props">
           {{ props.row.voterAddress }}
           <q-btn flat round color="primary" size="xs" class="q-pl-xs" icon="fa-solid fa-arrow-up-right-from-square"
