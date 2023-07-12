@@ -74,6 +74,10 @@ module.exports = configure(function (ctx) {
       env: {
         DEFAULT_IPFS_GATEWAY: ctx.dev ? 'http://localhost:8080/api/v0' : 'https://stateborn.org/api/v0',
         IS_LOCALHOST: ctx.dev,
+        DEVELOPMENT_NETWORK_CHAIN_ID: '31337',
+        DEVELOPMENT_NETWORK_CHAIN_ID_HEX: '0x7A69',
+        DEVELOPMENT_NETWORK_NAME: 'Hardhat localhost',
+        DEVELOPMENT_NETWORK_ICON_NAME: '/hardhat.png',
       },
       // rawDefine: {}
       // ignorePublicFolder: true,

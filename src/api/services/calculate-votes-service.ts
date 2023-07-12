@@ -9,7 +9,7 @@ import { ProposalReportStorage } from 'src/api/model/proposal-report-storage';
 import dayjs from 'dayjs';
 
 export const calculateUserVotesAndGetProposalReportStorage = async (proposalReportIpfsHash: string, proposalIpfsHash: string, userAddress: string): Promise<ProposalReportStorage> => {
-  let proposalReportStorage: ProposalReportStorage | undefined = await getClientProposalReportFromStorage(proposalIpfsHash);
+  let proposalReportStorage: ProposalReportStorage | undefined = await getClientProposalReportFromStorage(proposalIpfsHash, userAddress);
   if (proposalReportStorage === undefined) {
     const ipfsProposalReport = await getIpfsJsonFile(proposalReportIpfsHash);
     const merkleTreeService = new MerkleTreeService();
@@ -58,7 +58,7 @@ export const calculateUserVotesAndGetProposalReportStorage = async (proposalRepo
           ipfsUserVote
         );
       } else {
-        const userVoteStorage = await getUserVoteFromStorage(proposalIpfsHash);
+        const userVoteStorage = await getUserVoteFromStorage(proposalIpfsHash, userAddress);
         // If user didn't clear their storage, it should be saved on voting
         // but can be also empty because user uses different browser or cleared storage
         // in that case this validation must be skipped
@@ -136,7 +136,7 @@ export const calculateUserVotesAndGetProposalReportStorage = async (proposalRepo
         );
       }
     }
-    await setClientProposalReport(proposalIpfsHash, proposalReportStorage);
+    await setClientProposalReport(proposalIpfsHash, userAddress, proposalReportStorage);
     return proposalReportStorage;
   }
   console.log(`Proposal ${proposalIpfsHash} was already client side validated at ${proposalReportStorage.validationDate}`);

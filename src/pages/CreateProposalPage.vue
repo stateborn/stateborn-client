@@ -12,8 +12,7 @@
         ></picture-parallax>
         <div class="row justify-center noise q-mt-md q-mb-md">
           <div class="col-auto justify-center">
-            <dao-card-min  :dao="dao"  v-if="dao !== undefined" :full-width="true"
-            :show-required-token-quantity="true"></dao-card-min>
+            <dao-card-min  :dao="dao"  v-if="dao !== undefined" :full-width="true" :show-required-token-quantity="true"></dao-card-min>
           </div>
         </div>
         <CreateProposalCard @proposal-changed="proposalChanged"></CreateProposalCard>

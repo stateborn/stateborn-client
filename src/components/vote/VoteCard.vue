@@ -20,7 +20,8 @@
             <q-icon color="primary" name="fa-solid fa-circle-info" class="q-pl-xs">
               <q-tooltip  class="stateborn-tooltip">
                 This is your voting power based on latest block balance. <br>
-                Voting power available for this proposal will be validated by backend based on proposal creation block {{props.proposalBlockNumber}}.
+                Voting power available for this proposal will be validated <br>
+                by backend based on proposal creation block {{props.proposalBlockNumber}}.
               </q-tooltip>
             </q-icon>
           </div>

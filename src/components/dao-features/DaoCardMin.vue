@@ -22,7 +22,10 @@
             </q-item-section>
 
             <q-item-section >
-              <q-item-label>{{ props.dao.clientDao.token.symbol }} | {{props.dao.clientDao.token.type}}</q-item-label>
+              <q-item-label>{{ props.dao.clientDao.token.symbol }} | <q-badge style="padding:5px" :label="props.dao.clientDao.token.type"
+                                                                              :color="props.dao.clientDao.token.type === DaoTokenType.ERC20 ? 'primary' : 'secondary'"
+                                                                              :text-color="props.dao.clientDao.token.type === DaoTokenType.ERC20 ? 'white' : 'black'"></q-badge>
+              </q-item-label>
               <q-item-label caption class="text-primary">Token symbol | type</q-item-label>
             </q-item-section>
           </q-item>
@@ -50,13 +53,13 @@
             </q-item-section>
           </q-item>
 
-          <q-item dense clickable v-if="showTokenAddress" @click="goToEtherscan(props.dao.clientDao.token.address)">
+          <q-item dense clickable v-if="showTokenAddress" @click="goToEtherscan(props.dao.clientDao.token.address, props.dao.clientDao.token.chainId)">
             <q-item-section avatar>
               <q-icon color="primary" size="xs" name="fa-solid fa-arrow-up-right-from-square"/>
             </q-item-section>
 
             <q-item-section>
-              <q-item-label>{{ `${props.dao.clientDao.token.address.substring(0, 20)}...` }}</q-item-label>
+              <q-item-label>{{ `${props.dao.clientDao.token.address.substring(0, 14)}...` }}</q-item-label>
               <q-item-label caption class="text-primary">Token address</q-item-label>
             </q-item-section>
           </q-item>
@@ -88,6 +91,7 @@
 import { DaoBackend } from 'src/api/model/dao-backend';
 import { TOKEN_SERVICE } from 'src/api/services/token-service';
 import { goToEtherscan } from 'src/api/services/utils-service';
+import { DaoTokenType } from 'src/api/model/ipfs/dao-token-type';
 
 const props = defineProps<{
   dao: DaoBackend,

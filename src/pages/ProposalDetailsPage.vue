@@ -21,6 +21,7 @@
               v-if="!$q.platform.is.mobile">
               <FullProposalCard
                 class="q-ma-md"
+                :dao-token-chain-id="dao?.clientDao?.token?.chainId"
                 :proposal-verification="proposal?.proposalVerification"
                 :proposal="proposal"
                 v-if="proposal !== undefined">
@@ -29,6 +30,7 @@
             <FullProposalCard
               v-else
               class="q-ma-md"
+              :dao-token-chain-id="dao?.clientDao?.token?.chainId"
               :proposal-verification="proposal.proposalVerification"
               :proposal="proposal"
               v-if="proposal !== undefined">
@@ -79,6 +81,7 @@
           <div class="col-12">
             <VotesTable class="q-ma-md" :votes-count="votesCount"
                         :distinct-votes-count="distinctVotesCount"
+                        :dao-token-chain-id="dao?.clientDao?.token?.chainId"
                         :votes="votes" @rendered="onVotesRendered" @votesTableRequest="onVotesTableRequest">
             </VotesTable>
           </div>
@@ -245,7 +248,7 @@ const fetchUserVotes = async () => {
   api.get(`/api/rest/v1/proposal/${proposalIpfsHash}/${ethConnectionStore.account}/votes`).then(async (res) => {
     console.log('user votes', res.data);
     for (const userVote of res.data) {
-      await fetchAndStoreIpfsVoteInStorage(proposalIpfsHash, userVote.ipfsHash);
+      await fetchAndStoreIpfsVoteInStorage(proposalIpfsHash, userVote.ipfsHash, userVote.voterAddress);
     }
     userVotes.value = res.data;
   }, (error) => {
@@ -263,7 +266,7 @@ watch(() => [ethConnectionStore.isConnected, ethConnectionStore.networkName], as
 });
 
 const onVoted = async (vote: any) => {
-  await storeVoteCreatedByUser(proposalIpfsHash, vote.clientVote, vote.userSignature);
+  await storeVoteCreatedByUser(proposalIpfsHash, vote.clientVote, vote.userSignature, ethConnectionStore.account);
   await fetchProposalData();
 };
 

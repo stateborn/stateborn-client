@@ -3,37 +3,36 @@ import { UserVoteStorage } from 'src/api/model/user-vote-storage';
 import Dexie from 'dexie';
 import { BackendProposal } from 'src/api/model/backend-proposal';
 import { DaoBackend } from 'src/api/model/dao-backend';
-import { ProposalReport } from 'src/api/model/proposal-report';
 
 const db = new Dexie('stateborndb');
 
 // Declare tables, IDs and indexes
 db.version(1).stores({
-  votes: 'proposalIpfsHash, vote',
-  clientProposalReports: 'proposalIpfsHash, proposalReport',
+  votes: 'proposalIpfsHash_userAddress, vote',
+  clientProposalReports: 'proposalIpfsHash_userAddress, proposalReport',
   proposals: 'proposalIpfsHash, proposal',
   daos: 'daoIpfsHash, dao',
 });
 
-export const getClientProposalReportFromStorage = async (proposalIpfsHash: string): Promise<ProposalReportStorage | undefined> => {
-  const item = await db.clientProposalReports.where("proposalIpfsHash").equals(proposalIpfsHash).first();
+export const getClientProposalReportFromStorage = async (proposalIpfsHash: string, userAddress: string): Promise<ProposalReportStorage | undefined> => {
+  const item = await db.clientProposalReports.where("proposalIpfsHash_userAddress").equals(`${proposalIpfsHash}_${userAddress}`).first();
   return item !== undefined ? JSON.parse(item.proposalReport) : undefined;
 };
 
-export const getUserVoteFromStorage = async (proposalIpfsHash: string): Promise<UserVoteStorage | undefined> => {
-  const item = await db.votes.where("proposalIpfsHash").equals(proposalIpfsHash).first();
-  return item !== undefined ? JSON.parse(item.vote) : undefined;
-
-};
-export const setClientProposalReport = async (proposalIpfsHash: string, proposalReportStorage: ProposalReportStorage) => {
+export const setClientProposalReport = async (proposalIpfsHash: string, userAddress: string, proposalReportStorage: ProposalReportStorage) => {
   await db.clientProposalReports.put({
-    proposalIpfsHash,
+    proposalIpfsHash_userAddress: `${proposalIpfsHash}_${userAddress}`,
     proposalReport: JSON.stringify(proposalReportStorage),
   });
 }
-export const setUserVote = async (proposalIpfsHash: string, userVoteStorage: UserVoteStorage) => {
+export const getUserVoteFromStorage = async (proposalIpfsHash: string, userAddress: string): Promise<UserVoteStorage | undefined> => {
+  const item = await db.votes.where("proposalIpfsHash_userAddress").equals(`${proposalIpfsHash}_${userAddress}`).first();
+  return item !== undefined ? JSON.parse(item.vote) : undefined;
+
+};
+export const setUserVote = async (proposalIpfsHash: string, userAddress: string, userVoteStorage: UserVoteStorage) => {
   await db.votes.put({
-    proposalIpfsHash,
+    proposalIpfsHash_userAddress: `${proposalIpfsHash}_${userAddress}`,
     vote: JSON.stringify(userVoteStorage),
   });
 }

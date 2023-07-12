@@ -9,12 +9,14 @@
       <span class="text-bold text-red">Please connect first</span>
     </q-banner>
     <q-input square outlined filled label="DAO name" v-model="name" class="q-pa-xs" maxlength="60" counter :disable="!ethConnectionStore.isConnected"
+             :class="(ethConnectionStore.isConnected && flashNameBorder) ? 'flashingBorder' : ''"
     :error="name.trim() === ''">
       <template v-slot:error>
         Please provide a name for your DAO.
       </template>
     </q-input>
     <q-input counter filled square label="DAO description" v-model="description" maxlength="120" class="q-pa-xs q-pt-lg" :disable="!ethConnectionStore.isConnected"
+             :class="(ethConnectionStore.isConnected && flashDescriptionBorder) ? 'flashingBorder' : ''"
      :error="description.trim() === ''">
       <template v-slot:error>
         Please provide a short description of your DAO.
@@ -32,6 +34,7 @@
     </q-banner>
     <q-input square filled label="DAO governance token address" v-model="tokenAddress"
              :error="tokenAddress.trim() === '' && ethConnectionStore.isConnected"
+             :class="(ethConnectionStore.isConnected && flashTokenAddressBorder) ? 'flashingBorder' : ''"
              class="q-pa-xs q-pt-lg" :disable="!ethConnectionStore.isConnected">
       <template v-slot:error>
         Please provide address of your DAO governance token (ERC-20 or NFT).
@@ -40,7 +43,7 @@
     <div v-if="tokenName !== ''">
       <q-input square dense readonly outlined prefix="Token name:" v-model="tokenName" class="q-pa-xs" debounce="500"></q-input>
       <q-input square dense readonly outlined prefix="Token symbol:" v-model="tokenSymbol" class="q-pa-xs"></q-input>
-      <q-input square dense readonly outlined prefix="Token type:" v-model="tokenType" class="q-pa-xs"></q-input>
+      <q-input square dense readonly outlined prefix="Token type:" v-model="tokenType" class="q-pa-xs" ></q-input>
       <q-input square dense readonly outlined prefix="Token decimals:" v-model="decimals" v-if="decimals !== ''" class="q-pa-xs"></q-input>
       <q-input square dense readonly outlined prefix="Token network:" v-model="ethConnectionStore.networkName" class="q-pa-xs">
         <template v-slot:prepend>
@@ -56,6 +59,7 @@
       filled
       class="q-pa-xs q-pt-lg"
       v-model.number="minimalTokens"
+      :class="(ethConnectionStore.isConnected && flashTokensRequiredBorder) ? 'flashingBorder' : ''"
       type="number"
       :error="minimalTokens <= 0"
       label="Minimal tokens required for proposal creation"
@@ -76,7 +80,7 @@
       </q-tooltip>
     </q-input>
 
-    <div class="row justify-center items-center" v-if="!skipDaoPicture">
+    <div class="row justify-center items-center q-pt-md" v-if="!skipDaoPicture">
       <div class="col-6">
         <file-reader class="q-pa-xs"
                      :disable="!ethConnectionStore.isConnected"
@@ -161,9 +165,27 @@ const showSignDaoDialog = ref(false);
 const proposalType = ref({ value: 'YES/NO', label: 'YES / NO - vote YES or NO' });
 const minimalTokens = ref(100);
 const skipDaoPicture = ref(false);
+const flashNameBorder = ref(true);
+const flashDescriptionBorder = ref(true);
+const flashTokenAddressBorder = ref(true);
+const flashTokensRequiredBorder = ref(true);
 const proposalOptions = ref(<string[]>[]);
 const emit = defineEmits(['proposalChanged']);
 const router = useRouter();
+
+watch(() => name.value, () => {
+  flashNameBorder.value = false;
+});
+watch(() => description.value, () => {
+  flashDescriptionBorder.value = false;
+});
+watch(() => tokenAddress.value, () => {
+  flashTokenAddressBorder.value = false;
+});
+watch(() => minimalTokens.value, () => {
+  flashTokensRequiredBorder.value = false;
+});
+
 watch(() => ethConnectionStore.account, async () => {
   daoOwner.value = ethConnectionStore.account;
   setTokenAddress();
@@ -173,15 +195,19 @@ if (ethConnectionStore.isConnected) {
 }
 
 const setTokenAddress = () => {
-  if (ethConnectionStore.isConnected) {
+  if (ethConnectionStore.isConnected && process.env.IS_LOCALHOST) {
     if (ethConnectionStore.chainId === '1') {
       tokenAddress.value = '0xdAC17F958D2ee523a2206206994597C13D831ec7';
     } else if (ethConnectionStore.chainId === '42161') {
       //Tether Arbitrum
       tokenAddress.value = '0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9';
-    } else {
+    } else if (ethConnectionStore.chainId === '137') {
       //polygon
       tokenAddress.value = '0xc2132D05D31c914a87C6611C10748AEb04B58e8F';
+    } else {
+      // local erc-20
+      // NFT: 0x959922bE3CAee4b8Cd9a407cc3ac1C251C2007B1
+      tokenAddress.value = '0xB7f8BC63BbcaD18155201308C8f3540b07f84F5e';
     }
   }
 }

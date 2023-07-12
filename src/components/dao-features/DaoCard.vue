@@ -63,7 +63,9 @@
           </q-item-section>
 
           <q-item-section>
-            <q-item-label>{{ props.dao.clientDao.token.type }}</q-item-label>
+            <q-item-label><q-badge style="padding:5px" :label="props.dao.clientDao.token.type"
+                                   :color="props.dao.clientDao.token.type === DaoTokenType.ERC20 ? 'primary' : 'secondary'"
+                                   :text-color="props.dao.clientDao.token.type === DaoTokenType.ERC20 ? 'white' : 'black'"></q-badge></q-item-label>
             <q-item-label caption class="text-primary">Token type</q-item-label>
           </q-item-section>
         </q-item>
@@ -80,7 +82,7 @@
         </q-item>
 
 
-        <q-item clickable v-if="props.isFull" @click="goToEtherscan(props.dao.clientDao.token.address)">
+        <q-item clickable v-if="props.isFull" @click="goToEtherscan(props.dao.clientDao.token.address, props.dao.clientDao.token.chainId)">
           <q-item-section avatar>
             <q-icon color="primary" size="xs" name="fa-solid fa-arrow-up-right-from-square"/>
           </q-item-section>
@@ -125,6 +127,7 @@
 import { goToEtherscan, goToIpfs } from 'src/api/services/utils-service';
 import { DaoBackend } from 'src/api/model/dao-backend';
 import { TOKEN_SERVICE } from 'src/api/services/token-service';
+import { DaoTokenType } from 'src/api/model/ipfs/dao-token-type';
 
 const props = defineProps<{
   dao: DaoBackend,

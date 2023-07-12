@@ -43,7 +43,7 @@
         <q-td key="validity" :props="props">
           <q-icon :color="props.row.isValidated ? 'green-8' : 'red'"
                   :name="props.row.isValidated ? 'fa-solid fa-square-check' : 'fa-solid fa-square-xmark'">
-            <q-tooltip>
+            <q-tooltip class="stateborn-tooltip">
               The vote was verified client side.
             </q-tooltip>
           </q-icon>
@@ -87,7 +87,7 @@ const allVotesValid = ref(true);
 const props = defineProps(['userVotes', 'proposalIpfsHash']);
 const fillTable = () => {
   rows.value = props.userVotes.map((vote: any) => {
-    const isValid = verifyBackendReceivedVoteWithLocal(props.proposalIpfsHash, vote.ipfsHash, vote.clientVote);
+    const isValid = verifyBackendReceivedVoteWithLocal(props.proposalIpfsHash, vote.ipfsHash, vote.clientVote, vote.voterAddress);
     if (!isValid) {
       allVotesValid.value = false;
     }

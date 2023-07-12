@@ -116,3 +116,26 @@ a {text-decoration: none;color: inherit;}
   background: #424242;
   color: white;
 }
+
+
+.flashingBorder {
+  border: none;
+  transform: scale(1);
+  animation: pulse 1.2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.4);
+  }
+
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 6px rgba(0, 0, 0, 0);
+  }
+
+  100% {
+    /*transform: scale(0.98);*/
+    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+  }
+}

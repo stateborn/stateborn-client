@@ -18,7 +18,7 @@
         <q-icon color="primary" name="fa-solid fa-circle-info" class="q-pl-xs" style="margin-bottom: 3px">
           <q-tooltip class="stateborn-tooltip">
             All votes - all addresses votes including changed votes<br>
-            Unique votes - only final address votes (last submitted), 1 vote/address
+            Unique votes - only final addresses vote (last submitted), 1 vote/address
           </q-tooltip>
         </q-icon>
       </div>
@@ -29,7 +29,7 @@
         <q-td key="voterAddress" :props="props">
           {{ props.row.voterAddress }}
           <q-btn flat round color="primary" size="xs" class="q-pl-xs" icon="fa-solid fa-arrow-up-right-from-square"
-                 @click="goToEtherscan(props.row.voterAddress)"/>
+                 @click="goToEtherscan(props.row.voterAddress, daoTokenChainId)"/>
         </q-td>
         <q-td key="vote" :props="props"
               :class="(props.row.vote === 'YES' || props.row.vote === 'NO') ? (props.row.vote === 'YES' ? 'text-green' : 'text-red') : 'text-black'">
@@ -82,7 +82,7 @@ const columns = [
   },
 ];
 const rows = ref([]);
-const props = defineProps(['votes', 'votesCount', 'distinctVotesCount']);
+const props = defineProps(['votes', 'votesCount', 'distinctVotesCount', 'daoTokenChainId']);
 const emit = defineEmits(['rendered', 'votesTableRequest']);
 const initialPagination = ref({
   sortBy: 'desc',

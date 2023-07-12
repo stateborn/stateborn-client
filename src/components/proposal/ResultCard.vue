@@ -17,15 +17,15 @@
           <q-chip square color="white" text-color="black" :label="result.label"/>
         </div>
       </q-linear-progress>
-      <div class="row text-subtitle2">
+      <div class="row text-subtitle2 q-pb-md">
         <div class="col text-bold">All votes</div>
         <div class="col text-right">{{ props.proposalResultDto.totalVotes }} {{tokenSymbol}}</div>
       </div>
       <div class="row text-subtitle2" v-for="result of results" v-bind:key="result.label">
-        <div class="col text-bold">{{ result.option }} votes</div>
+        <div class="col text-bold">{{ result.option }}</div>
         <div class="col text-right">{{ result.votes }} {{tokenSymbol}}</div>
       </div>
-      <div class="row text-subtitle2">
+      <div class="row text-subtitle2 q-pt-md">
         <div class="col text-bold">Addresses voted</div>
         <div class="col text-right">{{ props.proposalResultDto.totalVotesQuantity }}</div>
       </div>
