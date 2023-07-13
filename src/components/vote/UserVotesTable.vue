@@ -1,26 +1,42 @@
 <template>
   <q-table
     square
-    :class="allVotesValid ? '' : 'bg-red-1'"
-    class="stateborn-card "
+    :class="thereAreNoInvalidVotes ? (someVotesAreNotVerified ? 'noisered' : 'stateborn-card') : 'noisered'"
     dense
     title="Your votes"
     :rows="rows"
     :columns="columns"
     row-key="name"
   >
-    <template v-slot:top-right>
-      <span class="text-bold text-green-8 text-subtitle2" v-if="allVotesValid && userVotes.length > 0">Validated</span>
-      <span class="text-bold text-red" v-if="!allVotesValid && userVotes.length > 0">Votes invalid</span>
-      <q-icon v-if="allVotesValid && userVotes.length > 0"
-              color="primary"
-              name="fa-solid fa-circle-info" class="q-pl-xs">
-        <q-tooltip v-if="allVotesValid" class="stateborn-tooltip">
-          All votes returned by server are client side validated. <br>
-          All votes saved in IPFS decentralized storage matches the votes saved by user.
+    <template v-slot:top-right v-if="!isLoading && ethConnectionStore.isConnected">
+      <span class="text-bold text-green-8 text-subtitle2" v-if="thereAreNoInvalidVotes && !someVotesAreNotVerified && userVotes.length > 0">Validated</span>
+      <span class="text-bold text-orange-10 text-subtitle2" v-if="thereAreNoInvalidVotes && someVotesAreNotVerified && userVotes.length > 0">Not yet verified</span>
+      <span class="text-bold text-red" v-if="!thereAreNoInvalidVotes && userVotes.length > 0">Votes invalid</span>
+      <q-icon color="primary" name="fa-solid fa-circle-info" class="q-pl-xs" v-if="userVotes.length > 0">
+        <q-tooltip v-if="thereAreNoInvalidVotes && !someVotesAreNotVerified" class="stateborn-tooltip">
+          All votes were client-side validated based on IPFS vote document data <br>
+          and if available - with client-side saved vote data (IndexedDB).<br>
         </q-tooltip>
-        <q-tooltip v-else class="stateborn-tooltip">
-          Some of votes returned by server are not valid.
+        <q-tooltip v-if="thereAreNoInvalidVotes && someVotesAreNotVerified" class="stateborn-tooltip">
+          Due to some processing error, not all votes were yet validated. <br>
+          It doesn't mean the votes are invalid, they must be validated again. <br>
+          Refresh the page to trigger the validation again.
+        </q-tooltip>
+        <q-tooltip v-if="!thereAreNoInvalidVotes && !someVotesAreNotVerified" class="stateborn-tooltip">
+          Some of the votes are invalid.<br>
+          Look at the vote validity column for details.<br>
+        </q-tooltip>
+      </q-icon>
+    </template>
+    <template v-slot:top-right v-if="isLoading && ethConnectionStore.isConnected">
+      <span class="text-subtitle2 text-bold q-pr-xs">Loading</span>
+      <q-spinner
+        color="primary"
+      />
+      <q-icon color="primary" name="fa-solid fa-circle-info" class="q-pl-xs">
+        <q-tooltip class="stateborn-tooltip">
+          Votes are loading yet, probably due to <br>
+          IPFS node not responding during client-side validation.
         </q-tooltip>
       </q-icon>
     </template>
@@ -35,16 +51,73 @@
         <q-td key="ipfsHash" :props="props">
             {{ `${props.row.ipfsHash.substring(0, 5)}...` }}
           <q-btn flat round color="primary" size="xs" class="q-pl-xs" icon="fa-solid fa-arrow-up-right-from-square" @click="goToIpfs(props.row.ipfsHash)"/>
-
         </q-td>
         <q-td key="createdAt" :props="props">
             {{ props.row.createdAt }}
         </q-td>
         <q-td key="validity" :props="props">
-          <q-icon :color="props.row.isValidated ? 'green-8' : 'red'"
-                  :name="props.row.isValidated ? 'fa-solid fa-square-check' : 'fa-solid fa-square-xmark'">
-            <q-tooltip class="stateborn-tooltip">
-              The vote was verified client side.
+          <q-icon :color="!props.row.isVerified ? 'orange-10' : (props.row.isValid ? 'green-8' : 'red')" :name="props.row.isValid ? 'fa-solid fa-square-check' : 'fa-solid fa-square-xmark'">
+          </q-icon>
+          <q-icon
+            color="primary"
+            name="fa-solid fa-circle-info" class="q-pl-xs">
+            <q-tooltip class="stateborn-tooltip" v-if="!props.row.isVerified">
+              Due to some processing error, the vote was not validated. <br>
+              Error: {{ props.row.validationError}}<br>
+              It doesn't mean the vote is invalid, it must be validated again. <br>
+              Refresh the page to trigger the validation again.
+            </q-tooltip>
+            <q-tooltip class="stateborn-tooltip" v-if="props.row.isValid">
+              Vote is valid.
+            </q-tooltip>
+            <q-tooltip class="stateborn-tooltip" v-if="!props.row.isValid && props.row.isVerified">
+              Vote is invalid. Validation error: {{ props.row.validationError }}
+            </q-tooltip>
+          </q-icon>
+        </q-td>
+        <q-td key="voteDataSource" :props="props">
+          <q-badge :label="props.row.voteDataSource"></q-badge>
+          <q-icon color="primary" name="fa-solid fa-circle-info" class="q-pl-xs">
+            <q-tooltip class="stateborn-tooltip" v-if="props.row.voteDataSource === VoteDataSource.CLIENT && props.row.isValid">
+              Vote data source: {{props.row.voteDataSource}} - <br>
+              saved client-side in browser on vote before sending to backend.<br>
+              Vote is client-side validated based on <br>
+              client-side saved vote data (IndexedDB) <br>
+              and IPFS vote document data.
+            </q-tooltip>
+            <q-tooltip class="stateborn-tooltip" v-if="props.row.voteDataSource === VoteDataSource.IPFS && props.row.isValid">
+              Vote data source: {{props.row.voteDataSource}} - read from IPFS.<br>
+              Vote is client-side validated based on IPFS vote document data. <br>
+              Because client-side saved vote data (IndexedDB) could not be found (cleared browser cache?), <br>
+              vote was not validated with it.
+            </q-tooltip>
+
+            <q-tooltip class="stateborn-tooltip" v-if="props.row.voteDataSource === VoteDataSource.CLIENT && (!props.row.isValid && !props.row.isVerified)">
+              Vote data source: {{props.row.voteDataSource}} - <br>
+              saved client-side in browser on vote before sending to backend.<br>
+              Vote was client-side saved (IndexedDB) before sending to backend, <br>
+              but was not yet successfully validated with IPFS vote document data.
+            </q-tooltip>
+            <q-tooltip class="stateborn-tooltip" v-if="props.row.voteDataSource === VoteDataSource.IPFS && (!props.row.isValid && !props.row.isVerified)">
+              Vote data source: {{props.row.voteDataSource}} - read from IPFS.<br>
+              Vote was client-side saved (IndexedDB) before sending to backend, <br>
+              but was not yet successfully validated with IPFS vote document data.
+            </q-tooltip>
+            <q-tooltip class="stateborn-tooltip" v-if="props.row.voteDataSource === VoteDataSource.BACKEND && (!props.row.isValid && !props.row.isVerified)">
+              Vote data source: {{props.row.voteDataSource}} - read from backend.<br>
+              Vote data was read from backend but was not yet successfully validated <br>
+              with IPFS vote document data and if available - with client-side saved vote data (IndexedDB).
+            </q-tooltip>
+
+            <q-tooltip class="stateborn-tooltip" v-if="props.row.voteDataSource === VoteDataSource.CLIENT && (!props.row.isValid && props.row.isVerified)">
+              Vote data source: {{props.row.voteDataSource}} - <br>
+              saved client-side in browser on vote before sending to backend.<br>
+              Vote was client-side saved (IndexedDB) before sending to backend <br>
+              but is invalid based on IPFS vote document data.
+            </q-tooltip>
+            <q-tooltip class="stateborn-tooltip" v-if="props.row.voteDataSource === VoteDataSource.IPFS && (!props.row.isValid && props.row.isVerified)">
+              Vote data source: {{props.row.voteDataSource}} - read from IPFS.<br>
+              Vote was read from IPFS but is invalid based on IPFS vote document data.<br>
             </q-tooltip>
           </q-icon>
         </q-td>
@@ -62,8 +135,10 @@
 </template>
 <script lang="ts" setup>
 import { ref, watch } from 'vue';
-import { verifyBackendReceivedVoteWithLocal } from 'src/api/services/get-and-store-ipfs-vote-service';
+import { getAllUserVotes } from 'src/api/services/vote-service';
 import { goToIpfs } from 'src/api/services/utils-service';
+import { VoteDataSource } from 'src/api/model/vote-data-source';
+import { useEthConnectionStore } from 'stores/eth-connection-store';
 
 const columns = [
   {
@@ -79,29 +154,48 @@ const columns = [
     name: 'createdAt', label: 'Created at', field: 'createdAt', sortable: true, align: 'left',
   },
   {
-    name: 'validity', label: 'Is valid', field: 'validity', sortable: false, align: 'right',
+    name: 'validity', label: 'Is valid', field: 'validity', sortable: false, align: 'center',
+  },
+  {
+    name: 'voteDataSource', label: 'Data source', field: 'voteDataSource', sortable: false, align: 'center',
   },
 ];
 const rows = ref([]);
-const allVotesValid = ref(true);
+const thereAreNoInvalidVotes = ref(true);
+const someVotesAreNotVerified = ref(false);
+const isLoading = ref(true);
 const props = defineProps(['userVotes', 'proposalIpfsHash']);
-const fillTable = () => {
-  rows.value = props.userVotes.map((vote: any) => {
-    const isValid = verifyBackendReceivedVoteWithLocal(props.proposalIpfsHash, vote.ipfsHash, vote.clientVote, vote.voterAddress);
-    if (!isValid) {
-      allVotesValid.value = false;
+const ethConnectionStore = useEthConnectionStore();
+const fillTable = async () => {
+  if (props.userVotes.length > 0) {
+    //just any
+    const voterAddress = props.userVotes[0].clientVote.voterAddress;
+    const allLocalVotes = await getAllUserVotes(props.proposalIpfsHash, voterAddress);
+    const localRows = [];
+    for (const vote of props.userVotes) {
+      const localVote = allLocalVotes.filter((_) => _.voteIpfsHash === vote.ipfsHash)[0];
+      if (localVote.voteVerification && localVote.voteVerification.isVerified && !localVote.voteVerification.isValid) {
+        thereAreNoInvalidVotes.value = false;
+      }
+      if (!localVote.voteVerification?.isVerified) {
+        someVotesAreNotVerified.value = true;
+      }
+      localRows.push({
+        vote: vote.clientVote.vote,
+        votingPower: vote.clientVote.votingPower,
+        ipfsHash: vote.ipfsHash,
+        createdAt: new Date(vote.createdAt).toLocaleString(),
+        isValid: localVote.voteVerification?.isValid,
+        validationError: localVote.voteVerification?.verificationError ?? '',
+        voteDataSource: localVote.voteDataSource,
+        isVerified: localVote.voteVerification?.isVerified,
+      });
     }
-    const row = {
-      vote: vote.clientVote.vote,
-      votingPower: vote.clientVote.votingPower,
-      ipfsHash: vote.ipfsHash,
-      createdAt: new Date(vote.createdAt).toLocaleString(),
-      isValidated: isValid,
-    };
-    return row;
-  });
+    rows.value = localRows;
+  }
+  isLoading.value = false;
 };
-watch(() => props.userVotes, async () => {
+watch(() => props.userVotes,  () => {
   fillTable();
 });
 fillTable();

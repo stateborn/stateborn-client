@@ -1,5 +1,5 @@
 import { ProposalReportStorage } from 'src/api/model/proposal-report-storage';
-import { UserVoteStorage } from 'src/api/model/user-vote-storage';
+import { UserVotesStorage } from 'src/api/model/user-votes-storage';
 import Dexie from 'dexie';
 import { BackendProposal } from 'src/api/model/backend-proposal';
 import { DaoBackend } from 'src/api/model/dao-backend';
@@ -25,15 +25,15 @@ export const setClientProposalReport = async (proposalIpfsHash: string, userAddr
     proposalReport: JSON.stringify(proposalReportStorage),
   });
 }
-export const getUserVoteFromStorage = async (proposalIpfsHash: string, userAddress: string): Promise<UserVoteStorage | undefined> => {
+export const getUserVoteFromStorage = async (proposalIpfsHash: string, userAddress: string): Promise<UserVotesStorage | undefined> => {
   const item = await db.votes.where("proposalIpfsHash_userAddress").equals(`${proposalIpfsHash}_${userAddress}`).first();
-  return item !== undefined ? JSON.parse(item.vote) : undefined;
+  return item !== undefined ? item.vote : undefined;
 
 };
-export const setUserVote = async (proposalIpfsHash: string, userAddress: string, userVoteStorage: UserVoteStorage) => {
+export const setUserVote = async (proposalIpfsHash: string, userAddress: string, userVoteStorage: UserVotesStorage) => {
   await db.votes.put({
     proposalIpfsHash_userAddress: `${proposalIpfsHash}_${userAddress}`,
-    vote: JSON.stringify(userVoteStorage),
+    vote: userVoteStorage,
   });
 }
 

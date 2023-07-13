@@ -4,19 +4,14 @@ import { getSettingsFromStorage } from 'src/api/services/settings-service';
 
 const settings = getSettingsFromStorage();
 let IPFS_CLIENT: IPFSHTTPClient;
-try {
-  IPFS_CLIENT  = create({ url: settings.ipfsGateway });
-} catch (err) {
-  console.log(JSON.stringify(err));
-}
-
 export const reconnectToIpfs = async (address: string) => {
   try {
-    IPFS_CLIENT = await create({ url: address });
+    IPFS_CLIENT = await create({ url: address, timeout: '10000' });
   } catch (err) {
     throw err;
   }
 }
+reconnectToIpfs(settings.ipfsGateway);
 
 export const getIpfsJsonFile = async (hash: string): Promise<any | undefined> => {
   const data = await IPFS_CLIENT.cat(hash);

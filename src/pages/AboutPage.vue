@@ -53,8 +53,8 @@
             Stateborn supports different token standards on various blockchain networks.<br>
             Supported DAO token standards:
             <ul>
-              <li>ERC-20 - voting power units is amount of tokens user owns</li>
-              <li>NFT - 1 NFT is 1 voting power unit</li>
+              <li><q-badge style="padding:5px" label="ERC-20" color="primary" text-color="white"></q-badge> - voting power units is amount of tokens user owns</li>
+              <li><q-badge style="padding:5px" label="NFT" color="secondary" text-color="black"></q-badge> - 1 NFT is 1 voting power unit</li>
             </ul>
             Supported blockchain networks:
             <q-list dense>
@@ -280,4 +280,5 @@
 </template>
 <script setup lang="ts">
 import PictureParallax from 'components/PictureParallax.vue';
+import { DaoTokenType } from 'src/api/model/ipfs/dao-token-type';
 </script>

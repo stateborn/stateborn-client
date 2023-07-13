@@ -64,8 +64,8 @@ export const calculateUserVotesAndGetProposalReportStorage = async (proposalRepo
         // in that case this validation must be skipped
         if (userVoteStorage !== undefined) {
           const lastUserVoteFromStorage = userVoteStorage!.votes[userVoteStorage?.votes.length - 1];
-          const encodedVoteFromReportIpfsFile = abiEncodeVote(ipfsUserVote.clientVote.voterAddress, proposalIpfsHash, ipfsUserVote.clientVote.vote, ipfsUserVote.clientVote.votingPower);
-          const encodedVoteFromStorage = abiEncodeVote(lastUserVoteFromStorage.clientVote.voterAddress, proposalIpfsHash, lastUserVoteFromStorage.clientVote.vote, lastUserVoteFromStorage.clientVote.votingPower);
+          const encodedVoteFromReportIpfsFile = abiEncodeVote(ipfsUserVote.clientVote.voterAddress, proposalIpfsHash, ipfsUserVote.clientVote.vote, ipfsUserVote.clientVote.votingPower, ipfsUserVote.clientVote.voteDate);
+          const encodedVoteFromStorage = abiEncodeVote(lastUserVoteFromStorage.clientVote.voterAddress, proposalIpfsHash, lastUserVoteFromStorage.clientVote.vote, lastUserVoteFromStorage.clientVote.votingPower, lastUserVoteFromStorage.clientVote.votingPower);
           // Validated that IPFS vote included in report is the last one user submitted (because can vote many times, but only last vote is valid)
           if (encodedVoteFromReportIpfsFile !== encodedVoteFromStorage) {
             proposalReportStorage = new ProposalReportStorage(

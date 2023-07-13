@@ -30,13 +30,14 @@ export const abiEncodeProposal = (clientProposal: ClientProposal) => {
   return ethers.solidityPacked(types, values);
 }
 
-export const abiEncodeVote = (voterAddress: string, proposalIpfsHash: string, vote: string, votingPower: string) => ethers.solidityPacked(
-  ['address', 'bytes', 'bytes32', 'uint256'],
+export const abiEncodeVote = (voterAddress: string, proposalIpfsHash: string, vote: string, votingPower: string, voteDate: string) => ethers.solidityPacked(
+  ['address', 'bytes', 'bytes32', 'uint256', 'bytes32'],
   [
     voterAddress,
     ethers.toUtf8Bytes(proposalIpfsHash),
     encodeBytes32String(vote),
     Number(votingPower),
+    encodeBytes32String(voteDate),
   ],
 );
 
@@ -45,8 +46,9 @@ export const signVote = async (
   proposalIpfsHash: string,
   vote: string,
   votingPower: string,
+  voteDate: string,
 ): Promise<string> => {
-  const keccak256DataString = ethers.keccak256(abiEncodeVote(voterAddress, proposalIpfsHash, vote, votingPower));
+  const keccak256DataString = ethers.keccak256(abiEncodeVote(voterAddress, proposalIpfsHash, vote, votingPower, voteDate));
   // ethers.getBytes -> arrayify
   return ETH_CONNECTION_SERVICE.getSigner().signMessage(ethers.getBytes(keccak256DataString));
 };
@@ -82,6 +84,7 @@ export const isVoteValid = (clientVoteDto: any, signature: string): boolean => {
     clientVoteDto.proposalIpfsHash,
     clientVoteDto.vote,
     clientVoteDto.votingPower,
+    clientVoteDto.voteDate,
   ));
   const derivedAddress = ethers.verifyMessage(ethers.getBytes(clientProposalToSign), signature);
   return derivedAddress.toUpperCase() === clientVoteDto.voterAddress.toUpperCase();

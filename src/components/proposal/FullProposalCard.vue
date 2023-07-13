@@ -38,28 +38,34 @@
           <span class="text-bold text-red" v-else>Invalid</span>
           <q-icon color="primary" name="fa-solid fa-circle-info" class="q-pl-xs" style="margin-bottom: 3px">
             <q-tooltip v-if="proposalVerification?.isValid" class="stateborn-tooltip">
-              Proposal content and validity is confirmed based on IPFS document data.
+              Proposal is client-side validated based on IPFS document data.<br>
             </q-tooltip>
             <q-tooltip v-else class="stateborn-tooltip">
-              Proposal returned by backend is not equal to IPFS document data. This can be caused by a backend error or by a malicious backend.
+              Proposal is invalid based on client-side validation. <br>
+              Look at the error message below.
             </q-tooltip>
           </q-icon>
         </div>
         <div class="col-grow text-right" v-else>
-          <span class="text-subtitle2">Not yet validated</span>
+          <span class="text-subtitle2 text-orange-10 text-bold">Not yet validated</span>
           <q-icon color="primary" name="fa-solid fa-circle-info" class="q-pl-xs">
-            <q-tooltip class="stateborn-tooltip">
-              Proposal content and validity will be automatically verified with IPFS document.
+            <q-tooltip class="stateborn-tooltip" v-if="!proposalVerification?.isVerified">
+              Due to some processing error, the proposal was not yet validated. <br>
+              It doesn't mean that the proposal is invalid, it must be validated again. <br>
+              Refresh the page to trigger the validation again.<br>
+              Look at the error message below.
+            </q-tooltip>
+            <q-tooltip class="stateborn-tooltip" v-else>
+              Proposal will be automatically validated based on IPFS document data.<br>
               Refresh the page to trigger validation.
             </q-tooltip>
           </q-icon>
         </div>
       </div>
-      <div class="row text-subtitle2" v-if="proposalVerification?.isVerified && !proposalVerification?.isValid">
+      <div class="row text-subtitle2" v-if="proposalVerification?.verificationError !== ''">
         <div class="col-auto text-bold">Validation error</div>
-        <div class="col-grow text-right">{{ proposalVerification.verificationError }}</div>
+        <div class="col-grow text-right">{{ proposalVerification?.verificationError }}</div>
       </div>
-
     </q-card-section>
     <q-card-section class="text-h5" style="border-bottom: 10px solid white">
       <div class="row text-subtitle2 text-bold"><div class="col-grow text-bold">Description</div></div>

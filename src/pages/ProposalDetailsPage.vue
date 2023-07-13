@@ -67,7 +67,8 @@
               <UserVotesTable class="q-ma-md"
                               :proposal-ipfs-hash="proposalIpfsHash"
                               :user-votes="userVotes"
-                              v-if="proposal !== undefined"></UserVotesTable>
+                              v-if="proposal !== undefined">
+              </UserVotesTable>
               <ValidityCard class="q-ma-md"
                             :proposal-ipfs-hash="proposalIpfsHash"
                             :token-chain-id="dao !== undefined ? dao.clientDao.token.chainId : ''"
@@ -126,13 +127,13 @@ import ValidityCard from 'components/proposal/ValidityCard.vue';
 import { dom, useQuasar } from 'quasar';
 import dayjs from 'dayjs';
 import {
-  fetchAndStoreIpfsVoteInStorage,
+  validateVoteAndUpdateInStorage,
   storeVoteCreatedByUser,
-} from 'src/api/services/get-and-store-ipfs-vote-service';
+} from 'src/api/services/vote-service';
 import DaoCardMin from 'components/dao-features/DaoCardMin.vue';
 import { getDao } from 'src/api/services/dao-service';
 import { DaoBackend } from 'src/api/model/dao-backend';
-import { compareAndUpdateProposalWithIpfsProposalIfNeeded, getProposal } from 'src/api/services/proposal-service';
+import { getProposal } from 'src/api/services/proposal-service';
 import { ProposalReport } from 'src/api/model/proposal-report';
 import { BackendProposal } from 'src/api/model/backend-proposal';
 import { ProposalResultDto } from 'src/api/dto/proposal-result-dto';
@@ -193,12 +194,13 @@ $q.loading.show({
   messageColor: 'white',
 });
 const fetchProposalData = async () => {
-
+  console.log('1');
   dao.value = await getDao(daoIpfsHash);
   if (ethConnectionStore.isConnected) {
     getTokenBalance(dao.value.clientDao.token.address, dao.value.clientDao.token.type, dao.value.clientDao.token.decimals);
     fetchUserVotes();
   }
+  console.log('2');
   // 5 comes from VotesTable.vue
   fetchTableVotes(5, 0);
   api.get(`/api/rest/v1/proposal/${proposalIpfsHash}/result`).then((res) => {
@@ -218,8 +220,6 @@ const fetchProposalData = async () => {
     console.log(error);
   });
   getProposal(proposalIpfsHash).then((_) => {
-    // no need await
-    compareAndUpdateProposalWithIpfsProposalIfNeeded(proposalIpfsHash);
     proposal.value = _;
     isProposalEnded.value = dayjs().isAfter(proposal.value.clientProposal.endDateUtc);
     if (isProposalEnded.value === true) {
@@ -248,7 +248,7 @@ const fetchUserVotes = async () => {
   api.get(`/api/rest/v1/proposal/${proposalIpfsHash}/${ethConnectionStore.account}/votes`).then(async (res) => {
     console.log('user votes', res.data);
     for (const userVote of res.data) {
-      await fetchAndStoreIpfsVoteInStorage(proposalIpfsHash, userVote.ipfsHash, userVote.voterAddress);
+      await validateVoteAndUpdateInStorage(proposalIpfsHash, userVote.ipfsHash, userVote.clientVote.voterAddress, userVote.clientVote, userVote.userSignature);
     }
     userVotes.value = res.data;
   }, (error) => {

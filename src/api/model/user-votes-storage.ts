@@ -1,6 +1,6 @@
 import { SingleUserVoteStorage } from 'src/api/model/single-user-vote-storage';
 
-export class UserVoteStorage {
+export class UserVotesStorage {
   proposalIpfsHash: string;
   // oldest votes first in array
   votes: SingleUserVoteStorage[];

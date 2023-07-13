@@ -99,7 +99,10 @@ import { signVote } from 'src/api/services/signature-service';
 import { computed, ref, watch } from 'vue';
 import { Notify } from 'quasar';
 import { TOKEN_SERVICE } from '../../api/services/token-service';
+import dayjsPluginUTC from 'dayjs-plugin-utc';
 import { changeNetwork } from 'src/api/services/change-network-service';
+import dayjs from 'dayjs';
+dayjs.extend(dayjsPluginUTC);
 
 const props = defineProps<{
   proposalIpfsHash: string,
@@ -154,13 +157,15 @@ watch(() => props.triggerVotingAfterDifferentVotingPowerAcceptance, () => {
 });
 
 const callVote = async (decision: string) => {
-  const signature = await signVote(ethConnectionStore.account, props.proposalIpfsHash, decision, props.tokenBalance);
+  const voteDate = dayjs().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
+  const signature = await signVote(ethConnectionStore.account, props.proposalIpfsHash, decision, props.tokenBalance, voteDate);
   const vote = {
     clientVote: {
       voterAddress: ethConnectionStore.account,
       proposalIpfsHash: props.proposalIpfsHash,
       vote: decision,
       votingPower: props.tokenBalance,
+      voteDate,
     },
     userSignature: signature,
   };

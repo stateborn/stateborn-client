@@ -7,6 +7,15 @@ import { abiEncodeProposal, isProposalValid } from 'src/api/services/signature-s
 import { ClientProposal } from 'src/api/model/ipfs/client-proposal';
 
 export const getProposal = async (proposalIpfsHash: string): Promise<BackendProposal> => {
+  const backendProposal: BackendProposal = await getProposalFromStorageOrFetch(proposalIpfsHash);
+  if (!backendProposal.proposalVerification?.isVerified) {
+    // async, if fails will be retried on next call
+    verifyProposalWithIpfsContent(backendProposal);
+  }
+  return backendProposal;
+}
+
+const getProposalFromStorageOrFetch = async (proposalIpfsHash: string): Promise<BackendProposal> => {
   const proposal: BackendProposal | undefined = await getProposalFromStorage(proposalIpfsHash);
   if (proposal === undefined) {
     const res = await api.get(`/api/rest/v1/proposal/${proposalIpfsHash}`);
@@ -31,18 +40,9 @@ export const getProposal = async (proposalIpfsHash: string): Promise<BackendProp
   }
 }
 
-export const compareAndUpdateProposalWithIpfsProposalIfNeeded = async (proposalIpfsHash: string): Promise<void> => {
-  const proposal: BackendProposal | undefined = await getProposalFromStorage(proposalIpfsHash);
-  if (proposal !== undefined) {
-    const proposalVerification: ProposalVerification | undefined = proposal.proposalVerification;
-    if (proposalVerification === undefined || proposalVerification.verificationToBeRepeated) {
-      proposal.proposalVerification = await getProposalVerificationToSave(proposalIpfsHash, proposal);
-      await setProposalInStorage(proposalIpfsHash, proposal);
-      console.log(`Proposal ${proposalIpfsHash} verified with IPFS document.`);
-    }
-  } else {
-    console.log(`Verification with IPFS failed: proposal ${proposalIpfsHash} is not saved in client db`);
-  }
+const verifyProposalWithIpfsContent = async (proposal: BackendProposal): Promise<void> => {
+  proposal.proposalVerification = await getProposalVerificationToSave(proposal.ipfsHash, proposal);
+  await setProposalInStorage(proposal.ipfsHash, proposal);
 }
 
 const getProposalVerificationToSave = async (proposalIpfsHash: string, backendProposal: BackendProposal): Promise<ProposalVerification> => {
@@ -53,9 +53,8 @@ const getProposalVerificationToSave = async (proposalIpfsHash: string, backendPr
     const error = 'Verification with IPFS failed: IPFS connection problem occurred';
     console.log(error, err);
     return new ProposalVerification(
-      true,
       false,
-      true,
+      false,
       error);
   }
   if (proposalIpfs !== undefined) {
@@ -63,28 +62,24 @@ const getProposalVerificationToSave = async (proposalIpfsHash: string, backendPr
     const abiEncodedIpfsProposal = abiEncodeProposal(ipfsClientProposal);
     const abiEncodedBackendProposal = abiEncodeProposal(backendProposal.clientProposal);
     if (abiEncodedIpfsProposal !== abiEncodedBackendProposal) {
-      const error = `Verification with IPFS failed: proposal ${proposalIpfsHash} doesn't match proposal saved in IPFS.`;
+      const error = `Verification with IPFS failed: backend proposal ${proposalIpfsHash} doesn't match proposal saved in IPFS.`;
       console.log(error);
       return new ProposalVerification(
         true,
         false,
-        false,
         error);
     } else {
-      const isIpfsProposalSignatureValid = isProposalValid(ipfsClientProposal, proposalIpfs.creatorSignature);
-      if (isIpfsProposalSignatureValid) {
+      if (isProposalValid(ipfsClientProposal, proposalIpfs.creatorSignature)) {
         console.log(`Proposal ${proposalIpfsHash} is validated with IPFS document.`);
         return new ProposalVerification(
           true,
           true,
-          false,
         );
       } else {
         const error = `Verification with IPFS failed: IPFS proposal signature is not valid. Proposal is not signed by ${ipfsClientProposal.creatorAddress}`;
         console.log(error);
         return new ProposalVerification(
           true,
-          false,
           false,
           error);
       }
@@ -95,7 +90,6 @@ const getProposalVerificationToSave = async (proposalIpfsHash: string, backendPr
     return new ProposalVerification(
       true,
       false,
-      true,
       error);
   }
 }
