@@ -102,6 +102,18 @@
         </q-img>
       </div>
     </div>
+    <q-separator ></q-separator>
+    <div class="row justify-center text-center">
+      <div class="col-auto">
+        Data cached in IndexedDB <q-icon color="primary" name="fa-solid fa-circle-info" class="q-pl-xs">
+        <q-tooltip class="stateborn-tooltip">
+          Stateborn saves data in IndexedDB - your Internet browser database. <br>
+          This data is related to DAOs, proposals, votes and data validation process. <br>
+          For best experience, please do not clear your browser cache for this site.
+        </q-tooltip>
+        </q-icon>
+      </div>
+    </div>
   </q-card>
 </template>
 <script lang="ts" setup>

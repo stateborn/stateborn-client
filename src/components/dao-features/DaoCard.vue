@@ -37,7 +37,7 @@
         </q-item>
         <q-item v-if="props.isFull">
           <q-item-section avatar>
-            <q-icon color="primary" size="xs" name="fa-solid fa-circle-info"/>
+            <q-icon color="primary" size="xs" name="fa-solid fa-circle"/>
           </q-item-section>
 
           <q-item-section>
@@ -48,7 +48,7 @@
 
         <q-item :dense="!props.isFull">
           <q-item-section avatar>
-            <q-icon color="primary" size="xs" name="fa-solid fa-circle-info"/>
+            <q-icon color="primary" size="xs" name="fa-regular fa-circle"/>
           </q-item-section>
 
           <q-item-section>
@@ -59,7 +59,7 @@
 
         <q-item>
           <q-item-section avatar>
-            <q-icon color="primary" size="xs" name="fa-solid fa-circle"/>
+            <q-icon color="primary" size="xs" name="fa-solid fa-circle-half-stroke"/>
           </q-item-section>
 
           <q-item-section>
@@ -101,6 +101,31 @@
           <q-item-section>
             <q-item-label>{{ props.dao.clientDao.proposalTokenRequiredQuantity }}</q-item-label>
             <q-item-label caption class="text-primary">Required tokens for creating proposal</q-item-label>
+          </q-item-section>
+        </q-item>
+
+        <q-item>
+          <q-item-section avatar>
+            <q-icon color="primary" size="xs" name="fa-solid fa-circle-info"/>
+            <q-tooltip v-if="dao.daoVerification && dao.daoVerification.isVerified && dao.daoVerification.isValid" class="stateborn-tooltip">
+              The DAO is client-side validated based on IPFS document data.
+            </q-tooltip>
+            <q-tooltip v-if="dao.daoVerification === undefined || !dao.daoVerification.isVerified" class="stateborn-tooltip">
+              Due to some processing error, the DAO was not yet validated. <br>
+              It doesn't mean that the DAO is invalid, it must be validated again. <br>
+              Validation error: {{ dao.daoVerification?.verificationError }} <br>
+              Validation process is now running in the background, page will be automatically updated if succeed.<br>
+            </q-tooltip>
+            <q-tooltip v-if="dao.daoVerification && dao.daoVerification.isVerified && !dao.daoVerification.isValid" class="stateborn-tooltip">
+              The DAO is invalid based on client-side validation. <br>
+              Validation error: {{ dao.daoVerification?.verificationError }}
+            </q-tooltip>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label v-if="dao.daoVerification && dao.daoVerification.isVerified && dao.daoVerification.isValid" class="text-green-9 text-bold">Validated</q-item-label>
+            <q-item-label v-if="dao.daoVerification === undefined || !dao.daoVerification.isVerified" class="text-orange-10 text-bold">Not yet validated</q-item-label>
+            <q-item-label v-if="dao.daoVerification && dao.daoVerification.isVerified && !dao.daoVerification.isValid" class="text-red text-bold">Invalid</q-item-label>
+            <q-item-label caption class="text-primary">Validity status</q-item-label>
           </q-item-section>
         </q-item>
         <q-item>

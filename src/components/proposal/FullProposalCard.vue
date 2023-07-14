@@ -34,7 +34,7 @@
       </div></div>
       <div class="row text-subtitle2"><div class="col-auto text-bold">Validity</div>
         <div class="col-grow text-right" v-if="proposalVerification?.isVerified">
-          <span class="text-bold text-green-8 text-subtitle2" v-if="proposalVerification?.isValid">Validated</span>
+          <span class="text-bold text-green-9 text-subtitle2" v-if="proposalVerification?.isValid">Validated</span>
           <span class="text-bold text-red" v-else>Invalid</span>
           <q-icon color="primary" name="fa-solid fa-circle-info" class="q-pl-xs" style="margin-bottom: 3px">
             <q-tooltip v-if="proposalVerification?.isValid" class="stateborn-tooltip">
@@ -49,15 +49,11 @@
         <div class="col-grow text-right" v-else>
           <span class="text-subtitle2 text-orange-10 text-bold">Not yet validated</span>
           <q-icon color="primary" name="fa-solid fa-circle-info" class="q-pl-xs">
-            <q-tooltip class="stateborn-tooltip" v-if="!proposalVerification?.isVerified">
+            <q-tooltip class="stateborn-tooltip">
               Due to some processing error, the proposal was not yet validated. <br>
               It doesn't mean that the proposal is invalid, it must be validated again. <br>
-              Refresh the page to trigger the validation again.<br>
-              Look at the error message below.
-            </q-tooltip>
-            <q-tooltip class="stateborn-tooltip" v-else>
-              Proposal will be automatically validated based on IPFS document data.<br>
-              Refresh the page to trigger validation.
+              For more details, look at the error message below.<br>
+              Validation process is now running in the background, page will be automatically updated if succeed.<br>
             </q-tooltip>
           </q-icon>
         </div>

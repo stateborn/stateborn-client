@@ -32,7 +32,7 @@
                  @click="goToEtherscan(props.row.voterAddress, daoTokenChainId)"/>
         </q-td>
         <q-td key="vote" :props="props"
-              :class="(props.row.vote === 'YES' || props.row.vote === 'NO') ? (props.row.vote === 'YES' ? 'text-green' : 'text-red') : 'text-black'">
+              :class="(props.row.vote === 'YES' || props.row.vote === 'NO') ? (props.row.vote === 'YES' ? 'text-green-9' : 'text-red') : 'text-black'">
           {{ props.row.vote }}
         </q-td>
         <q-td key="votingPower" :props="props">

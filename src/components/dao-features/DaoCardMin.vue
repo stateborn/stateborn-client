@@ -18,7 +18,7 @@
         <q-list style="padding: 2px; margin:2px;">
           <q-item dense>
             <q-item-section avatar  >
-              <q-icon color="primary" size="xs" name="fa-solid fa-circle-info"/>
+              <q-icon color="primary" size="xs" name="fa-solid fa-circle"/>
             </q-item-section>
 
             <q-item-section >

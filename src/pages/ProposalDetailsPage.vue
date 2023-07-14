@@ -65,6 +65,7 @@
                           :proposal-options="proposal.clientProposal.data?.options"
                           v-if="proposal !== undefined && proposalResultDto !== undefined"></ResultCard>
               <UserVotesTable class="q-ma-md"
+                              :trigger-fill-table="triggerFillUserVotesTable"
                               :proposal-ipfs-hash="proposalIpfsHash"
                               :user-votes="userVotes"
                               v-if="proposal !== undefined">
@@ -155,6 +156,7 @@ const daoIpfsHash: string = <string>route.params.daoIpfsHash;
 const ethConnectionStore = useEthConnectionStore();
 const isProposalEnded = ref(false);
 const canShowScrollArea = ref(false);
+const triggerFillUserVotesTable = ref(false);
 const votesCount = ref('1');
 const distinctVotesCount = ref('1');
 const showDifferentVotingPowerDialog = ref(false);
@@ -219,7 +221,10 @@ const fetchProposalData = async () => {
   }, (error) => {
     console.log(error);
   });
-  getProposal(proposalIpfsHash).then((_) => {
+  const onProposalValidationDoneCallback = (backendProposal: BackendProposal) => {
+    proposal.value = backendProposal;
+  };
+  getProposal(proposalIpfsHash, onProposalValidationDoneCallback).then((_) => {
     proposal.value = _;
     isProposalEnded.value = dayjs().isAfter(proposal.value.clientProposal.endDateUtc);
     if (isProposalEnded.value === true) {
@@ -247,10 +252,11 @@ const getTokenBalance = async (tokenAddress: string, tokenType: DaoTokenType, de
 const fetchUserVotes = async () => {
   api.get(`/api/rest/v1/proposal/${proposalIpfsHash}/${ethConnectionStore.account}/votes`).then(async (res) => {
     console.log('user votes', res.data);
-    for (const userVote of res.data) {
-      await validateVoteAndUpdateInStorage(proposalIpfsHash, userVote.ipfsHash, userVote.clientVote.voterAddress, userVote.clientVote, userVote.userSignature);
-    }
     userVotes.value = res.data;
+    for (const _ of res.data) {
+      await validateVoteAndUpdateInStorage(proposalIpfsHash, _.ipfsHash, _.clientVote.voterAddress, _.clientVote, _.userSignature);
+      triggerFillUserVotesTable.value = !triggerFillUserVotesTable.value;
+    }
   }, (error) => {
     console.log(error);
   });

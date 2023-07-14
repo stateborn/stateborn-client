@@ -158,7 +158,8 @@ api.get(`/api/rest/v1/dao/${daoIpfsHash}/proposals/count`).then(async (response)
   console.log(error);
 });
 
-getDao(daoIpfsHash).then(_ => {
+const onValidationDoneCallback = (daoBackend: DaoBackend) => dao.value = daoBackend;
+getDao(daoIpfsHash, onValidationDoneCallback).then(_ => {
   dao.value = _;
 });
 const onTableDataRequest = async ({ pagination, filter }: any) => {

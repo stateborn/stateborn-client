@@ -3,6 +3,7 @@ import { ETH_CONNECTION_SERVICE } from 'src/api/services/eth-connection-service'
 import { ClientProposal } from 'src/api/model/ipfs/client-proposal';
 import { ProposalType } from 'src/api/model/ipfs/proposal-type';
 import { ClientDao } from 'src/api/model/ipfs/client-dao';
+import { ClientDaoToken } from 'src/api/model/ipfs/client-dao-token';
 
 export const signProposal = async (clientProposal :ClientProposal): Promise<string> => {
   const abiEncodedProposal = abiEncodeProposal(clientProposal);
@@ -91,6 +92,14 @@ export const isVoteValid = (clientVoteDto: any, signature: string): boolean => {
 };
 
 export const signDao = async (clientDao: ClientDao): Promise<string> => {
+  const abiEncodedDao = abiEncodeDao(clientDao);
+  // Same as `abi.encodePacked` in Solidity
+  const keccak256DataString = ethers.keccak256(abiEncodedDao);
+  // ethers.getBytes -> arrayify
+  return ETH_CONNECTION_SERVICE.getSigner().signMessage(ethers.getBytes(keccak256DataString));
+};
+
+export const abiEncodeDao = (clientDao: ClientDao) => {
   const types = ['bytes', 'bytes', 'bytes', 'uint256', 'uint256', 'bytes32', 'address', 'bytes32'];
   const values = [
     ethers.toUtf8Bytes(clientDao.name),
@@ -106,9 +115,12 @@ export const signDao = async (clientDao: ClientDao): Promise<string> => {
     types.push('address');
     values.push(owner);
   }
-  // Same as `abi.encodePacked` in Solidity
-  const abiEncodedProposal = ethers.solidityPacked(types, values);
-  const keccak256DataString = ethers.keccak256(abiEncodedProposal);
-  // ethers.getBytes -> arrayify
-  return ETH_CONNECTION_SERVICE.getSigner().signMessage(ethers.getBytes(keccak256DataString));
+  return ethers.solidityPacked(types, values);
+}
+
+export const isDaoValid = (clientDao: ClientDao, signature: string): boolean => {
+  const abiEncodedClientDao: string = abiEncodeDao(clientDao);
+  const keccak256DataString = ethers.keccak256(abiEncodedClientDao);
+  const derivedAddress = ethers.verifyMessage(ethers.getBytes(keccak256DataString), signature);
+  return derivedAddress.toUpperCase() === clientDao.owners[0].toUpperCase();
 };

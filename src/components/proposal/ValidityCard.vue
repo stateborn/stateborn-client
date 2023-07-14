@@ -28,7 +28,7 @@
             </q-item-section>
 
             <q-item-section>
-              <q-item-label :class="reportIsValid ? 'text-green-8 text-bold' : 'text-bold text-red'">
+              <q-item-label :class="reportIsValid ? 'text-green-9 text-bold' : 'text-bold text-red'">
                 {{reportIsValid ? 'Valid' : 'Invalid' }}
               </q-item-label>
               <q-item-label caption class="text-primary">Your vote validity</q-item-label>

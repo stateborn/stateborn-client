@@ -6,11 +6,16 @@ import { ProposalVerification } from 'src/api/model/proposal-verification';
 import { abiEncodeProposal, isProposalValid } from 'src/api/services/signature-service';
 import { ClientProposal } from 'src/api/model/ipfs/client-proposal';
 
-export const getProposal = async (proposalIpfsHash: string): Promise<BackendProposal> => {
+export const getProposal = async (proposalIpfsHash: string, onValidationDoneCallback?: (backendProposal: BackendProposal) => void): Promise<BackendProposal> => {
   const backendProposal: BackendProposal = await getProposalFromStorageOrFetch(proposalIpfsHash);
   if (!backendProposal.proposalVerification?.isVerified) {
     // async, if fails will be retried on next call
-    verifyProposalWithIpfsContent(backendProposal);
+    verifyProposalWithIpfsContent(backendProposal).then(async () => {
+      const backendProposalAfterValidationDone = await getProposalFromStorageOrFetch(proposalIpfsHash);
+      if (onValidationDoneCallback) {
+        onValidationDoneCallback(backendProposalAfterValidationDone);
+      }
+    });
   }
   return backendProposal;
 }
