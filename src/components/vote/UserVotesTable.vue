@@ -87,8 +87,7 @@
             <q-tooltip class="stateborn-tooltip" v-if="props.row.voteDataSource === VoteDataSource.IPFS && props.row.isValid">
               Vote data source: {{props.row.voteDataSource}} - read from IPFS.<br>
               Vote is client-side validated based on IPFS vote document data. <br>
-              Because client-side saved vote data (IndexedDB) could not be found (cleared browser cache?), <br>
-              vote was not validated with it.
+              Because client-side saved vote data (IndexedDB) could not be found (cleared browser cache?), the vote was not validated with it.
             </q-tooltip>
 
             <q-tooltip class="stateborn-tooltip" v-if="props.row.voteDataSource === VoteDataSource.CLIENT && (!props.row.isValid && !props.row.isVerified)">
