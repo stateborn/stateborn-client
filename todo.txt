@@ -1,6 +1,0 @@
-1. Przy głosowaniu sprawdzaj ze ziomek ma tokeny, bo z frontu moze dostac ze ma 800 a teraz w ogole nic nie sprawdzam
-+ dodatkowo wysylaj mu ze jakby wyslal ze ma 200 , a w bloku xxx 100, to niech głosuje tylko 1000
-
-2. W liście głosowan dodaj pole informujace o ilości oddanych głosów + fajnie byłoby jakby wygrany rezultat był też pokazany :D
-
-

@@ -1,5 +1,5 @@
 # stateborn-client
-stateborn-sequencer is a web client for [stateborn.org](https://stateborn.org) project.
+stateborn-client is a web client for [stateborn.org](https://stateborn.org) project.
 It interact with stateborn-backend, IPFS and blockchain (through wallet extension) allowing users to operate daos, proposals and votes.
 ## Architecutre
 ![stateborn architecture](stateborn-client.svg)
