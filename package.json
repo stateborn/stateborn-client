@@ -1,15 +1,13 @@
 {
-  "name": "deceteam-client",
+  "name": "stateborn-client",
   "version": "0.0.1",
-  "description": "A Quasar Project",
-  "productName": "Quasar App",
-  "author": "none",
+  "description": "stateborn-client",
   "private": true,
   "scripts": {
     "lint": "eslint --ext .js,.ts,.vue ./",
     "test": "echo \"No test specified\" && exit 0",
-    "dev": "quasar dev",
-    "build": "quasar build"
+    "dev": "node_modules/@quasar/cli/bin/quasar.js dev",
+    "build": "node_modules/@quasar/cli/bin/quasar.js dev build"
   },
   "dependencies": {
     "@chenfengyuan/vue-countdown": "^2.1.1",
@@ -27,12 +25,12 @@
     "merkletreejs": "^0.3.10",
     "pinia": "^2.0.11",
     "quasar": "^2.6.0",
-    "stateborn-lib": "file:../stateborn-lib",
     "vue": "^3.0.0",
     "vue-router": "^4.0.0"
   },
   "devDependencies": {
     "@quasar/app-vite": "^1.0.0",
+    "@quasar/cli": "^2.2.1",
     "@quasar/quasar-app-extension-qmarkdown": "^2.0.0-beta.10",
     "@types/node": "^12.20.21",
     "@typescript-eslint/eslint-plugin": "^5.10.0",

@@ -1,33 +1,30 @@
-# Quasar App (deceteam-client)
+# stateborn-client
+stateborn-sequencer is a web client for [stateborn.org](https://stateborn.org) project.
+It interact with stateborn-backend, IPFS and blockchain (through wallet extension) allowing users to operate daos, proposals and votes.
+## Architecutre
+![stateborn architecture](stateborn-client.svg)
+## Development
+Below configuration is located in `quasar.conf.js` file.
+1. Client starts at port `8080`
+2. Default DEV server address: `http://localhost:8000`
+2. Default IPFS API url (`DEFAULT_IPFS_GATEWAY`): `http://localhost:8080/api/v0`
 
-A Quasar Project
+Default local blockchain network settings:
+- `DEVELOPMENT_NETWORK_CHAIN_ID: '31337'`
+- `DEVELOPMENT_NETWORK_CHAIN_ID_HEX: '0x7A69'`,
+- `DEVELOPMENT_NETWORK_NAME: 'Hardhat localhost'`,
+- `DEVELOPMENT_NETWORK_ICON_NAME: '/hardhat.png'`,
 
-## Install the dependencies
-```bash
-yarn
-# or
-npm install
-```
+### Installation & start
+1. `nvm use 18.10.0`
+2. `npm install`
+3. `npm run dev`
 
-### Start the app in development mode (hot-code reloading, error reporting, etc.)
-```bash
-quasar dev
-```
+## Production
+Set IPFS gateway address for production `DEFAULT_IPFS_GATEWAY`. Default: `https://stateborn.org/api/v0`
 
+### Build
+1. `nvm use 18.10.0`
+2. `npm run build`
 
-### Lint the files
-```bash
-yarn lint
-# or
-npm run lint
-```
-
-
-
-### Build the app for production
-```bash
-quasar build
-```
-
-### Customize the configuration
-See [Configuring quasar.config.js](https://v2.quasar.dev/quasar-cli-vite/quasar-config-js).
+Build is generated in `dist` folder.
