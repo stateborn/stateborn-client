@@ -207,7 +207,7 @@ const setTokenAddress = () => {
     } else {
       // local erc-20
       // NFT: 0x959922bE3CAee4b8Cd9a407cc3ac1C251C2007B1
-      tokenAddress.value = '0xB7f8BC63BbcaD18155201308C8f3540b07f84F5e';
+      tokenAddress.value = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
     }
   }
 }
