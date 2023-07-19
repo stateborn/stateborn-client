@@ -1,4 +1,4 @@
-import { getSettingsFromStorage } from 'src/api/services/settings-service';
+import { getSettingsFromStorage } from 'src/api/services/settings-local-storage-service';
 
 export const getTimeCounterColorDependingOTimeLeft = (days: number, hours: number) => {
   if (days > 0) {
@@ -34,3 +34,9 @@ export const goToEtherscan = (address: string, chainId: string) => {
   }
 };
 
+export const goToTwitter = () => {
+  window.open('https://twitter.com/stateborn', '_blank');
+};
+export const goToGithub = () => {
+  window.open('https://github.com/stateborn', '_blank');
+};

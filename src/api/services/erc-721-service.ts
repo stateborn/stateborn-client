@@ -45,6 +45,5 @@ export class Erc721Service {
     }
   }
 
-// Define
 }
 export const ERC_721_SERVICE = new Erc721Service();

@@ -42,6 +42,5 @@ export class Erc20Service {
     }
   }
 
-// Define
 }
 export const ERC_20_SERVICE = new Erc20Service();

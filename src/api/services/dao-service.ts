@@ -1,11 +1,10 @@
-import { getDaoFromStorage, setDaoInStorage } from 'src/api/services/local-storage-service';
+import { getDaoFromStorage, setDaoInStorage } from 'src/api/services/indexdb-service';
 import { api } from 'boot/axios';
 import { DaoBackend } from 'src/api/model/dao-backend';
 import { ProposalVerification } from 'src/api/model/proposal-verification';
 import { getIpfsJsonFile } from 'src/api/services/ipfs-service';
 import { abiEncodeDao, isDaoValid } from 'src/api/services/signature-service';
 import { ClientDao } from 'src/api/model/ipfs/client-dao';
-import { BackendProposal } from 'src/api/model/backend-proposal';
 
 export const getDao = async (daoIpfsHash: string, onValidationDoneCallback?: (daoBackend: DaoBackend) => void): Promise<DaoBackend> => {
   const daoBackend: DaoBackend = await getDaoOrFetch(daoIpfsHash);

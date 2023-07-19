@@ -3,7 +3,6 @@ import { ETH_CONNECTION_SERVICE } from 'src/api/services/eth-connection-service'
 import { ClientProposal } from 'src/api/model/ipfs/client-proposal';
 import { ProposalType } from 'src/api/model/ipfs/proposal-type';
 import { ClientDao } from 'src/api/model/ipfs/client-dao';
-import { ClientDaoToken } from 'src/api/model/ipfs/client-dao-token';
 
 export const signProposal = async (clientProposal :ClientProposal): Promise<string> => {
   const abiEncodedProposal = abiEncodeProposal(clientProposal);

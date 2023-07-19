@@ -7,7 +7,7 @@
     "lint": "eslint --ext .js,.ts,.vue ./",
     "test": "echo \"No test specified\" && exit 0",
     "dev": "node_modules/@quasar/cli/bin/quasar.js dev",
-    "build": "node_modules/@quasar/cli/bin/quasar.js dev build"
+    "build": "node_modules/@quasar/cli/bin/quasar.js build"
   },
   "dependencies": {
     "@chenfengyuan/vue-countdown": "^2.1.1",

@@ -1,5 +1,5 @@
 import { getIpfsJsonFile } from 'src/api/services/ipfs-service';
-import { getUserVoteFromStorage, setUserVote } from 'src/api/services/local-storage-service';
+import { getUserVoteFromStorage, setUserVote } from 'src/api/services/indexdb-service';
 import { UserVotesStorage } from 'src/api/model/user-votes-storage';
 import { SingleUserVoteStorage } from 'src/api/model/single-user-vote-storage';
 import { abiEncodeVote, isVoteValid } from 'src/api/services/signature-service';

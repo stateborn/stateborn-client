@@ -6,6 +6,7 @@
         <q-toolbar-title>
           <router-link to="/">
             <span :style="$q.platform.is.mobile ? 'font-size:12px': ''">stateborn - minimum trust democracy</span>
+            <q-badge class="q-ma-md" label="beta"></q-badge>
           </router-link>
         </q-toolbar-title>
         <ConnectWithWallet></ConnectWithWallet>

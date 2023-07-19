@@ -2,7 +2,7 @@ import { getIpfsJsonFile } from 'src/api/services/ipfs-service';
 import {
   getClientProposalReportFromStorage, getUserVoteFromStorage,
   setClientProposalReport,
-} from 'src/api/services/local-storage-service';
+} from 'src/api/services/indexdb-service';
 import { MerkleTreeService } from 'src/api/services/merkle-tree-service';
 import { abiEncodeVote, getEncodedReportVoteKeccak256, isVoteValid } from 'src/api/services/signature-service';
 import { ProposalReportStorage } from 'src/api/model/proposal-report-storage';

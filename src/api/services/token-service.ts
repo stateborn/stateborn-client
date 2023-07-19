@@ -31,10 +31,10 @@ export class TokenService {
         chainIdHex: '0x89',
       },
       {
-        chainId: process.env.DEVELOPMENT_NETWORK_CHAIN_ID,
-        name: process.env.DEVELOPMENT_NETWORK_NAME,
-        icon: process.env.DEVELOPMENT_NETWORK_ICON_NAME,
-        chainIdHex: process.env.DEVELOPMENT_NETWORK_CHAIN_ID_HEX,
+        chainId: process.env.DEVELOPMENT_NETWORK_CHAIN_ID!,
+        name: process.env.DEVELOPMENT_NETWORK_NAME!,
+        icon: process.env.DEVELOPMENT_NETWORK_ICON_NAME!,
+        chainIdHex: process.env.DEVELOPMENT_NETWORK_CHAIN_ID_HEX!,
       },
     ]
       :
@@ -68,7 +68,7 @@ export class TokenService {
   }
 
   private getProperty(chainId: string, property: string) {
-    const network = this.supportedNetwork.filter(_ => _.chainId === chainId)[0];
+    const network: any = this.supportedNetwork.filter(_ => _.chainId === chainId)[0];
     if (network !== undefined) {
       return network[property];
     } else {

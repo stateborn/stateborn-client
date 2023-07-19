@@ -35,12 +35,12 @@
     </q-card-section>
     <div class="row justify-center">
       <div class="col-auto">
-        <q-btn  round flat>
+        <q-btn  round flat @click="goToGithub()">
           <q-avatar size="25px">
             <img src="/brands/icons8-github-50.png">
           </q-avatar>
         </q-btn>
-        <q-btn  round flat>
+        <q-btn  round flat @click="goToTwitter()">
           <q-avatar size="25px">
             <img src="/brands/icons8-twitter-50.png">
           </q-avatar>
@@ -123,9 +123,10 @@ import {
   getSettingsFromStorage,
   resetIpfsGatewayAddressToDefault,
   saveSettingsToLocalStorage
-} from 'src/api/services/settings-service';
+} from 'src/api/services/settings-local-storage-service';
 import { Notify } from 'quasar';
 import { reconnectToIpfs } from 'src/api/services/ipfs-service';
+import { goToGithub, goToTwitter } from 'src/api/services/utils-service';
 
 const ipfsGateway = ref('');
 const dropdown = ref(null);

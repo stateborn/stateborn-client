@@ -1,6 +1,6 @@
 import { create, IPFSHTTPClient } from 'ipfs-http-client';
 import { Buffer } from 'buffer';
-import { getSettingsFromStorage } from 'src/api/services/settings-service';
+import { getSettingsFromStorage } from 'src/api/services/settings-local-storage-service';
 
 const settings = getSettingsFromStorage();
 let IPFS_CLIENT: IPFSHTTPClient;

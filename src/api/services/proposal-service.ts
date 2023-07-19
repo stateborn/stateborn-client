@@ -1,5 +1,5 @@
 import { BackendProposal } from 'src/api/model/backend-proposal';
-import { getProposalFromStorage, setProposalInStorage } from 'src/api/services/local-storage-service';
+import { getProposalFromStorage, setProposalInStorage } from 'src/api/services/indexdb-service';
 import { api } from 'boot/axios';
 import { getIpfsJsonFile } from 'src/api/services/ipfs-service';
 import { ProposalVerification } from 'src/api/model/proposal-verification';

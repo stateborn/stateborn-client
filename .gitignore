@@ -33,3 +33,4 @@ yarn-error.log*
 *.sln
 
 build_and_push.sh
+todo.txt

@@ -5,7 +5,7 @@
              :label="isProposalEnded? 'Ended' : 'Active'" :text-color="isProposalEnded? 'red' : 'green'"
              style="padding: 7px;"></q-badge>
     <q-card-section>
-      <span class="text-h4" style="line-height: 1.5rem;padding-right:10px">{{ props.proposal.clientProposal.title }}</span>
+      <span :class="$q.platform.is.mobile ? 'text-h5' : 'text-h4'" style="line-height: 1.5rem;padding-right:10px">{{ props.proposal.clientProposal.title }}</span>
     </q-card-section>
     <q-separator></q-separator>
 
