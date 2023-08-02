@@ -1,53 +1,72 @@
 <template>
   <div>
-    <q-banner class="text-primary text-subtitle2 text-center noisegreen q-ma-xs q-mb-md">
-      DAO proposal creation is <b>free</b>.<br>
-      Proposal definition file is stored off-chain.<br>
-      Total proposal size (with attachments) cannot be greater than 2MB.
+    <q-banner class="text-primary text-subtitle2 text-center noisegreen">
+      <div class="row items-center">
+        <div class="col-4">
+          <q-icon name="fa-solid fa-info" color="primary"  size="lg"/>
+        </div>
+        <div class="col-8 text-left">
+          DAO proposal creation is <b>free</b>.<br>
+          Proposal definition file is stored off-chain (IPFS).<br>
+          Total proposal size (with attachments) cannot be greater than 2MB.
+        </div>
+      </div>
     </q-banner>
-    <q-banner class="text-black text-subtitle2 text-center noisered q-ma-xs" v-if="!ethConnectionStore.isConnected">
+    <q-banner class="text-black text-subtitle2 text-center noisered q-mt-md" v-if="!ethConnectionStore.isConnected">
       <span class="text-bold text-red">Please connect first</span>
     </q-banner>
-    <q-banner class="text-black text-subtitle2 text-center noisered q-ma-xs q-mt-md q-mb-md" v-if="ethConnectionStore.isConnected && !hasRequiredAmountOfTokens">
-      You need at least <span class="text-bold">{{props.dao.clientDao.proposalTokenRequiredQuantity}} {{props.dao.clientDao.token.symbol}}</span> to create a proposal <br>
-      You have: <span class="text-bold">{{tokenBalance}} {{props.dao.clientDao.token.symbol}}</span>
+    <q-banner class="text-primary text-subtitle2 text-center bodynoise q-mt-md" v-if="description.length > 0 && ethConnectionStore.isConnected && hasRequiredAmountOfTokens && connectedNetworkMatchesTokenNetwork">
+      <div>
+        <div class="text-center text-subtitle2">Description preview</div>
+        <proposal-description-markdown
+          class="q-pt-md q-pb-md q-ma-xs"
+          :description="calculateDescriptionValue()"
+        >
+        </proposal-description-markdown>
+      </div>
     </q-banner>
-    <q-banner class="text-black text-bold text-subtitle2 text-center noisered items-center" v-if="ethConnectionStore.isConnected && !connectedNetworkMatchesTokenNetwork">
-      <div class="row">
-        <div class="col-grow">
+    <q-banner class="text-black text-subtitle2 text-center noisered q-mt-md" v-if="ethConnectionStore.isConnected && !hasRequiredAmountOfTokens">
+      <div class="row items-center">
+        <div class="col-4">
+          <q-icon name="fa-solid fa-triangle-exclamation" color="primary"  size="lg"/>
+        </div>
+        <div class="col-8 text-left">
+          You need at least <span class="text-bold">{{props.dao.clientDao.proposalTokenRequiredQuantity}} {{props.dao.clientDao.token.symbol}}</span> to create a proposal <br>
+          You have: <span class="text-bold">{{tokenBalance}} {{props.dao.clientDao.token.symbol}}</span>
+        </div>
+      </div>
+
+    </q-banner>
+    <q-banner class="text-black text-bold text-subtitle2 text-center noisered items-center q-mt-md" v-if="ethConnectionStore.isConnected && !connectedNetworkMatchesTokenNetwork">
+      <div class="row items-center">
+        <div class="col-4">
+          <q-icon name="fa-solid fa-triangle-exclamation" color="primary"  size="lg"/>
+        </div>
+        <div class="col-8 text-left">
           You are connected to: {{TOKEN_SERVICE.getNetworkName(ethConnectionStore.chainId)}}<q-img style="width: 25px; height: 25px;" :src="TOKEN_SERVICE.getNetworkIcon(ethConnectionStore.chainId)"/> <br>
           DAO token network: {{TOKEN_SERVICE.getNetworkName(props.dao.clientDao.token.chainId) }}<q-img style="width: 25px; height: 25px;" :src="TOKEN_SERVICE.getNetworkIcon(props.dao.clientDao.token.chainId)"/><br>
-          Please switch your wallet to {{TOKEN_SERVICE.getNetworkName(props.dao.clientDao.token.chainId) }} to create proposal.
-        </div>
-      </div>
-      <div class="row justify-center">
-        <div class="col-grow justify-center text-center">
-          <q-btn color="primary" class="q-mt-md" icon="fa-solid fa-shuffle" @click="switchNetwork" :label="`Switch to ${TOKEN_SERVICE.getNetworkName(props.dao.clientDao.token.chainId)}`"></q-btn>
+          Please switch your wallet to {{TOKEN_SERVICE.getNetworkName(props.dao.clientDao.token.chainId) }} to create proposal.<br>
+          <q-btn color="primary"  class="q-mt-xs" icon="fa-solid fa-shuffle" @click="switchNetwork" :label="`Switch to ${TOKEN_SERVICE.getNetworkName(props.dao.clientDao.token.chainId)}`"></q-btn>
+
         </div>
       </div>
     </q-banner>
-    <q-input square filled label="Title" v-model="title" maxlength="120" counter class="q-pa-xs" :error="title.trim() === ''">
+    <q-input square filled label="Title" v-model="title" maxlength="120" counter :error="title.trim() === ''" class="q-mt-md">
       <template v-slot:error>
         Proposal title is required.
       </template>
     </q-input>
-    <q-input type="textarea" filled counter square label="Description" v-model="description" class="q-pa-xs q-pt-lg" :error="description.trim() === ''">
+    <q-input type="textarea" filled counter square label="Description" v-model="description" class="q-pt-xs" :error="description.trim() === ''">
       <template v-slot:error>
         Proposal description is required.
       </template>
     </q-input>
-    <div>
-      <div class="text-left text-subtitle2 q-pa-xs q-pt-lg">Description preview</div>
-        <proposal-description-markdown
-          class="q-pt-md q-pb-md q-ma-xs"
-          :description="calculateDescriptionValue()"
-          >
-        </proposal-description-markdown>
-    </div>
-    <q-select filled :options="proposalTypeOptions" square v-model="proposalType" label="BackendProposal type" class="q-pa-xs q-mt-md"></q-select>
+    <file-reader label="Upload proposal attachments" class="q-mt-xs" @file-uploaded="onFileUploaded" @file-removed="onFileRemoved" :as-base="true" size-kb-limit="1000"></file-reader>
+
+    <q-select filled :options="proposalTypeOptions" square v-model="proposalType" label="BackendProposal type" class="q-mt-md"></q-select>
     <define-voting-options-card v-if="proposalType.value === 'OPTIONS'" @proposal-option-added="proposalOptionAdded"></define-voting-options-card>
-    <div class="row items-center">
-      <div class="col-6 q-pa-xs">
+    <div class="row items-center q-pt-md">
+      <div class="col-6">
         <q-input
           filled
           v-model.number="durationHours"
@@ -61,12 +80,27 @@
           </template>
         </q-input>
       </div>
-      <div class="col-6 q-pa-xs text-subtitle2">
+      <div class="col-6 text-subtitle2">
         <span class="text-bold">Duration:</span> {{durationString}}
       </div>
     </div>
-    <file-reader class="q-ma-xs q-mt-md" label="Upload proposal attachments" @file-uploaded="onFileUploaded" @file-removed="onFileRemoved" :as-base="true" size-kb-limit="1000"></file-reader>
-    <q-btn class="q-ma-xs old-button" square label="Create" color="primary"
+
+    <div class="row justify-left">
+      <div class="col-auto">
+        <q-toggle
+          v-model="createDaoOnChainTransaction"
+          label="Create DAO on-chain transaction"
+        />
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12">
+        <create-proposal-transaction-row v-if="createDaoOnChainTransaction && dao.clientDao.contractAddress" :dao-address="dao.clientDao.contractAddress!"
+        @proposal-transaction="onProposalTransactionAdded"></create-proposal-transaction-row>
+      </div>
+    </div>
+
+    <q-btn class="q-ma-xs q-mt-lg" square label="Create" color="primary"
            :disable="!isFormValid"
            @click="callCreateProposal"></q-btn>
     <q-dialog v-model="showSignProposalDialog">
@@ -104,6 +138,8 @@ import { ProposalType } from 'src/api/model/ipfs/proposal-type';
 import { TOKEN_SERVICE } from 'src/api/services/token-service';
 import { changeNetwork } from 'src/api/services/change-network-service';
 import { DaoBackend } from 'src/api/model/dao-backend';
+import CreateProposalTransactionRow from 'components/proposal/CreateProposalTransactionRow.vue';
+import { ClientProposalTransaction } from 'src/api/model/ipfs/proposal-transaction/client-proposal-transaction';
 
 dayjs.extend(dayjsPluginUTC);
 const title = ref('New proposal');
@@ -118,6 +154,8 @@ const ethConnectionStore = useEthConnectionStore();
 const emit = defineEmits(['proposalChanged']);
 const imagesMap = new Map();
 const showSignProposalDialog = ref(false);
+const createDaoOnChainTransaction = ref(false);
+const transaction = ref(<ClientProposalTransaction | undefined>undefined);
 const startDate = dayjs();
 const router = useRouter();
 
@@ -127,7 +165,9 @@ const props = defineProps<{
 
 const isFormValid = computed(() => {
   return ethConnectionStore.isConnected && hasRequiredAmountOfTokens.value === true && title.value.trim() !== ''
-  && description.value.trim() !== '' && durationHours.value >= 1;
+  && description.value.trim() !== '' && durationHours.value >= 1 &&
+    // if chosen to add transaction, then it must be set (is correct)
+    ((props.dao.clientDao.contractAddress && createDaoOnChainTransaction.value === true) ? (transaction.value !== undefined) : true)
 });
 
 const proposalOptionAdded = (currentProposalOptions: string[]) => {
@@ -252,6 +292,7 @@ const callCreateProposal = async () => {
     startDate.add(durationHours.value, 'h').utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
     latestBlockNumber.toString(),
     getDataObject(),
+    transaction.value !== undefined ? [transaction.value] : undefined
 );
   showSignProposalDialog.value = true;
   const signature = await signProposal(clientProposal);
@@ -275,5 +316,9 @@ const switchNetwork = async () => {
   } catch (err) {
     Notify.create({ message: 'Changing network failed. Please change network directly in wallet (e.g. Metamask)', position: 'top-right', color: 'red' });
   }
+}
+
+const onProposalTransactionAdded = async (proposalTransaction?: ClientProposalTransaction | undefined) => {
+  transaction.value = proposalTransaction;
 }
 </script>

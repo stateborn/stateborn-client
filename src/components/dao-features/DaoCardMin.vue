@@ -16,6 +16,18 @@
       </div>
       <div class="col-grow" style="padding:0; margin:0;">
         <q-list style="padding: 2px; margin:2px;">
+          <q-item >
+            <q-item-section avatar>
+              <q-icon color="primary" size="xs" :name="props.dao.clientDao.contractAddress ? 'fa-solid fa-cube' : 'fa-solid fa-square'"/>
+            </q-item-section>
+
+            <q-item-section>
+              <q-item-label><q-badge style="padding:5px" :label="props.dao.clientDao.contractAddress ? 'OFF-CHAIN + ON-CHAIN' : 'OFF-CHAIN'"
+                                     :color="props.dao.clientDao.contractAddress ? 'info' : 'primary'"
+                                     text-color="white"></q-badge></q-item-label>
+              <q-item-label caption class="text-primary">DAO type</q-item-label>
+            </q-item-section>
+          </q-item>
           <q-item dense>
             <q-item-section avatar  >
               <q-icon color="primary" size="xs" name="fa-solid fa-circle"/>
@@ -23,8 +35,8 @@
 
             <q-item-section >
               <q-item-label>{{ props.dao.clientDao.token.symbol }} | <q-badge style="padding:5px" :label="props.dao.clientDao.token.type"
-                                                                              :color="props.dao.clientDao.token.type === DaoTokenType.ERC20 ? 'primary' : 'secondary'"
-                                                                              :text-color="props.dao.clientDao.token.type === DaoTokenType.ERC20 ? 'white' : 'black'"></q-badge>
+                                                                              :color="props.dao.clientDao.token.type === TokenType.ERC20 ? 'primary' : 'secondary'"
+                                                                              :text-color="props.dao.clientDao.token.type === TokenType.ERC20 ? 'white' : 'black'"></q-badge>
               </q-item-label>
               <q-item-label caption class="text-primary">Token symbol | type</q-item-label>
             </q-item-section>
@@ -91,7 +103,7 @@
 import { DaoBackend } from 'src/api/model/dao-backend';
 import { TOKEN_SERVICE } from 'src/api/services/token-service';
 import { goToEtherscan } from 'src/api/services/utils-service';
-import { DaoTokenType } from 'src/api/model/ipfs/dao-token-type';
+import { TokenType } from 'src/api/model/ipfs/token-type';
 
 const props = defineProps<{
   dao: DaoBackend,

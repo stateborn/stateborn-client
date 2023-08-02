@@ -25,17 +25,7 @@ const getProposalFromStorageOrFetch = async (proposalIpfsHash: string): Promise<
   if (proposal === undefined) {
     const res = await api.get(`/api/rest/v1/proposal/${proposalIpfsHash}`);
     const newProposal = new BackendProposal(
-      new ClientProposal(
-        res.data.clientProposal.creatorAddress,
-        res.data.clientProposal.daoIpfsHash,
-        res.data.clientProposal.title,
-        res.data.clientProposal.description,
-        res.data.clientProposal.proposalType,
-        res.data.clientProposal.startDateUtc,
-        res.data.clientProposal.endDateUtc,
-        res.data.clientProposal.blockNumber,
-        res.data.clientProposal.data,
-      ),
+      res.data.clientProposal,
       proposalIpfsHash,
     );
     await setProposalInStorage(proposalIpfsHash, newProposal);

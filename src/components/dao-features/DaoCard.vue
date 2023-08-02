@@ -11,7 +11,7 @@
         </div>
       </div>
     </div>
-    <div class="row justify-center text-center items-center q-pt-xs">
+    <div class="row justify-center text-center items-center q-pt-xs" v-if="props.dao.clientDao.imageBase64 !== ''">
       <div class="col-auto justify-center items-center">
         <q-img
           style="height: 120px; width: 120px;"
@@ -19,12 +19,24 @@
         />
       </div>
     </div>
-    <q-card-section style="padding: 2px; margin:2px; min-height: 100px" >
+    <q-card-section style="padding: 2px; margin:2px;" >
       <div class="text-subtitle2 q-pa-xs">{{ props.dao.clientDao.description }}</div>
     </q-card-section>
     <q-separator class="q-mt-xs q-mb-xs"></q-separator>
     <q-card-section style="padding:0; margin:0; ">
       <q-list>
+        <q-item v-if="props.isFull">
+          <q-item-section avatar>
+            <q-icon :color="props.dao.clientDao.contractAddress ? 'info' : 'primary'" size="xs" :name="props.dao.clientDao.contractAddress ? 'fa-solid fa-cube' : 'fa-solid fa-square'"/>
+          </q-item-section>
+
+          <q-item-section>
+            <q-item-label><q-badge style="padding:5px" :label="props.dao.clientDao.contractAddress ? 'OFF-CHAIN + ON-CHAIN' : 'OFF-CHAIN'"
+                                   :color="props.dao.clientDao.contractAddress ? 'info' : 'primary'"
+                                   text-color="white"></q-badge></q-item-label>
+            <q-item-label caption class="text-primary">DAO type</q-item-label>
+          </q-item-section>
+        </q-item>
         <q-item clickable v-if="props.isFull" @click="goToIpfs(props.dao.ipfsHash)">
           <q-item-section avatar>
             <q-icon color="primary" size="xs" name="fa-solid fa-arrow-up-right-from-square"/>
@@ -33,6 +45,16 @@
           <q-item-section>
             <q-item-label>{{ props.dao.ipfsHash }}</q-item-label>
             <q-item-label caption class="text-primary">IPFS hash</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item v-if="props.isFull && props.dao.clientDao.contractAddress" clickable @click="goToEtherscan(props.dao.clientDao.contractAddress, props.dao.clientDao.token.chainId)">
+          <q-item-section avatar>
+            <q-icon color="primary" size="xs" name="fa-solid fa-arrow-up-right-from-square"/>
+          </q-item-section>
+
+          <q-item-section>
+            <q-item-label>{{ props.dao.clientDao.contractAddress }}</q-item-label>
+            <q-item-label caption class="text-primary">DAO contract address (on-chain)</q-item-label>
           </q-item-section>
         </q-item>
         <q-item v-if="props.isFull">
@@ -64,8 +86,8 @@
 
           <q-item-section>
             <q-item-label><q-badge style="padding:5px" :label="props.dao.clientDao.token.type"
-                                   :color="props.dao.clientDao.token.type === DaoTokenType.ERC20 ? 'primary' : 'secondary'"
-                                   :text-color="props.dao.clientDao.token.type === DaoTokenType.ERC20 ? 'white' : 'black'"></q-badge></q-item-label>
+                                   :color="props.dao.clientDao.token.type === TokenType.ERC20 ? 'primary' : 'secondary'"
+                                   :text-color="props.dao.clientDao.token.type === TokenType.ERC20 ? 'white' : 'black'"></q-badge></q-item-label>
             <q-item-label caption class="text-primary">Token type</q-item-label>
           </q-item-section>
         </q-item>
@@ -152,7 +174,7 @@
 import { goToEtherscan, goToIpfs } from 'src/api/services/utils-service';
 import { DaoBackend } from 'src/api/model/dao-backend';
 import { TOKEN_SERVICE } from 'src/api/services/token-service';
-import { DaoTokenType } from 'src/api/model/ipfs/dao-token-type';
+import { TokenType } from 'src/api/model/ipfs/token-type';
 
 const props = defineProps<{
   dao: DaoBackend,

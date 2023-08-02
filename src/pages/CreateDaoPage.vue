@@ -16,7 +16,18 @@
                     <span class="text-underline">Home</span>
                   </q-breadcrumbs-el>
                 </q-breadcrumbs>
-                <create-dao-form></create-dao-form>
+                <q-tabs v-model="tab" align="justify" dense>
+                  <q-tab name="offchain" icon="fa-solid fa-square" label="OFF-CHAIN ONLY" />
+                  <q-tab name="onchain" icon="fa-solid fa-cube" label="OFF-CHAIN + ON-CHAIN" />
+                </q-tabs>
+                <q-tab-panels v-model="tab" animated class="stateborn-card">
+                  <q-tab-panel name="offchain">
+                    <create-dao-form :onchain="false"></create-dao-form>
+                  </q-tab-panel>
+                  <q-tab-panel name="onchain">
+                    <create-dao-form :onchain="true"></create-dao-form>
+                  </q-tab-panel>
+                </q-tab-panels>
               </div>
             </div>
           </q-card-section>
@@ -29,4 +40,6 @@
 <script lang="ts" setup>
 import CreateDaoForm from 'components/proposal/CreateDaoForm.vue';
 import PictureParallax from 'components/PictureParallax.vue';
+import { ref } from 'vue';
+const tab = ref('offchain')
 </script>

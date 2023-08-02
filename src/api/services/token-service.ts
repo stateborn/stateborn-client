@@ -1,4 +1,4 @@
-import { DaoTokenType } from 'src/api/model/ipfs/dao-token-type';
+import { TokenType } from 'src/api/model/ipfs/token-type';
 import { ERC_20_SERVICE } from 'src/api/services/erc-20-service';
 import { ERC_721_SERVICE } from 'src/api/services/erc-721-service';
 
@@ -59,8 +59,8 @@ export class TokenService {
     },
   ]
 
-  async readTokenBalance(userAddress: string, tokenAddress: string, tokenType: DaoTokenType, decimals: string): Promise<string> {
-    if (tokenType === DaoTokenType.ERC20) {
+  async readTokenBalance(userAddress: string, tokenAddress: string, tokenType: TokenType, decimals: string): Promise<string> {
+    if (tokenType === TokenType.ERC20) {
       return await ERC_20_SERVICE.readTokenBalance(userAddress, tokenAddress, decimals);
     } else {
       return await ERC_721_SERVICE.readTokenBalance(userAddress, tokenAddress, decimals);

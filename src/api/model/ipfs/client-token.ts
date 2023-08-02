@@ -1,15 +1,15 @@
-import { DaoTokenType } from 'src/api/model/ipfs/dao-token-type';
+import { TokenType } from 'src/api/model/ipfs/token-type';
 
-export class ClientDaoToken {
+export class ClientToken {
 
   address: string;
   name: string;
   symbol: string;
-  type: DaoTokenType;
+  type: TokenType;
   chainId: string;
   decimals: string;
 
-  constructor(address: string, name: string, symbol: string, type: DaoTokenType, chainId: string, decimals: string) {
+  constructor(address: string, name: string, symbol: string, type: TokenType, chainId: string, decimals: string) {
     this.address = address;
     this.name = name;
     this.symbol = symbol;

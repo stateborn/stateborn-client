@@ -280,5 +280,5 @@
 </template>
 <script setup lang="ts">
 import PictureParallax from 'components/PictureParallax.vue';
-import { DaoTokenType } from 'src/api/model/ipfs/dao-token-type';
+import { TokenType } from 'src/api/model/ipfs/token-type';
 </script>

@@ -1,4 +1,5 @@
 import { ProposalType } from 'src/api/model/ipfs/proposal-type';
+import { ClientProposalTransaction } from 'src/api/model/ipfs/proposal-transaction/client-proposal-transaction';
 
 export class ClientProposal {
 
@@ -11,8 +12,9 @@ export class ClientProposal {
   endDateUtc: string;
   blockNumber: string;
   data?: any;
+  transactions?: ClientProposalTransaction[];
 
-  constructor(creatorAddress: string, daoIpfsHash: string, title: string, description: string, proposalType: ProposalType, startDateUtc: string, endDateUtc: string, blockNumber: string, data?: any) {
+  constructor(creatorAddress: string, daoIpfsHash: string, title: string, description: string, proposalType: ProposalType, startDateUtc: string, endDateUtc: string, blockNumber: string, data?: any, transactions?: ClientProposalTransaction[]) {
     this.creatorAddress = creatorAddress;
     this.daoIpfsHash = daoIpfsHash;
     this.title = title;
@@ -22,5 +24,6 @@ export class ClientProposal {
     this.endDateUtc = endDateUtc;
     this.blockNumber = blockNumber;
     this.data = data;
+    this.transactions = transactions;
   }
 }

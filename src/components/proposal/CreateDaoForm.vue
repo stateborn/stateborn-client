@@ -1,36 +1,57 @@
 <template>
   <div>
-    <q-banner class="text-primary text-subtitle2 text-center noisegreen q-ma-xs">
-      Stateborn DAO creation is <b>free</b>.<br>
-      DAO definition file is stored off-chain.<br>
-      You only need to provide the address of your governance token (ERC-20 or NFT).
+    <q-banner class="text-primary text-subtitle2 text-center noisegreen q-ma-xs" v-if="props.onchain">
+      <div class="row items-center">
+        <div class="col-4">
+          <q-icon name="fa-solid fa-cube" color="primary"  size="lg"/>
+        </div>
+        <div class="col-8 text-left">
+          You create <b>on-chain + off-chain</b> DAO. <br>
+          Creation costs <b>transaction fee</b> for on-chain DAO creation.<br>
+          DAO definition is stored off-chain (IPFS) and on-chain (smart contract).<br>
+          You need to provide the address of your governance token (ERC-20 or NFT).
+        </div>
+      </div>
+    </q-banner>
+    <q-banner class="text-primary text-subtitle2 text-center noisegreen q-ma-xs" v-else>
+      <div class="row items-center">
+        <div class="col-4">
+          <q-icon name="fa-solid fa-square" color="primary"  size="lg"/>
+        </div>
+        <div class="col-8 text-left">
+          You create <b>off-chain</b> DAO. Creation is <b>free</b>.<br>
+          DAO definition is stored off-chain (IPFS).<br>
+          You only need to provide the address of your governance token (ERC-20 or NFT).
+        </div>
+      </div>
     </q-banner>
     <q-banner class="text-black text-subtitle2 text-center noisered q-ma-xs" v-if="!ethConnectionStore.isConnected">
       <span class="text-bold text-red">Please connect first</span>
     </q-banner>
     <q-input square outlined filled label="DAO name" v-model="name" class="q-pa-xs" maxlength="60" counter :disable="!ethConnectionStore.isConnected"
-             :class="(ethConnectionStore.isConnected && flashNameBorder) ? 'flashingBorder' : ''"
-    :error="name.trim() === ''">
+             :class="(ethConnectionStore.isConnected && flashNameBorder) ? 'flashingBorder' : ''" :error="name.trim() === ''">
       <template v-slot:error>
         Please provide a name for your DAO.
       </template>
     </q-input>
     <q-input counter filled square label="DAO description" v-model="description" maxlength="120" class="q-pa-xs q-pt-lg" :disable="!ethConnectionStore.isConnected"
-             :class="(ethConnectionStore.isConnected && flashDescriptionBorder) ? 'flashingBorder' : ''"
-     :error="description.trim() === ''">
+             :class="(ethConnectionStore.isConnected && flashDescriptionBorder) ? 'flashingBorder' : ''" :error="description.trim() === ''">
       <template v-slot:error>
         Please provide a short description of your DAO.
       </template>
 
     </q-input>
     <q-banner class="noisegreen text-primary text-center text-subtitle2 q-pa-xs q-mt-lg" v-if="ethConnectionStore.isConnected" dense>
-      <template v-slot:avatar>
-        <q-img :src="ethConnectionStore.networkIcon" style="height: 25px; width:25px; margin-top:27px"/>
-      </template>
-      You are connected to {{ethConnectionStore.networkName}} network. <br>Please provide {{ethConnectionStore.networkName}} token address. <br>
-      <b>Important:</b> your DAO will use a governance token on {{ethConnectionStore.networkName}}.<br>
-      Please reconnect wallet if you want to change the blockchain network.
-
+      <div class="row items-center">
+        <div class="col-4">
+          <q-img :src="ethConnectionStore.networkIcon" style="height: 25px; width:25px"/>
+        </div>
+        <div class="col-8 text-left">
+          You are connected to {{ethConnectionStore.networkName}} network. <br>Please provide {{ethConnectionStore.networkName}} token address. <br>
+          <b>Important:</b> your DAO will use a governance token on {{ethConnectionStore.networkName}}.<br>
+          Please reconnect wallet if you want to change the blockchain network.
+        </div>
+      </div>
     </q-banner>
     <q-input square filled label="DAO governance token address" v-model="tokenAddress"
              :error="tokenAddress.trim() === '' && ethConnectionStore.isConnected"
@@ -46,7 +67,7 @@
       <q-input square dense readonly outlined prefix="Token type:" v-model="tokenType" class="q-pa-xs" ></q-input>
       <q-input square dense readonly outlined prefix="Token decimals:" v-model="decimals" v-if="decimals !== ''" class="q-pa-xs"></q-input>
       <q-input square dense readonly outlined prefix="Token network:" v-model="ethConnectionStore.networkName" class="q-pa-xs">
-        <template v-slot:prepend>
+        <template v-slot:append>
           <q-avatar>
             <img :src="ethConnectionStore.networkIcon" style="height: 25px; width: 25px;">
           </q-avatar>
@@ -112,7 +133,7 @@
     </div>
     <q-btn class="q-ma-xs old-button" square label="Create" color="primary"
            :disable="!isFormValid"
-           @click="callCreateProposal"></q-btn>
+           @click="callCreateDao"></q-btn>
 
   </div>
   <q-dialog v-model="showSignDaoDialog">
@@ -139,15 +160,15 @@ import { signDao } from 'src/api/services/signature-service';
 import FileReader from 'components/proposal/FileReader.vue';
 import dayjs from 'dayjs';
 import dayjsPluginUTC from 'dayjs-plugin-utc';
-import DefineVotingOptionsCard from 'components/proposal/DefineVotingOptionsCard.vue';
 import { Notify, useQuasar } from 'quasar';
 import { useRouter } from 'vue-router';
 import { ERC_721_SERVICE } from 'src/api/services/erc-721-service';
 import { ERC_20_SERVICE } from 'src/api/services/erc-20-service';
 import { sleep } from 'src/api/services/sleep-service';
 import { ClientDao } from 'src/api/model/ipfs/client-dao';
-import { ClientDaoToken } from 'src/api/model/ipfs/client-dao-token';
-import { DaoTokenType } from 'src/api/model/ipfs/dao-token-type';
+import { ClientToken } from 'src/api/model/ipfs/client-token';
+import { TokenType } from 'src/api/model/ipfs/token-type';
+import { createDaoOnChain } from 'src/api/services/onchain-service';
 
 dayjs.extend(dayjsPluginUTC);
 const ethConnectionStore = useEthConnectionStore();
@@ -157,7 +178,7 @@ const description = ref('Description of your DAO...');
 const tokenAddress = ref('');
 const tokenName = ref('');
 const tokenSymbol = ref('');
-const tokenType = ref(DaoTokenType.ERC20);
+const tokenType = ref(TokenType.ERC20);
 const decimals = ref('');
 const image = ref('');
 const daoOwner = ref(' ');
@@ -172,7 +193,9 @@ const flashTokensRequiredBorder = ref(true);
 const proposalOptions = ref(<string[]>[]);
 const emit = defineEmits(['proposalChanged']);
 const router = useRouter();
-
+const props = defineProps<{
+  onchain: boolean,
+}>();
 watch(() => name.value, () => {
   flashNameBorder.value = false;
 });
@@ -207,7 +230,7 @@ const setTokenAddress = () => {
     } else {
       // local erc-20
       // NFT: 0x959922bE3CAee4b8Cd9a407cc3ac1C251C2007B1
-      tokenAddress.value = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
+      tokenAddress.value = process.env.DEVELOPMENT_NETWORK_ERC_20_TOKEN_ADDRESS!;
     }
   }
 }
@@ -236,7 +259,7 @@ watch(() => tokenAddress.value, async () => {
     const { nameRes, symbolRes, decimalsRes } = await ERC_721_SERVICE.readTokenData(tokenAddress.value);
     tokenName.value = nameRes;
     tokenSymbol.value = symbolRes;
-    tokenType.value = DaoTokenType.NFT;
+    tokenType.value = TokenType.NFT;
     decimals.value = decimalsRes;
     minimalTokens.value = 1;
     $q.loading.hide();
@@ -247,7 +270,7 @@ watch(() => tokenAddress.value, async () => {
       tokenName.value = nameRes;
       tokenSymbol.value = symbolRes;
       decimals.value = decimalsRes;
-      tokenType.value = DaoTokenType.ERC20;
+      tokenType.value = TokenType.ERC20;
       $q.loading.hide();
       Notify.create({ message: 'Successfully fetched ERC-20 token data!', position: 'top-right', color: 'green' });
     } catch (err) {
@@ -273,7 +296,19 @@ const onFileRemoved = () => {
   image.value = '';
 };
 
-const callCreateProposal = async () => {
+const callCreateDao = async () => {
+  let daoContractAddress = '';
+  if (props.onchain === true) {
+    $q.loading.show({
+      delay: 100, // ms
+      message: 'Waiting for transaction processing. This may take a while...',
+      backgroundColor: 'black',
+      messageColor: 'white',
+    });
+    daoContractAddress = await createDaoOnChain(ethConnectionStore.chainId);
+    Notify.create({ message: `DAO created on-chain. Address: ${daoContractAddress}`, position: 'top-right', color: 'green' });
+    $q.loading.hide();
+  }
   showSignDaoDialog.value = true;
   const creationDateUtc = dayjs().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
   const clientDao = new ClientDao(
@@ -284,7 +319,7 @@ const callCreateProposal = async () => {
     "1",
     minimalTokens.value.toString(),
     creationDateUtc,
-    new ClientDaoToken(
+    new ClientToken(
       tokenAddress.value,
       tokenName.value,
       tokenSymbol.value,
@@ -292,6 +327,7 @@ const callCreateProposal = async () => {
       ethConnectionStore.chainId,
       decimals.value,
     ),
+    daoContractAddress !== '' ? daoContractAddress : undefined,
   );
 
   const signature = await signDao(clientDao);

@@ -79,6 +79,12 @@
             </div>
           </div>
         </div>
+        <div class="row">
+          <div class="col-12">
+            <ProposalTransactionsCard class="q-ma-md" :transactions="proposal.clientProposal.transactions" v-if="proposal !== undefined && proposal.clientProposal.transactions !== undefined"></ProposalTransactionsCard>
+
+          </div>
+        </div>
         <div class="row" id="table-votes-row">
           <div class="col-12">
             <VotesTable class="q-ma-md" :votes-count="votesCount"
@@ -139,10 +145,11 @@ import { ProposalReport } from 'src/api/model/proposal-report';
 import { BackendProposal } from 'src/api/model/backend-proposal';
 import { ProposalResultDto } from 'src/api/dto/proposal-result-dto';
 import { TOKEN_SERVICE } from 'src/api/services/token-service';
-import { DaoTokenType } from 'src/api/model/ipfs/dao-token-type';
+import { TokenType } from 'src/api/model/ipfs/token-type';
 import { sleep } from 'src/api/services/sleep-service';
 import height = dom.height;
 import { getProposalReport } from 'src/api/services/proposal-report-service';
+import ProposalTransactionsCard from 'components/proposal/ProposalTransactionsCard.vue';
 
 const route = useRoute();
 const proposal = ref(<BackendProposal | undefined> undefined);
@@ -241,7 +248,7 @@ const fetchProposalData = async () => {
 };
 fetchProposalData();
 
-const getTokenBalance = async (tokenAddress: string, tokenType: DaoTokenType, decimals?: string) => {
+const getTokenBalance = async (tokenAddress: string, tokenType: TokenType, decimals?: string) => {
   TOKEN_SERVICE.readTokenBalance(ethConnectionStore.account, tokenAddress, tokenType, decimals).then((res) => {
     tokenBalance.value = res;
   }, (error) => {

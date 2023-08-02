@@ -78,6 +78,8 @@ module.exports = configure(function (ctx) {
         DEVELOPMENT_NETWORK_CHAIN_ID_HEX: '0x7A69',
         DEVELOPMENT_NETWORK_NAME: 'Hardhat localhost',
         DEVELOPMENT_NETWORK_ICON_NAME: '/hardhat.png',
+        DEVELOPMENT_NETWORK_ERC_20_TOKEN_ADDRESS: '0x5FbDB2315678afecb367f032d93F642f64180aa3',
+        DEVELOPMENT_NETWORK_DAO_FACTORY_ADDRESS: '0x0165878A594ca255338adfa4d48449f69242Eb8F',
       },
       // rawDefine: {}
       // ignorePublicFolder: true,

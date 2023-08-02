@@ -1,4 +1,4 @@
-import { ClientDaoToken } from 'src/api/model/ipfs/client-dao-token';
+import { ClientToken } from 'src/api/model/ipfs/client-token';
 
 export class ClientDao {
 
@@ -9,10 +9,11 @@ export class ClientDao {
   ownersMultisigThreshold: string;
   proposalTokenRequiredQuantity: string;
   creationDateUtc: string;
-  token: ClientDaoToken;
+  token: ClientToken;
+  contractAddress?: string;
 
   constructor(name: string, description: string, imageBase64: string, owners: string[], ownersMultisigThreshold: string, proposalTokenRequiredQuantity: string,
-              creationDateUtc: string, token: ClientDaoToken) {
+              creationDateUtc: string, token: ClientToken, contractAddress?: string) {
     this.name = name;
     this.description = description;
     this.imageBase64 = imageBase64;
@@ -21,5 +22,6 @@ export class ClientDao {
     this.proposalTokenRequiredQuantity = proposalTokenRequiredQuantity;
     this.creationDateUtc = creationDateUtc;
     this.token = token;
+    this.contractAddress = contractAddress;
   }
 }
