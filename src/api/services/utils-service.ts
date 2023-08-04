@@ -34,6 +34,23 @@ export const goToEtherscan = (address: string, chainId: string) => {
   }
 };
 
+export const goToEtherscanTx = (txHash: string, chainId: string) => {
+  switch (chainId) {
+    case '1':
+      window.open(`https://etherscan.io/tx/${txHash}`, '_blank');
+      break;
+    case '42161':
+      window.open(`https://arbiscan.io/tx/${txHash}`, '_blank');
+      break;
+    case '137':
+      window.open(`https://polygonscan.com/tx/${txHash}`, '_blank');
+      break;
+    default:
+      window.open(`https://etherscan.io/tx/${txHash}`, '_blank');
+      break;
+  }
+};
+
 export const goToTwitter = () => {
   window.open('https://twitter.com/stateborn', '_blank');
 };

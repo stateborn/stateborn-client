@@ -18,7 +18,7 @@
       <q-list :class="isProposalEnded ? 'noisered' : 'noisegreen'">
         <q-item dense>
           <q-item-section avatar>
-            <q-icon color="primary" size="xs" name="fa-solid fa-clock"/>
+            <q-icon color="primary" size="xs" name="fa-solid fa-clock" />
           </q-item-section>
 
           <q-item-section>

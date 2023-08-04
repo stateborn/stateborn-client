@@ -34,7 +34,7 @@
             <q-item-label><q-badge style="padding:5px" :label="props.dao.clientDao.contractAddress ? 'OFF-CHAIN + ON-CHAIN' : 'OFF-CHAIN'"
                                    :color="props.dao.clientDao.contractAddress ? 'info' : 'primary'"
                                    text-color="white"></q-badge></q-item-label>
-            <q-item-label caption class="text-primary">DAO type</q-item-label>
+            <q-item-label caption class="text-primary sectionName">DAO type</q-item-label>
           </q-item-section>
         </q-item>
         <q-item clickable v-if="props.isFull" @click="goToIpfs(props.dao.ipfsHash)">
@@ -44,7 +44,7 @@
 
           <q-item-section>
             <q-item-label>{{ props.dao.ipfsHash }}</q-item-label>
-            <q-item-label caption class="text-primary">IPFS hash</q-item-label>
+            <q-item-label caption class="text-primary sectionName">IPFS hash</q-item-label>
           </q-item-section>
         </q-item>
         <q-item v-if="props.isFull && props.dao.clientDao.contractAddress" clickable @click="goToEtherscan(props.dao.clientDao.contractAddress, props.dao.clientDao.token.chainId)">
@@ -54,7 +54,7 @@
 
           <q-item-section>
             <q-item-label>{{ props.dao.clientDao.contractAddress }}</q-item-label>
-            <q-item-label caption class="text-primary">DAO contract address (on-chain)</q-item-label>
+            <q-item-label caption class="text-primary sectionName">DAO contract address (on-chain)</q-item-label>
           </q-item-section>
         </q-item>
         <q-item v-if="props.isFull">
@@ -64,7 +64,7 @@
 
           <q-item-section>
             <q-item-label>{{ props.dao.clientDao.token.name }}</q-item-label>
-            <q-item-label caption class="text-primary">Token name</q-item-label>
+            <q-item-label caption class="text-primary sectionName">Token name</q-item-label>
           </q-item-section>
         </q-item>
 
@@ -75,7 +75,7 @@
 
           <q-item-section>
             <q-item-label>{{ props.dao.clientDao.token.symbol }}</q-item-label>
-            <q-item-label caption class="text-primary">Token symbol</q-item-label>
+            <q-item-label caption class="text-primary sectionName">Token symbol</q-item-label>
           </q-item-section>
         </q-item>
 
@@ -88,7 +88,7 @@
             <q-item-label><q-badge style="padding:5px" :label="props.dao.clientDao.token.type"
                                    :color="props.dao.clientDao.token.type === TokenType.ERC20 ? 'primary' : 'secondary'"
                                    :text-color="props.dao.clientDao.token.type === TokenType.ERC20 ? 'white' : 'black'"></q-badge></q-item-label>
-            <q-item-label caption class="text-primary">Token type</q-item-label>
+            <q-item-label caption class="text-primary sectionName">Token type</q-item-label>
           </q-item-section>
         </q-item>
 
@@ -99,7 +99,7 @@
 
           <q-item-section>
             <q-item-label>{{ TOKEN_SERVICE.getNetworkName(props.dao.clientDao.token.chainId) }}</q-item-label>
-            <q-item-label caption class="text-primary">Token network</q-item-label>
+            <q-item-label caption class="text-primary sectionName">Token network</q-item-label>
           </q-item-section>
         </q-item>
 
@@ -111,7 +111,7 @@
 
           <q-item-section>
             <q-item-label>{{ props.dao.clientDao.token.address }}</q-item-label>
-            <q-item-label caption class="text-primary">Token address</q-item-label>
+            <q-item-label caption class="text-primary sectionName">Token address</q-item-label>
           </q-item-section>
         </q-item>
 
@@ -122,7 +122,7 @@
 
           <q-item-section>
             <q-item-label>{{ props.dao.clientDao.proposalTokenRequiredQuantity }}</q-item-label>
-            <q-item-label caption class="text-primary">Required tokens for creating proposal</q-item-label>
+            <q-item-label caption class="text-primary sectionName">Required tokens for creating proposal</q-item-label>
           </q-item-section>
         </q-item>
 
@@ -147,7 +147,7 @@
             <q-item-label v-if="dao.daoVerification && dao.daoVerification.isVerified && dao.daoVerification.isValid" class="text-green-9 text-bold">Validated</q-item-label>
             <q-item-label v-if="dao.daoVerification === undefined || !dao.daoVerification.isVerified" class="text-orange-10 text-bold">Not yet validated</q-item-label>
             <q-item-label v-if="dao.daoVerification && dao.daoVerification.isVerified && !dao.daoVerification.isValid" class="text-red text-bold">Invalid</q-item-label>
-            <q-item-label caption class="text-primary">Validity status</q-item-label>
+            <q-item-label caption class="text-primary sectionName">Validity status</q-item-label>
           </q-item-section>
         </q-item>
         <q-item>
@@ -156,7 +156,7 @@
           </q-item-section>
 
           <q-item-section>
-            <q-item-label class="text-subtitle2">proposals</q-item-label>
+            <q-item-label class="text-subtitle2 sectionName">proposals</q-item-label>
           </q-item-section>
         </q-item>
 

@@ -3,7 +3,7 @@
     <q-card-section class="text-center" style="padding:0px;">
       <div class="row justify-center items-center">
         <div class="col-auto q-pa-xs justify-center">
-          <q-icon name="fa-solid fa-clock" color="primary" style="font-size: 1.5rem !important;"></q-icon>
+          <q-icon name="fa-solid fa-clock" color="primary" style="font-size: 1.3rem !important;"></q-icon>
         </div>
         <div class="col-auto justify-center">
           <div class="text-h6 text-center" >

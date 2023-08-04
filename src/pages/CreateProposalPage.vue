@@ -10,6 +10,21 @@
           :style="$q.platform.is.mobile ? 'height: 100px !important;' :''"
           :height="$q.platform.is.mobile ? '323': '300'"
         ></picture-parallax>
+        <div class="row q-pt-md">
+          <div class="col-12">
+            <q-breadcrumbs class="text-subtitle2 noise text-primary">
+              <q-breadcrumbs-el icon="home" to="/">
+                <span class="text-underline">Home</span>
+              </q-breadcrumbs-el>
+              <q-breadcrumbs-el :to="`/${daoIpfsHash}`" >
+               <span class="text-underline"> {{dao !== null ? `${$q.platform.is.mobile ? `${dao?.clientDao.name.substring(0, 20)}...` : dao?.clientDao.name}`: ''}}</span>
+              </q-breadcrumbs-el>
+              <q-breadcrumbs-el>
+                Create Proposal
+              </q-breadcrumbs-el>
+            </q-breadcrumbs>
+          </div>
+        </div>
         <div class="row justify-center noise q-mt-md q-mb-md">
           <div class="col-auto justify-center">
             <dao-card-min  :dao="dao"  v-if="dao !== undefined" :full-width="true" :show-required-token-quantity="true"></dao-card-min>

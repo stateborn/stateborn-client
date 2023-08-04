@@ -62,7 +62,7 @@
       </template>
     </q-input>
     <div v-if="tokenName !== ''">
-      <q-input square dense readonly outlined prefix="Token name:" v-model="tokenName" class="q-pa-xs" debounce="500"></q-input>
+      <q-input square dense readonly outlined prefix="Token nameero:" v-model="tokenName" class="q-pa-xs" debounce="500"></q-input>
       <q-input square dense readonly outlined prefix="Token symbol:" v-model="tokenSymbol" class="q-pa-xs"></q-input>
       <q-input square dense readonly outlined prefix="Token type:" v-model="tokenType" class="q-pa-xs" ></q-input>
       <q-input square dense readonly outlined prefix="Token decimals:" v-model="decimals" v-if="decimals !== ''" class="q-pa-xs"></q-input>
