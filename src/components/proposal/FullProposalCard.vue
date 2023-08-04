@@ -1,5 +1,5 @@
 <template>
-  <q-card class="stateborn-card" square>
+  <q-card class="stateborn-card " square>
     <q-card-section class="" style="border-bottom: 10px solid white">
       <div class="row items-center">
         <div class="col-2">
@@ -10,12 +10,12 @@
         </div>
       </div>
     </q-card-section>
-    <q-card-section>
+    <q-card-section >
       <div class="row text-subtitle2" v-if="props.proposal.ipfsHash"><div class="col-auto text-bold sectionName">IPFS hash</div>
         <div class="col-grow text-right">{{ $q.platform.is.mobile ? `${props.proposal.ipfsHash.substring(0, 10)}...` : props.proposal.ipfsHash }}</div>
         <q-btn flat round color="primary" size="xs" class="q-pl-xs" icon="fa-solid fa-arrow-up-right-from-square" @click="goToIpfs(props.proposal.ipfsHash)"/>
       </div>
-      <div class="row text-subtitle2"><div class="col-auto text-bold sectionName">Author</div>
+      <div class="row text-subtitle2"><div class="col-auto text-bold sectionName ">Author</div>
         <div class="col-grow text-right">
           {{$q.platform.is.mobile ? `${props.proposal.clientProposal.creatorAddress.substring(0, 10)}...` : props.proposal.clientProposal.creatorAddress}}
         </div>

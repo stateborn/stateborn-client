@@ -1,7 +1,7 @@
 <template>
   <q-page>
     <div class="row justify-center" :class="$q.platform.is.mobile ? '' : 'q-pa-md'" >
-      <div class="col-lg-6 col-xs-grow justify-center q-pa-xs">
+      <div class="col-lg-8 col-xs-grow justify-center q-pa-xs">
         <picture-parallax
           image-src="/proposalbody2noise.webp"
           alt="proposal image"
@@ -10,7 +10,7 @@
           :style="$q.platform.is.mobile ? 'height: 100px !important;' :''"
           :height="$q.platform.is.mobile ? '323': '300'"
         ></picture-parallax>
-        <div class="row q-pt-md">
+        <div class="row q-mt-md">
           <div class="col-12">
             <q-breadcrumbs class="text-subtitle2 noise text-primary">
               <q-breadcrumbs-el icon="home" to="/">
@@ -25,12 +25,14 @@
             </q-breadcrumbs>
           </div>
         </div>
-        <div class="row justify-center noise q-mt-md q-mb-md">
-          <div class="col-auto justify-center">
-            <dao-card-min  :dao="dao"  v-if="dao !== undefined" :full-width="true" :show-required-token-quantity="true"></dao-card-min>
+        <div class="row">
+          <div class="col-lg-3 col-md-5 col-xs-grow">
+            <dao-card :is-full="true" :dao="dao"  v-if="dao !== undefined" :full-width="true" :show-required-token-quantity="true" :is-create-proposal-mode="true"></dao-card>
+          </div>
+          <div class="col-lg-9 col-md-7 col-xs-grow q-mt-xs">
+            <CreateProposalCard @proposal-changed="proposalChanged"></CreateProposalCard>
           </div>
         </div>
-        <CreateProposalCard @proposal-changed="proposalChanged"></CreateProposalCard>
       </div>
     </div>
   </q-page>
@@ -45,6 +47,7 @@ import { useRoute } from 'vue-router';
 import { DaoBackend } from 'src/api/model/dao-backend';
 import { getDao } from 'src/api/services/dao-service';
 import DaoCardMin from 'components/dao-features/DaoCardMin.vue';
+import DaoCard from 'components/dao-features/DaoCard.vue';
 
 const route = useRoute();
 const daoIpfsHash: string = <string>route.params.daoIpfsHash;

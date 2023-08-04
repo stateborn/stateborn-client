@@ -1,62 +1,73 @@
 <template>
-  <q-table
-    square
-    class="stateborn-card"
-    dense
-    title="All votes"
-    :rows="rows"
-    :columns="columns"
-    row-key="name"
-    :filter="filter"
-    @request="onTableDataRequest"
-    v-model:pagination="initialPagination"
-  >
-    <template v-slot:top-right>
-      <div class="text-subtitle2 text-left">
-        All votes: <span class="text-bold">{{votesCount}}</span><br>
-        Unique votes: <span class="text-bold">{{props.distinctVotesCount}}</span>
-        <q-icon color="primary" name="fa-solid fa-circle-info" class="q-pl-xs" style="margin-bottom: 3px">
-          <q-tooltip class="stateborn-tooltip">
-            All votes - all addresses votes including changed votes<br>
-            Unique votes - only final addresses vote (last submitted), 1 vote/address
-          </q-tooltip>
-        </q-icon>
+  <div>
+    <div class="row justify-center items-center noise">
+      <div class="col-auto q-pa-xs justify-center">
+        <q-icon name="fa-solid fa-user" color="primary" style="font-size: 1.3rem !important;"></q-icon>
       </div>
-    </template>
+      <div class="col-auto justify-center">
+        <div class="text-h6 text-center" >
+          User votes
+        </div>
+      </div>
+    </div>
+    <q-table
+      square
+      class="stateborn-card"
+      dense
+      :rows="rows"
+      :columns="columns"
+      row-key="name"
+      :filter="filter"
+      @request="onTableDataRequest"
+      v-model:pagination="initialPagination"
+    >
+      <template v-slot:top-right>
+        <div class="text-subtitle2 text-left">
+          All votes: <span class="text-bold">{{votesCount}}</span><br>
+          Unique votes: <span class="text-bold">{{props.distinctVotesCount}}</span>
+          <q-icon color="primary" name="fa-solid fa-circle-info" class="q-pl-xs" style="margin-bottom: 3px">
+            <q-tooltip class="stateborn-tooltip">
+              All votes - all addresses votes including changed votes<br>
+              Unique votes - only final addresses vote (last submitted), 1 vote/address
+            </q-tooltip>
+          </q-icon>
+        </div>
+      </template>
       <template v-slot:body="props">
-      <q-tr :props="props" class="text-subtitle2"
-            :class="(props.row.vote === 'YES' || props.row.vote === 'NO') ? (props.row.vote === 'YES' ? 'noisegreen' : 'noisered') : 'bodynoise'">
-        <q-td key="voterAddress" :props="props">
-          {{ props.row.voterAddress }}
-          <q-btn flat round color="primary" size="xs" class="q-pl-xs" icon="fa-solid fa-arrow-up-right-from-square"
-                 @click="goToEtherscan(props.row.voterAddress, daoTokenChainId)"/>
-        </q-td>
-        <q-td key="vote" :props="props"
-              :class="(props.row.vote === 'YES' || props.row.vote === 'NO') ? (props.row.vote === 'YES' ? 'text-green-9' : 'text-red') : 'text-black'">
-          {{ props.row.vote }}
-        </q-td>
-        <q-td key="votingPower" :props="props">
-          {{ props.row.votingPower }}
-        </q-td>
-        <q-td key="ipfsHash" :props="props">
-          {{ props.row.ipfsHash }}
-          <q-btn flat round color="primary" size="xs" class="q-pl-xs" icon="fa-solid fa-arrow-up-right-from-square"
-                 @click="goToIpfs(props.row.ipfsHash)"/>
-        </q-td>
-        <q-td key="createdAt" :props="props">
-          {{ props.row.createdAt }}
-        </q-td>
-      </q-tr>
-    </template>
-    <template v-slot:no-data="{ icon, message, filter }">
-      <div class="full-width row flex-center q-gutter-sm text-primary">
+        <q-tr :props="props" class="text-subtitle2"
+              :class="(props.row.vote === 'YES' || props.row.vote === 'NO') ? (props.row.vote === 'YES' ? 'noisegreen' : 'noisered') : 'bodynoise'">
+          <q-td key="voterAddress" :props="props">
+            {{ props.row.voterAddress }}
+            <q-btn flat round color="primary" size="xs" class="q-pl-xs" icon="fa-solid fa-arrow-up-right-from-square"
+                   @click="goToEtherscan(props.row.voterAddress, daoTokenChainId)"/>
+          </q-td>
+          <q-td key="vote" :props="props"
+                :class="(props.row.vote === 'YES' || props.row.vote === 'NO') ? (props.row.vote === 'YES' ? 'text-green-9' : 'text-red') : 'text-black'">
+            {{ props.row.vote }}
+          </q-td>
+          <q-td key="votingPower" :props="props">
+            {{ props.row.votingPower }}
+          </q-td>
+          <q-td key="ipfsHash" :props="props">
+            {{ props.row.ipfsHash }}
+            <q-btn flat round color="primary" size="xs" class="q-pl-xs" icon="fa-solid fa-arrow-up-right-from-square"
+                   @click="goToIpfs(props.row.ipfsHash)"/>
+          </q-td>
+          <q-td key="createdAt" :props="props">
+            {{ props.row.createdAt }}
+          </q-td>
+        </q-tr>
+      </template>
+      <template v-slot:no-data="{ icon, message, filter }">
+        <div class="full-width row flex-center q-gutter-sm text-primary">
         <span>
            No data found
           </span>
-        <q-icon name="fa-solid fa-triangle-exclamation" />
-      </div>
-    </template>
-  </q-table>
+          <q-icon name="fa-solid fa-triangle-exclamation" />
+        </div>
+      </template>
+    </q-table>
+  </div>
 </template>
 <script lang="ts" setup>
 import { onMounted, ref, watch } from 'vue';

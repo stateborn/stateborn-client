@@ -79,10 +79,9 @@
             </div>
           </div>
         </div>
-        <div class="row noise">
-          <div class="col-12">
+        <div class="row noise q-ma-md">
+          <div class="col-12 ">
             <ProposalTransactionsCard
-              class="q-ma-md"
               :transactions="proposal.clientProposal.transactions"
               v-if="proposal !== undefined && proposal.clientProposal.transactions !== undefined"
               :proposal-ipfs-hash="proposal.ipfsHash">
