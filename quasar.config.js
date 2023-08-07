@@ -74,12 +74,12 @@ module.exports = configure(function (ctx) {
       env: {
         DEFAULT_IPFS_GATEWAY: ctx.dev ? 'http://localhost:8080/api/v0' : 'https://stateborn.org/api/v0',
         IS_LOCALHOST: ctx.dev,
-        DEVELOPMENT_NETWORK_CHAIN_ID: '31337',
+        DEVELOPMENT_NETWORK_CHAIN_ID: '1337',
         DEVELOPMENT_NETWORK_CHAIN_ID_HEX: '0x7A69',
-        DEVELOPMENT_NETWORK_NAME: 'Hardhat localhost',
+        DEVELOPMENT_NETWORK_NAME: 'Ganache local NEW',
         DEVELOPMENT_NETWORK_ICON_NAME: '/hardhat.png',
-        DEVELOPMENT_NETWORK_ERC_20_TOKEN_ADDRESS: '0x5FbDB2315678afecb367f032d93F642f64180aa3',
-        DEVELOPMENT_NETWORK_DAO_FACTORY_ADDRESS: '0x0165878A594ca255338adfa4d48449f69242Eb8F',
+        DEVELOPMENT_NETWORK_ERC_20_TOKEN_ADDRESS: '0x9931e9395c7700F1b017Fd9CfC0D56c250000727',
+        DEVELOPMENT_NETWORK_DAO_FACTORY_ADDRESS: '0xC456777bf71dc418848AFb8B21F915ad352314f0',
       },
       // rawDefine: {}
       // ignorePublicFolder: true,

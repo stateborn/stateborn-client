@@ -11,7 +11,7 @@
           <q-card-section class="text-center">
             <div class="row justify-center">
               <div class="col-lg-8 col-md-12 col-xs-grow justify-center">
-                <q-breadcrumbs class="text-subtitle2 text-primary q-pb-md">
+                <q-breadcrumbs class="text-subtitle2 text-primary q-pb-lg">
                   <q-breadcrumbs-el icon="home" to="/">
                     <span class="text-underline">Home</span>
                   </q-breadcrumbs-el>

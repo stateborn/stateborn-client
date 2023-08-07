@@ -13,14 +13,14 @@
             :label="`${$q.platform.is.mobile ? `${proposalIpfsHash.substring(0, 10)}...` : proposalIpfsHash}`"
             :to="`/${daoIpfsHash}`/proposalIpfsHash"/>
         </q-breadcrumbs>
-        <div class="row">
+        <div class="row q-col-gutter-x-sm q-mt-xs">
           <div class="col-lg-8 col-xs-grow">
             <q-scroll-area
               v-show="canShowScrollArea"
               :style="`height: ${proposalScrollHeight}px; max-width: 100%; min-width:100px`"
               v-if="!$q.platform.is.mobile">
               <FullProposalCard
-                class="q-ma-md"
+                class=""
                 :dao-token-chain-id="dao?.clientDao?.token?.chainId"
                 :proposal-verification="proposal?.proposalVerification"
                 :proposal="proposal"
@@ -29,7 +29,7 @@
             </q-scroll-area>
             <FullProposalCard
               v-else
-              class="q-ma-md"
+              class="q-mt-md"
               :dao-token-chain-id="dao?.clientDao?.token?.chainId"
               :proposal-verification="proposal.proposalVerification"
               :proposal="proposal"
@@ -38,9 +38,9 @@
           </div>
           <div class="col-lg-4 col-xs-grow">
             <div id="other-info-row">
-              <dao-card-min :full-width="true" class="q-ma-md" :dao="dao" v-if="dao !== undefined" :show-token-address="true"></dao-card-min>
+              <dao-card-min :full-width="true" class="" :dao="dao" v-if="dao !== undefined" :show-token-address="true"></dao-card-min>
               <VoteCard
-                class="q-ma-md"
+                class="q-mt-md"
                 :trigger-voting-after-different-voting-power-acceptance="triggerVotingAfterDifferentVotingPowerAcceptance"
                 :decision-after-different-power-acceptance="decisionAfterDifferentPowerAcceptance"
                 :proposal-options="proposal.clientProposal.data?.options"
@@ -55,22 +55,22 @@
                 @different-voting-power="onDifferentVotingPower"
                 v-if="proposal !== undefined">
               </VoteCard>
-              <ProposalCountdownCard class="q-ma-md"
+              <ProposalCountdownCard class="q-mt-md"
                                      :is-proposal-ended="isProposalEnded"
                                      :end-date-utc="proposal.clientProposal.endDateUtc"
                                      v-if="proposal !== undefined"></ProposalCountdownCard>
-              <ResultCard class="q-ma-md"
+              <ResultCard class="q-mt-md"
                           :token-symbol="dao !== undefined ? dao.clientDao.token.symbol : ''"
                           :proposal-result-dto="proposalResultDto"
                           :proposal-options="proposal.clientProposal.data?.options"
                           v-if="proposal !== undefined && proposalResultDto !== undefined"></ResultCard>
-              <UserVotesTable class="q-ma-md"
+              <UserVotesTable class="q-mt-md"
                               :trigger-fill-table="triggerFillUserVotesTable"
                               :proposal-ipfs-hash="proposalIpfsHash"
                               :user-votes="userVotes"
                               v-if="proposal !== undefined">
               </UserVotesTable>
-              <ValidityCard class="q-ma-md"
+              <ValidityCard class="q-mt-md"
                             :proposal-ipfs-hash="proposalIpfsHash"
                             :token-chain-id="dao !== undefined ? dao.clientDao.token.chainId : ''"
                             :proposal-report="proposalReport"
@@ -79,7 +79,7 @@
             </div>
           </div>
         </div>
-        <div class="row noise q-ma-md">
+        <div class="row noise q-mt-md" id="transactions-row">
           <div class="col-12 ">
             <ProposalTransactionsCard
               :transactions="proposal.clientProposal.transactions"
@@ -89,9 +89,9 @@
 
           </div>
         </div>
-        <div class="row" id="table-votes-row">
+        <div class="row q-mt-md q-mb-lg" id="table-votes-row">
           <div class="col-12">
-            <VotesTable class="q-ma-md" :votes-count="votesCount"
+            <VotesTable  :votes-count="votesCount"
                         :distinct-votes-count="distinctVotesCount"
                         :dao-token-chain-id="dao?.clientDao?.token?.chainId"
                         :votes="votes" @rendered="onVotesRendered" @votesTableRequest="onVotesTableRequest">
@@ -179,8 +179,9 @@ const proposalScrollHeight = ref(0);
 const dao = ref(<DaoBackend | undefined > undefined);
 const onVotesRendered = async () => {
   const otherInfoRowHeight = height(document.getElementById('other-info-row')!);
+  const transactionsRowHeight = height(document.getElementById('transactions-row')!);
   // eslint-disable-next-line
-  const scrollHeight = window.innerHeight - 90 - height(document.getElementById('table-votes-row')!);
+  const scrollHeight = window.innerHeight - 90 - height(document.getElementById('table-votes-row')!) - height(document.getElementById('transactions-row')!);
   if (otherInfoRowHeight > scrollHeight) {
     proposalScrollHeight.value = otherInfoRowHeight;
   } else {
@@ -254,6 +255,7 @@ fetchProposalData();
 
 const getTokenBalance = async (tokenAddress: string, tokenType: TokenType, decimals?: string) => {
   TOKEN_SERVICE.readTokenBalance(ethConnectionStore.account, tokenAddress, tokenType, decimals).then((res) => {
+    console.log('wumku', res);
     tokenBalance.value = res;
   }, (error) => {
     console.log(error);

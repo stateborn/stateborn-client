@@ -1,7 +1,11 @@
 <template>
-  <q-card class="stateborn-card" square>
+  <q-card class="stateborn-card q-ma-xs" square>
+    <q-card-section style="padding: 2px !important; margin:2px !important;">
+      <div class="text-h5 text-center">New proposal</div>
+    </q-card-section>
+      <q-separator class="q-mt-xs q-mb-xs"></q-separator>
     <q-card-section>
-     <create-proposal-form @proposal-changed="proposalChanged" class="text-center" :dao="dao" v-if="dao !== undefined"></create-proposal-form>
+     <create-proposal-form @proposal-changed="proposalChanged" class="text-center q-pt-md" :dao="dao" v-if="dao !== undefined"></create-proposal-form>
     </q-card-section>
   </q-card>
 </template>

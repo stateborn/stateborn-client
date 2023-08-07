@@ -29,7 +29,7 @@
           <div class="col-lg-3 col-md-5 col-xs-grow">
             <dao-card :is-full="true" :dao="dao"  v-if="dao !== undefined" :full-width="true" :show-required-token-quantity="true" :is-create-proposal-mode="true"></dao-card>
           </div>
-          <div class="col-lg-9 col-md-7 col-xs-grow q-mt-xs">
+          <div class="col-lg-9 col-md-7 col-xs-grow ">
             <CreateProposalCard @proposal-changed="proposalChanged"></CreateProposalCard>
           </div>
         </div>

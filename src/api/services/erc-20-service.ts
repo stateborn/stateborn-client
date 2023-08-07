@@ -25,7 +25,7 @@ export class Erc20Service {
 
     console.log('User balance is: ', ethers.formatUnits(balance, Number(decimals)));
     console.log('User balance is given: ', balance);
-    return ethers.formatUnits(balance, Number(decimals));
+    return Number(ethers.formatUnits(balance, Number(decimals))).toFixed(0);
   }
 
   async readTokenData(tokenAddress: string): Promise<any> {

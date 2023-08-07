@@ -85,7 +85,7 @@
       </div>
     </div>
 
-    <div class="row justify-left">
+    <div class="row justify-left" v-if="ethConnectionStore.isConnected">
       <div class="col-auto">
         <q-toggle
           v-model="createDaoOnChainTransaction"
