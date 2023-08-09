@@ -23,13 +23,13 @@ export const getIpfsJsonFile = async (hash: string): Promise<any | undefined> =>
   return JSON.parse(new TextDecoder().decode(Buffer.from(content)).toString());
 };
 
-// export const getIpfsImage = async (hash: string): Promise<Buffer> => {
-//   console.log(hash);
-//   const data = await IPFS_CLIENT.cat(hash);
-//   let content: any[] = [];
-//   // eslint-disable-next-line no-restricted-syntax
-//   for await (const chunk of data) {
-//     content = [...content, ...chunk];
-//   }
-//   return Buffer.from(content);
-// };
+export const getIpfsImage = async (hash: string): Promise<Buffer> => {
+  console.log(hash);
+  const data = await IPFS_CLIENT.cat(hash);
+  let content: any[] = [];
+  // eslint-disable-next-line no-restricted-syntax
+  for await (const chunk of data) {
+    content = [...content, ...chunk];
+  }
+  return Buffer.from(content);
+};

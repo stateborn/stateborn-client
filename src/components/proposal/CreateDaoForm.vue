@@ -61,24 +61,44 @@
         Please provide address of your DAO governance token (ERC-20 or NFT).
       </template>
     </q-input>
-    <div v-if="tokenName !== ''">
-      <q-input square dense readonly outlined prefix="Token nameero:" v-model="tokenName" class="q-pa-xs" debounce="500"></q-input>
-      <q-input square dense readonly outlined prefix="Token symbol:" v-model="tokenSymbol" class="q-pa-xs"></q-input>
-      <q-input square dense readonly outlined prefix="Token type:" v-model="tokenType" class="q-pa-xs" ></q-input>
-      <q-input square dense readonly outlined prefix="Token decimals:" v-model="decimals" v-if="decimals !== ''" class="q-pa-xs"></q-input>
-      <q-input square dense readonly outlined prefix="Token network:" v-model="ethConnectionStore.networkName" class="q-pa-xs">
-        <template v-slot:append>
-          <q-avatar>
-            <img :src="ethConnectionStore.networkIcon" style="height: 25px; width: 25px;">
-          </q-avatar>
-        </template>
-      </q-input>
+    <div class="row q-pa-xs">
+      <div class="col-12 bodynoise" style="border: 1px solid  #e6e6e6">
+        <div class="row justify-center">
+          <div class="col-8">
+            <token-info-card
+              v-if="tokenType === TokenType.ERC20 && tokenName !== ''"
+              :big-token="true"
+              label="DAO governance token"
+              :token-symbol="tokenSymbol"
+              :decimals="decimals"
+              :token-name="tokenName"
+              :network-name="ethConnectionStore.networkName"
+              :network-icon="ethConnectionStore.networkIcon"
+              :token-type="tokenType">
+            </token-info-card>
+            <nft-token-info-card
+              v-if="tokenType === TokenType.NFT && tokenName !== ''"
+              :big-token="true"
+              :nft-id="undefined"
+              :token-address="tokenAddress"
+              label="DAO governance token"
+              :token-symbol="tokenSymbol"
+              :decimals="decimals"
+              :token-name="tokenName"
+              :network-name="ethConnectionStore.networkName"
+              :network-icon="ethConnectionStore.networkIcon"
+              :collection-mode-only="true">
+            </nft-token-info-card>
+          </div>
+        </div>
+      </div>
     </div>
+
     <q-input
       v-if="ethConnectionStore.isConnected && tokenSymbol.trim() !== ''"
       :disable="!ethConnectionStore.isConnected"
       filled
-      class="q-pa-xs q-pt-lg"
+      class="q-pa-xs"
       v-model.number="minimalTokens"
       :class="(ethConnectionStore.isConnected && flashTokensRequiredBorder) ? 'flashingBorder' : ''"
       type="number"
@@ -169,6 +189,8 @@ import { ClientDao } from 'src/api/model/ipfs/client-dao';
 import { ClientToken } from 'src/api/model/ipfs/client-token';
 import { TokenType } from 'src/api/model/ipfs/token-type';
 import { createDaoOnChain } from 'src/api/services/onchain-service';
+import TokenInfoCard from 'components/TokenInfoCard.vue';
+import NftTokenInfoCard from 'components/NftTokenInfoCard.vue';
 
 dayjs.extend(dayjsPluginUTC);
 const ethConnectionStore = useEthConnectionStore();

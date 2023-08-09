@@ -131,9 +131,9 @@ a {text-decoration: none;color: inherit;}
 
 
 .flashingBorder {
-  border: none;
-  transform: scale(1);
-  animation: pulse 1.2s infinite;
+  //border: none;
+  //transform: scale(1);
+  //animation: pulse 1.2s infinite;
 }
 
 @keyframes pulse {

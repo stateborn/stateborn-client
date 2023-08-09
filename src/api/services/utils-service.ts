@@ -1,4 +1,5 @@
 import { getSettingsFromStorage } from 'src/api/services/settings-local-storage-service';
+import { ethers } from 'ethers';
 
 export const getTimeCounterColorDependingOTimeLeft = (days: number, hours: number) => {
   if (days > 0) {
@@ -57,3 +58,9 @@ export const goToTwitter = () => {
 export const goToGithub = () => {
   window.open('https://github.com/stateborn', '_blank');
 };
+
+export const generateRandomString = (length: number) => Array.from({ length }, () => 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'[Math.floor(Math.random() * 62)]).join('');
+
+export const isEthAddress = (address: string) => {
+  return ethers.isAddress(address);
+}

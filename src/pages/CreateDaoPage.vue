@@ -18,7 +18,7 @@
                 </q-breadcrumbs>
                 <q-tabs v-model="tab" align="justify" dense>
                   <q-tab name="offchain" icon="fa-solid fa-square" label="OFF-CHAIN ONLY" />
-                  <q-tab name="onchain" icon="fa-solid fa-cube" label="OFF-CHAIN + ON-CHAIN" />
+                  <q-tab name="onchain" icon="fa-solid fa-cube" label="OFF-CHAIN + ON-CHAIN"  />
                 </q-tabs>
                 <q-tab-panels v-model="tab" animated class="stateborn-card">
                   <q-tab-panel name="offchain">

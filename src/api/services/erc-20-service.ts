@@ -1,5 +1,6 @@
 import { ETH_CONNECTION_SERVICE } from 'src/api/services/eth-connection-service';
 import { ethers, InterfaceAbi } from 'ethers';
+import { isEthAddress } from 'src/api/services/utils-service';
 
 export class Erc20Service {
   private readonly abi: InterfaceAbi = [
@@ -23,22 +24,25 @@ export class Erc20Service {
     // Call the balanceOf function for the user address
     const balance = await contract.balanceOf(userAddress);
 
-    console.log('User balance is: ', ethers.formatUnits(balance, Number(decimals)));
-    console.log('User balance is given: ', balance);
     return Number(ethers.formatUnits(balance, Number(decimals))).toFixed(0);
   }
 
   async readTokenData(tokenAddress: string): Promise<any> {
-    try {
-      const contract = new ethers.Contract(tokenAddress, this.abi, ETH_CONNECTION_SERVICE.getProvider());
-      const nameRes = await contract.name();
-      const symbolRes = await contract.symbol();
-      const decimalsRes = (await contract.decimals()).toString();
-      console.log(`Token ${tokenAddress} data : ${nameRes} ${symbolRes} ${decimalsRes}`);
-      return { nameRes, symbolRes, decimalsRes };
-    } catch (err) {
-      console.log(`Error reading token ${tokenAddress} data`, err);
-      throw new Error(`Error reading token ${tokenAddress} data`);
+    if (tokenAddress.trim() !== '' && isEthAddress(tokenAddress)) {
+      try {
+        const contract = new ethers.Contract(tokenAddress, this.abi, ETH_CONNECTION_SERVICE.getProvider());
+        const nameRes = await contract.name();
+        const symbolRes = await contract.symbol();
+        const decimalsRes = (await contract.decimals()).toString();
+        console.log(`Token ${tokenAddress} data : ${nameRes} ${symbolRes} ${decimalsRes}`);
+        return {nameRes, symbolRes, decimalsRes};
+      } catch (err) {
+        console.log(`Error reading token ${tokenAddress} data`, err);
+        throw new Error(`Error reading token ${tokenAddress} data`);
+      }
+    } else {
+      console.log()
+      throw new Error(`Skip reading token data - invalid (empty/incorrect) token address: ${tokenAddress}`);
     }
   }
 

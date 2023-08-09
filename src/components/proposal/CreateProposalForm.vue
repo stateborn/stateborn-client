@@ -6,6 +6,7 @@
           <q-icon name="fa-solid fa-info" color="primary"  size="lg"/>
         </div>
         <div class="col-8 text-left">
+          NFT address: 0xefA115Bf1398eC05082c43C789714C1fF5D3c1eC<br>
           DAO proposal creation is <b>free</b>.<br>
           Proposal definition file is stored off-chain (IPFS).<br>
           Total proposal size (with attachments) cannot be greater than 2MB.
@@ -15,16 +16,16 @@
     <q-banner class="text-black text-subtitle2 text-center noisered q-mt-md" v-if="!ethConnectionStore.isConnected">
       <span class="text-bold text-red">Please connect first</span>
     </q-banner>
-    <q-banner class="text-primary text-subtitle2 text-center bodynoise q-mt-md" v-if="description.length > 0 && ethConnectionStore.isConnected && hasRequiredAmountOfTokens && connectedNetworkMatchesTokenNetwork">
-      <div>
-        <div class="text-center text-subtitle2">Description preview</div>
-        <proposal-description-markdown
-          class="q-pt-md q-pb-md q-ma-xs"
-          :description="calculateDescriptionValue()"
-        >
-        </proposal-description-markdown>
-      </div>
-    </q-banner>
+<!--    <q-banner class="text-primary text-subtitle2 text-center bodynoise q-mt-md" v-if="description.length > 0 && ethConnectionStore.isConnected && hasRequiredAmountOfTokens && connectedNetworkMatchesTokenNetwork">-->
+<!--      <div>-->
+<!--        <div class="text-center text-subtitle2">Description preview</div>-->
+<!--        <proposal-description-markdown-->
+<!--          class="q-pt-md q-pb-md q-ma-xs"-->
+<!--          :description="calculateDescriptionValue()"-->
+<!--        >-->
+<!--        </proposal-description-markdown>-->
+<!--      </div>-->
+<!--    </q-banner>-->
     <q-banner class="text-black text-subtitle2 text-center noisered q-mt-md" v-if="ethConnectionStore.isConnected && !hasRequiredAmountOfTokens">
       <div class="row items-center">
         <div class="col-4">
@@ -63,7 +64,15 @@
     </q-input>
     <file-reader label="Upload proposal attachments" class="q-mt-xs" @file-uploaded="onFileUploaded" @file-removed="onFileRemoved" :as-base="true" size-kb-limit="1000"></file-reader>
 
-    <q-select filled :options="proposalTypeOptions" square v-model="proposalType" label="BackendProposal type" class="q-mt-md"></q-select>
+    <q-select filled :options="proposalTypeOptions" square v-model="proposalType" label="Proposal type" class="q-mt-md">
+      <template v-slot:prepend>
+        <q-badge style="padding:5px" :label="proposalType.value"
+                 color="primary"
+                 text-color="white">
+
+        </q-badge>
+      </template>
+    </q-select>
     <define-voting-options-card v-if="proposalType.value === 'OPTIONS'" @proposal-option-added="proposalOptionAdded"></define-voting-options-card>
     <div class="row items-center q-pt-md">
       <div class="col-6">
@@ -78,6 +87,9 @@
           <template v-slot:error>
             Proposal duration must be at least 1 hour.
           </template>
+          <template v-slot:prepend>
+           <q-icon name="fa-solid fa-clock" color="primary"  size="xs"/>
+          </template>
         </q-input>
       </div>
       <div class="col-6 text-subtitle2">
@@ -85,18 +97,35 @@
       </div>
     </div>
 
-    <div class="row justify-left" v-if="ethConnectionStore.isConnected">
+    <div class="row justify-left">
       <div class="col-auto">
         <q-toggle
+          size="xl"
+          icon="fa-solid fa-cube"
+          icon-color="yellow"
+          :disable="!ethConnectionStore.isConnected"
           v-model="createDaoOnChainTransaction"
-          label="Create DAO on-chain transaction"
-        />
+        >
+          <span class="text-subtitle2">Create DAO <span class="text-bold">on-chain</span> transaction</span>
+        </q-toggle>
       </div>
     </div>
-    <div class="row">
+    <div class="row" v-for="txIndex in txIndexes" v-bind:key="txIndex.hash">
       <div class="col-12">
-        <create-proposal-transaction-row v-if="createDaoOnChainTransaction && dao.clientDao.contractAddress" :dao-address="dao.clientDao.contractAddress!"
-        @proposal-transaction="onProposalTransactionAdded"></create-proposal-transaction-row>
+        <create-proposal-transaction-row
+          v-if="createDaoOnChainTransaction && dao.clientDao.contractAddress"
+          :dao-address="dao.clientDao.contractAddress!"
+          :tx-index="txIndex.index"
+          @proposal-transaction="onProposalTransactionAdded">
+        </create-proposal-transaction-row>
+        <q-btn color="red-9 q-ma-xs" square @click="removeTransaction(txIndex.index)">REMOVE</q-btn>
+        <q-separator class="q-mt-xs q-pa-xs bodynoise"></q-separator>
+      </div>
+    </div>
+    <div class="row q-pt-md" v-if="createDaoOnChainTransaction">
+      <div class="col-12">
+        <q-btn class="full-width" color="primary" @click="addAnotherTransactionToEdit"
+        :disable="notAllTransactionsAreAlreadyEdited">Add another transaction</q-btn>
       </div>
     </div>
 
@@ -140,6 +169,8 @@ import { changeNetwork } from 'src/api/services/change-network-service';
 import { DaoBackend } from 'src/api/model/dao-backend';
 import CreateProposalTransactionRow from 'components/proposal/CreateProposalTransactionRow.vue';
 import { ClientProposalTransaction } from 'src/api/model/ipfs/proposal-transaction/client-proposal-transaction';
+import { generateRandomString } from 'src/api/services/utils-service';
+import { TokenType } from 'src/api/model/ipfs/token-type';
 
 dayjs.extend(dayjsPluginUTC);
 const title = ref('New proposal');
@@ -155,10 +186,20 @@ const emit = defineEmits(['proposalChanged']);
 const imagesMap = new Map();
 const showSignProposalDialog = ref(false);
 const createDaoOnChainTransaction = ref(false);
-const transaction = ref(<ClientProposalTransaction | undefined>undefined);
+const transactions = ref(<ClientProposalTransaction[]>[]);
 const startDate = dayjs();
 const router = useRouter();
+class TxIndex {
+  index: number;
+  hash: string;
 
+  constructor(index: number, hash: string) {
+    this.index = index;
+    this.hash = hash;
+  }
+}
+const txIndexes = ref(<TxIndex[]>[]);
+const transactionsCurrentlyEdited = ref(0);
 const props = defineProps<{
   dao: DaoBackend,
 }>();
@@ -167,7 +208,7 @@ const isFormValid = computed(() => {
   return ethConnectionStore.isConnected && hasRequiredAmountOfTokens.value === true && title.value.trim() !== ''
   && description.value.trim() !== '' && durationHours.value >= 1 &&
     // if chosen to add transaction, then it must be set (is correct)
-    ((props.dao.clientDao.contractAddress && createDaoOnChainTransaction.value === true) ? (transaction.value !== undefined) : true)
+    ((props.dao.clientDao.contractAddress && createDaoOnChainTransaction.value === true) ? (transactions.value.length > 0) : true)
 });
 
 const proposalOptionAdded = (currentProposalOptions: string[]) => {
@@ -231,7 +272,6 @@ const readTokenBalance = async () => {
       props.dao.clientDao.token.type,
       props.dao.clientDao.token.decimals).then((res) => {
       tokenBalance.value = res;
-      console.log('token balance', tokenBalance.value);
     }, (error) => {
       console.log(error);
     });
@@ -292,7 +332,7 @@ const callCreateProposal = async () => {
     startDate.add(durationHours.value, 'h').utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
     latestBlockNumber.toString(),
     getDataObject(),
-    transaction.value !== undefined ? [transaction.value] : undefined
+    transactions.value.length > 0? transactions.value.map((_) => _) : undefined
 );
   showSignProposalDialog.value = true;
   const signature = await signProposal(clientProposal);
@@ -318,7 +358,51 @@ const switchNetwork = async () => {
   }
 }
 
-const onProposalTransactionAdded = async (proposalTransaction?: ClientProposalTransaction | undefined) => {
-  transaction.value = proposalTransaction;
+const onProposalTransactionAdded = async (index: number, proposalTransaction?: ClientProposalTransaction | undefined) => {
+  const currentTransaction = transactions.value[index];
+  if (currentTransaction !== undefined) {
+    if (proposalTransaction !== undefined) {
+      transactions.value[index] = proposalTransaction!;
+    } else {
+      transactions.value = transactions.value.filter((_, i) => i !== index);
+    }
+  } else {
+    if (proposalTransaction !== undefined) {
+      transactions.value.push(proposalTransaction!);
+    }
+  }
 }
+
+watch(() => createDaoOnChainTransaction.value, () => {
+  if (createDaoOnChainTransaction.value && txIndexes.value.length === 0) {
+    txIndexes.value.push(new TxIndex(0, generateRandomString(20)));
+    transactionsCurrentlyEdited.value = 1;
+  } else {
+    txIndexes.value = [];
+  }
+});
+const removeTransaction = (index: number) => {
+  // remove
+  txIndexes.value = txIndexes.value.filter(_ => _.index !== index);
+  // reorder current values to be like 0,1,2,3,4...
+  txIndexes.value = txIndexes.value.map((_, index) => {
+    _.index = index;
+    return _;
+  });
+  if (txIndexes.value.length === 0) {
+    createDaoOnChainTransaction.value = false;
+  }
+  transactions.value.splice(index, 1);
+  transactionsCurrentlyEdited.value--;
+}
+
+const addAnotherTransactionToEdit = () => {
+  txIndexes.value.push(new TxIndex(txIndexes.value.length, generateRandomString(20)));
+  transactionsCurrentlyEdited.value++;
+}
+
+const notAllTransactionsAreAlreadyEdited = computed(() => {
+  return transactions.value.length !== transactionsCurrentlyEdited.value;
+
+});
 </script>

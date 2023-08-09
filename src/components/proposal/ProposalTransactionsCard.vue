@@ -6,7 +6,7 @@
       </div>
       <div class="col-auto justify-center">
         <div class="text-h6 text-center" >
-          Transactions   <q-icon color="primary" name="fa-solid fa-circle-info" class="q-pl-xs" style="margin-bottom: 3px;">
+          Transactions   <q-icon color="primary" name="fa-solid fa-circle-info" style="margin-bottom: 3px;">
           <q-tooltip class="stateborn-tooltip">
             Transactions to be executed if proposal passes.<br>
             These transactions will be <b class="text-red">executed only all together</b> if proposal passes.<br>
@@ -166,7 +166,6 @@ const fillTable = async () => {
   let i = 1;
   const tabla = [props.transactions[0], props.transactions[0], props.transactions[0]];
   rows.value = tabla.map((_: ClientProposalTransaction) => {
-  console.log('mam date', _);
     const data = _.data as TransferErc20TransactionData;
     i++;
     return {
@@ -187,7 +186,6 @@ const fetchTransactionAggregate = async () => {
   if (props.proposalIpfsHash) {
     const res = await api.get(`/api/rest/v1/proposal/${props.proposalIpfsHash}/blockchain`);
     const blockchainProposalDto: BlockchainProposalDto = <BlockchainProposalDto>res.data;
-    console.log('mam blockchainProposalDto', blockchainProposalDto);
     txHash.value = blockchainProposalDto.blockchainProposalChainTransactions[0].txHash ?? '';
     transactionStatus.value = blockchainProposalDto.status;
     address.value = blockchainProposalDto.address;

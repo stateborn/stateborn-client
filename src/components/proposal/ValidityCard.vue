@@ -30,11 +30,7 @@
             <q-item-section>
               <q-item-label :class="reportIsValid ? 'text-green-9 text-bold' : 'text-bold text-red'">
                 {{reportIsValid ? 'Valid' : 'Invalid' }}
-              </q-item-label>
-              <q-item-label caption class="text-primary">Your vote validity</q-item-label>
-            </q-item-section>
-            <q-item-section side v-if="reportIsValid">
-              <q-icon size="xs" name="fa-solid fa-circle-info" color="primary" class="q-pl-xs">
+                <q-icon v-if="reportIsValid"  name="fa-solid fa-circle-info" color="primary"  style="margin-bottom: 3px;padding-right:5px">
                 <q-tooltip class="stateborn-tooltip">
                   Your vote is correctly included in the proposal result summary created by stateborn backend.<br>
                   Validation was done client side. <br>
@@ -42,6 +38,8 @@
                   It was also verified that only your last (final) vote is included in the proposal result report.<br>
                 </q-tooltip>
               </q-icon>
+              </q-item-label>
+              <q-item-label caption class="text-primary">Your vote validity</q-item-label>
             </q-item-section>
           </q-item>
           <q-item clickable @click="goToIpfs(proposalReport.ipfsHash)">
