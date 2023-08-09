@@ -134,7 +134,6 @@
 
             </q-list>
           </div>
-
         </div>
       </div>
     </div>
@@ -143,7 +142,7 @@
 <script setup lang="ts">
 
 import { TokenType } from 'src/api/model/ipfs/token-type';
-import { ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { IpfsNftInfo } from 'src/api/model/ipfs-nft-info';
 import { ERC_721_SERVICE } from 'src/api/services/erc-721-service';
 
@@ -178,6 +177,7 @@ const readNftImage = () => {
         nftPreviewSupported.value = false;
       }
     }, (err) => {
+        console.log(err);
         ipfsNftInfo.value = undefined;
         nftPreviewSupported.value = false;
     });
@@ -188,5 +188,7 @@ const readNftImage = () => {
     nftPreviewSupported.value = true;
   }
 }
-
+onMounted(() => {
+  readNftImage();
+});
 </script>

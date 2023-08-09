@@ -12,12 +12,12 @@
             <q-item-section avatar>
               <q-icon size="xs" :color="daoOwnsNft ? 'green-8' : 'red-8'" :name="daoOwnsNft ? 'fa-solid fa-check' : 'fa-solid fa-circle-xmark'" />
             </q-item-section>
-            <q-item-section v-if="nftId">
+            <q-item-section v-if="nftId " class="text-h6">
               <q-item-label v-if="daoOwnsNft">Confirmed - DAO owns {{tokenSymbol}} #{{nftId}}</q-item-label>
               <q-item-label v-else>Rejected - DAO doesn't own {{tokenSymbol}} #{{nftId}}</q-item-label>
               <q-item-label caption class="text-primary">{{tokenSymbol}} NFT #{{nftId}} ownership status</q-item-label>
             </q-item-section>
-            <q-item-section v-else>
+            <q-item-section v-else class="text-h6">
               <q-item-label >Please provide NFT ID</q-item-label>
               <q-item-label caption class="text-primary">DAO NFT ownership status</q-item-label>
             </q-item-section>
@@ -29,7 +29,7 @@
             </q-item-section>
 
             <q-item-section>
-              <q-item-label>{{daoFunds}} {{tokenSymbol}}</q-item-label>
+              <q-item-label class="text-h6">{{daoFunds}} {{tokenSymbol}}</q-item-label>
               <q-item-label caption class="text-primary"> {{tokenSymbol}} NFT tokens owned by DAO</q-item-label>
             </q-item-section>
           </q-item>
@@ -40,7 +40,7 @@
             </q-item-section>
 
             <q-item-section>
-              <q-item-label>{{Number(daoFunds) - Number(amountOfTokensToSend)}} {{tokenSymbol}}</q-item-label>
+              <q-item-label class="text-h6">{{Number(daoFunds) - Number(amountOfTokensToSend)}} {{tokenSymbol}}</q-item-label>
               <q-item-label caption class="text-primary">{{tokenSymbol}} NFT tokens owned by DAO after transaction</q-item-label>
             </q-item-section>
           </q-item>

@@ -2,7 +2,12 @@
   <div class="row">
     <div class="col-12">
       <q-separator class="q-pa-xs bodynoise"></q-separator>
-      <div class="text-h6">Transaction #{{ txIndex + 1 }}</div>
+      <div class="text-h6">
+        <q-icon :name="isEverythingFilled ? 'fa-solid fa-circle-check' : 'fa-solid fa-circle-xmark'"
+                style="margin-bottom:2px"
+                :color="isEverythingFilled ? 'green-8' : 'red-8'"/>
+        Transaction #{{ txIndex + 1 }}
+      </div>
       <q-separator class="q-mb-md"></q-separator>
       <q-banner class="text-primary text-subtitle2 text-center "
                 :class="isEverythingFilled ? 'noisegreen' : 'noisered'">
@@ -11,13 +16,22 @@
             <q-icon :name="isEverythingFilled ? 'fa-solid fa-info' : 'fa-solid fa-triangle-exclamation'" color="primary" size="lg"/>
           </div>
           <div class="col-8 text-left text-subtitle2 text-black">
-            <div v-if="tokenName === ''">
-              Please provide token address which will be send from DAO.
+            <div v-if="thereIsAlreadyTransactionWithThisToken">
+              There is already transaction with token {{tokenSymbol}}. Please choose another token.
             </div>
-            <div v-if="tokenName !== '' && Number(daoFunds).toFixed(2) === '0.00'">
+            <div v-if="tokenName === ''">
+              Please provide correct token address which will be send from DAO.
+            </div>
+            <div v-if="tokenName !== '' && (tokenAddress.trim() === transferToAddress.trim())">
+              Receiver address is the same as sender address. Transaction cannot be sent.
+            </div>
+            <div v-if="tokenName !== '' && (transferToAddress.trim() === daoAddress.trim())">
+              DAO cannot be receiver, because DAO is the sender.
+            </div>
+            <div v-if="tokenName !== '' && Number(daoFunds).toFixed(0) === '0'">
               DAO has 0 {{ tokenSymbol }} tokens. Transaction cannot be sent.
             </div>
-            <div v-if="tokenName !== '' && Number(daoFunds).toFixed(2) !== '0.00' && transferToAddress.trim() === ''">
+            <div v-if="tokenName !== '' && Number(daoFunds).toFixed(0) !== '0' && transferToAddress.trim() === ''">
               Please provide address of {{ tokenSymbol }} tokens receiver.
             </div>
             <div v-if="transactionType.value === TokenType.ERC20 && tokenName !== '' && Number(daoFunds).toFixed(0) !== '0' && transferToAddress.trim() !== '' && (Number(amountOfTokensToSend) <= 0 || Number(amountOfTokensToSend) > Number(daoFunds) || !Number.isInteger(amountOfTokensToSend))">
@@ -205,7 +219,23 @@ const $q = useQuasar();
 const props = defineProps<{
   daoAddress: string,
   txIndex: number,
+  previousTransactions: ClientProposalTransaction[],
 }>();
+
+const thereIsAlreadyTransactionWithThisToken = computed(() => {
+  if (transactionType.value.value === TokenType.ERC20) {
+    return props.previousTransactions.filter(_ => (<TransferErc20TransactionData>_.data).token.address === tokenAddress.value).length > 0
+    //show only to next txs, not first
+    && props.txIndex !== 0;
+  } else if (transactionType.value.value === TokenType.NFT) {
+    return props.previousTransactions.filter(_ => (<TransferNftTransactionData>_.data).token.address === tokenAddress.value).length > 0
+      //show only to next txs, not first
+      && props.txIndex !== 0;
+  } else {
+    return false;
+  }
+});
+
 const isEverythingFilled = computed(() => {
   if (transactionType.value.value === TokenType.ERC20) {
     // token exists
@@ -220,7 +250,12 @@ const isEverythingFilled = computed(() => {
       Number.isInteger(amountOfTokensToSend.value) &&
       // amount of tokens to send is less than funds owned by DAO
       Number(amountOfTokensToSend.value) <= Number(daoFunds.value) &&
-      isTransferToCorrectEthAddress.value === true;
+      // you cannot send tokens to token
+      tokenAddress.value.trim() !== transferToAddress.value.trim() &&
+      //receiver is not dao
+      transferToAddress.value.trim() !== props.daoAddress.trim() &&
+      isTransferToCorrectEthAddress.value === true &&
+      !thereIsAlreadyTransactionWithThisToken.value;
   } else if (transactionType.value.value === TokenType.NFT) {
     // token exists
     return tokenName.value !== '' &&
@@ -229,10 +264,15 @@ const isEverythingFilled = computed(() => {
       //transfer to address is provided
       (transferToAddress.value.trim() !== '') &&
       //nftId >= 0
-      ((nftId.value !== undefined ) && Number(nftId.value) >= 0) &&
+      ((nftId.value) && Number(nftId.value) >= 0) &&
       //dao owns nft
       daoOwnsNft.value === true &&
-      isTransferToCorrectEthAddress.value === true;
+      // you cannot send tokens to token
+      tokenAddress.value.trim() !== transferToAddress.value.trim() &&
+      //receiver is not dao
+      transferToAddress.value.trim() !== props.daoAddress.trim() &&
+      isTransferToCorrectEthAddress.value === true &&
+      !thereIsAlreadyTransactionWithThisToken.value;
   } else {
     return false;
   }
@@ -247,7 +287,7 @@ const emitProposalTransaction = () => {
       tokenAddress.value,
       tokenName.value,
       tokenSymbol.value,
-      TokenType.ERC20,
+      tokenType.value,
       ethConnectionStore.chainId,
       decimals.value,
     );

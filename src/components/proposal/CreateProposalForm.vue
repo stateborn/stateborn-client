@@ -116,6 +116,7 @@
           v-if="createDaoOnChainTransaction && dao.clientDao.contractAddress"
           :dao-address="dao.clientDao.contractAddress!"
           :tx-index="txIndex.index"
+          :previous-transactions="transactions.slice(0, txIndex.index + 1)"
           @proposal-transaction="onProposalTransactionAdded">
         </create-proposal-transaction-row>
         <q-btn color="red-9 q-ma-xs" square @click="removeTransaction(txIndex.index)">REMOVE</q-btn>
