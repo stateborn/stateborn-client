@@ -42,8 +42,8 @@
                   </q-input>
                 </template>
                 <template v-slot:item="props">
-
                   <dao-card-min
+                    class="q-ma-md"
                     :dao="props.row"
                     :is-full="false"
                     :proposals-number="getProposalNumbers(props.row.ipfsHash)"
@@ -94,10 +94,10 @@ const initialPagination = ref({
 const hasData = ref(false);
 
 onMounted(async () => {
-  daoEntryWidth.value = width(document.getElementById('daosTable')!)  / 3 - 20;
-  if (daoEntryWidth.value > 400) {
-    daoEntryWidth.value = 400;
-  }
+  daoEntryWidth.value = width(document.getElementById('daosTable')!)  / 2 - 40;
+  // if (daoEntryWidth.value > 400) {
+  //   daoEntryWidth.value = 400;
+  // }
   if (daoEntryWidth.value <= 300) {
     daoEntryWidth.value = 400;
   }

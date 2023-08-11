@@ -1,14 +1,17 @@
 import { ethers } from 'ethers';
 
 export class EthConnectionService {
+
   private isConnected: boolean;
   private provider: ethers.BrowserProvider | undefined;
   private signer: ethers.Signer | undefined;
   private account: string;
+  private quickProvider: ethers.BrowserProvider | undefined;
 
   constructor() {
     this.isConnected = false;
-    this.provider = undefined;
+    this.provider = new ethers.BrowserProvider(window.ethereum);
+    this.quickProvider = undefined;
     this.signer = undefined;
     this.account = '';
   }
@@ -19,6 +22,7 @@ export class EthConnectionService {
     this.isConnected = true;
     const accounts: string[] = await window.ethereum.request({ method: 'eth_requestAccounts' });
     this.account = accounts[0];
+    this.quickProvider = undefined;
     return this.account;
   }
 
@@ -35,6 +39,15 @@ export class EthConnectionService {
     }
     return this.provider!;
   }
+
+  getProviderQuickProvider(): ethers.BrowserProvider {
+    if (this.provider) {
+      return this.provider;
+    } else {
+      return this.quickProvider!;
+    }
+  }
+
 }
 
 export const ETH_CONNECTION_SERVICE = new EthConnectionService();

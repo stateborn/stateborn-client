@@ -3,12 +3,59 @@
     <q-banner class="text-primary text-subtitle2 text-center noisegreen q-ma-xs" v-if="props.onchain">
       <div class="row items-center">
         <div class="col-4">
-          <q-icon name="fa-solid fa-cube" color="primary"  size="lg"/>
+          <q-img class="onchain-icon" src="/cube2.svg" style="height:42px; width: 42px"></q-img>
         </div>
         <div class="col-8 text-left">
-          You create <b>on-chain + off-chain</b> DAO. <br>
-          Creation costs <b>transaction fee</b> for on-chain DAO creation.<br>
-          DAO definition is stored off-chain (IPFS) and on-chain (smart contract).<br>
+          <q-item-label class="text-overline q-mb-xs" style="font-size: 1rem">OFF-CHAIN + ON-CHAIN</q-item-label>
+          <q-item-label class="text-overline text-bold q-pt-xs" style="font-size: 0.9rem">Features:</q-item-label>
+          <q-item-label class="text-overline q-mb-md " style="font-size: 0.9rem">All included in off-chain DAO:</q-item-label>
+          • NFT/ERC-20 blockchain based token governance
+          <q-icon color="primary" name="fa-solid fa-circle-info" style="margin-bottom: 3px;">
+            <q-tooltip class="stateborn-tooltip">
+              Your DAO governance will be based on blockchain NFT/ERC-20 token of your choice.<br>
+              Users owning a DAO token will be able to vote on proposals.<br>
+            </q-tooltip>
+          </q-icon><br>
+          • off-chain proposals creation (no cost)
+          <q-icon color="primary" name="fa-solid fa-circle-info" style="margin-bottom: 3px;">
+            <q-tooltip class="stateborn-tooltip">
+              Users owning a DAO token can create proposals. <br>
+              Proposals are stored off-chain (not in blockchain). <br>
+              Users owning a DAO token can vote on proposal. <br>
+              Proposal can be about anything and can include attachments (images, documents). <br>
+              Proposals creation is free.<br>
+              Proposals are transparent, immutable and cryptographically secured and can be verified by anyone.
+            </q-tooltip>
+          </q-icon>
+          <br>
+          • voting on proposals
+          <q-icon color="primary" name="fa-solid fa-circle-info" style="margin-bottom: 3px;">
+            <q-tooltip class="stateborn-tooltip">
+              Users owning a DAO token can vote on proposals.<br>
+              Voting purpose is to pass or reject proposal. <br>
+              Voting is free and votes are stored off-chain (not in blockchain).<br>
+              Votes are transparent, immutable, cryptographically secured and can be verified by anyone.<br>
+            </q-tooltip>
+          </q-icon><br>
+          <q-item-label class="text-overline q-mb-md q-mt-md " style="font-size: 0.9rem">on-chain only features:</q-item-label>
+          • on-chain (smart-contracts based) DAO with treasury  <q-icon color="primary" name="fa-solid fa-circle-info" style="margin-bottom: 3px;">
+          <q-tooltip class="stateborn-tooltip">
+            Smart contracts based DAO will be created in blockchain. <br>
+            DAO will have a treasury (smart contract based wallet) where funds can be stored. <br>
+            Stateborn DAOs are non-permissioned. <br>
+            DAO treasury transfers can be proposed and executed by anyone. <br>
+            DAO should be managed by DAO community and proposals decisions.
+          </q-tooltip>
+        </q-icon><br>
+          • proposals can include on-chain DAO treasury transfers  <q-icon color="primary" name="fa-solid fa-circle-info" style="margin-bottom: 3px;">
+          <q-tooltip class="stateborn-tooltip">
+            Proposals can include transfers of assets (tokens, NFTs) from DAO treasury to any address. <br>
+            Transaction execution is based on DAO community voting. <br>
+          </q-tooltip>
+        </q-icon><br>
+          <br>
+          on-chain + off-chain DAO creation costs <b>transaction fee</b> for on-chain DAO creation (blockchain transaction).<br>
+          DAO definition is stored off-chain (IPFS) and on-chain (smart contracts).<br>
           You need to provide the address of your governance token (ERC-20 or NFT).
         </div>
       </div>
@@ -16,10 +63,40 @@
     <q-banner class="text-primary text-subtitle2 text-center noisegreen q-ma-xs" v-else>
       <div class="row items-center">
         <div class="col-4">
-          <q-icon name="fa-solid fa-square" color="primary"  size="lg"/>
+          <q-icon class="offchain-icon" name="fa-solid fa-square" color="primary"  size="lg"/>
         </div>
-        <div class="col-8 text-left">
-          You create <b>off-chain</b> DAO. Creation is <b>free</b>.<br>
+        <div class="col-8 text-left ">
+          <q-item-label class="text-overline " style="font-size: 1.1rem">OFF-CHAIN DAO</q-item-label>
+          <q-item-label class="text-overline text-bold q-mb-md q-pt-xs" style="font-size: 0.9rem">Features:</q-item-label>
+          • NFT/ERC-20 blockchain based token governance
+          <q-icon color="primary" name="fa-solid fa-circle-info" style="margin-bottom: 3px;">
+            <q-tooltip class="stateborn-tooltip">
+              Your DAO governance will be based on blockchain NFT/ERC-20 token of your choice.<br>
+              Users owning a DAO token will be able to vote on proposals.<br>
+            </q-tooltip>
+          </q-icon><br>
+          • off-chain proposals creation (no cost)
+          <q-icon color="primary" name="fa-solid fa-circle-info" style="margin-bottom: 3px;">
+            <q-tooltip class="stateborn-tooltip">
+              Users owning a DAO token can create proposals. <br>
+              Proposals are stored off-chain (not in blockchain). <br>
+              Users owning a DAO token can vote on proposal. <br>
+              Proposal can be about anything and can include attachments (images, documents). <br>
+              Proposals creation is free.<br>
+              Proposals are transparent, immutable and cryptographically secured and can be verified by anyone.
+            </q-tooltip>
+          </q-icon><br>
+          • voting on proposals
+          <q-icon color="primary" name="fa-solid fa-circle-info" style="margin-bottom: 3px;">
+            <q-tooltip class="stateborn-tooltip">
+              Users owning a DAO token can vote on proposals.<br>
+              Voting purpose is to pass or reject proposal. <br>
+              Voting is free and votes are stored off-chain (not in blockchain).<br>
+              Votes are transparent, immutable, cryptographically secured and can be verified by anyone.<br>
+            </q-tooltip>
+          </q-icon><br>
+          <br>
+          off-chain DAO creation is <b>free</b>.<br>
           DAO definition is stored off-chain (IPFS).<br>
           You only need to provide the address of your governance token (ERC-20 or NFT).
         </div>
@@ -62,7 +139,7 @@
       </template>
     </q-input>
     <div class="row q-pa-xs">
-      <div class="col-12 bodynoise" style="border: 1px solid  #e6e6e6">
+      <div class="col-12 bodynoise veryLightBorder">
         <div class="row justify-center">
           <div class="col-8">
             <token-info-card
@@ -93,7 +170,6 @@
         </div>
       </div>
     </div>
-
     <q-input
       v-if="ethConnectionStore.isConnected && tokenSymbol.trim() !== ''"
       :disable="!ethConnectionStore.isConnected"
@@ -125,7 +201,7 @@
       <div class="col-6">
         <file-reader class="q-pa-xs"
                      :disable="!ethConnectionStore.isConnected"
-                     label="Upload DAO image/logo"
+                     label="Upload DAO logo (120x120 px)"
                      @file-uploaded="onFileUploaded"
                      @file-removed="onFileRemoved"
                      size-kb-limit="500"
@@ -191,6 +267,7 @@ import { TokenType } from 'src/api/model/ipfs/token-type';
 import { createDaoOnChain } from 'src/api/services/onchain-service';
 import TokenInfoCard from 'components/TokenInfoCard.vue';
 import NftTokenInfoCard from 'components/NftTokenInfoCard.vue';
+import { animeIcons } from 'src/api/services/anime-service';
 
 dayjs.extend(dayjsPluginUTC);
 const ethConnectionStore = useEthConnectionStore();
@@ -258,6 +335,7 @@ const setTokenAddress = () => {
 }
 const $q = useQuasar();
 onMounted(() => {
+  animeIcons();
   if (ethConnectionStore.isConnected) {
     setTokenAddress();
   }

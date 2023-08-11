@@ -1,6 +1,6 @@
 <template>
   <q-btn color="primary" v-if="ethConnectionStore.account == ''" @click="connectWithMetamask">Connect</q-btn>
-  <q-chip square v-else class="text-subtitle2">
+  <q-chip square v-else class="text-subtitle2 noise veryLightBorder">
     <q-avatar>
       <img :src="networkIcon" style="height: 25px; width:25px">
     </q-avatar>

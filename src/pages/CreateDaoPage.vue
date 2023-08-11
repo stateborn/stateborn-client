@@ -7,18 +7,30 @@
                           :text-class="$q.platform.is.mobile ? 'text-h5': 'text-h3 q-pa-md'"
                           :height="$q.platform.is.mobile ? '979' : '600'">
         </picture-parallax>
-        <q-card class="stateborn-card" square>
-          <q-card-section class="text-center">
-            <div class="row justify-center">
-              <div class="col-lg-8 col-md-12 col-xs-grow justify-center">
-                <q-breadcrumbs class="text-subtitle2 text-primary q-pb-lg">
+
+        <div class="row justify-center q-mt-xs q-mb-xs stateborn-card q-pa-xs">
+          <div class="col-12">
+            <div class="row justify-center items-center">
+              <div class="col-8 items-center">
+                <q-breadcrumbs class="text-subtitle2 ">
                   <q-breadcrumbs-el icon="home" to="/">
                     <span class="text-underline">Home</span>
                   </q-breadcrumbs-el>
                 </q-breadcrumbs>
+              </div>
+            </div>
+          </div>
+        </div>
+        <q-card class="stateborn-card" square>
+          <q-card-section class="text-center">
+            <div class="row justify-center">
+              <div class="col-lg-8 col-md-12 col-xs-grow justify-center">
                 <q-tabs v-model="tab" align="justify" dense>
                   <q-tab name="offchain" icon="fa-solid fa-square" label="OFF-CHAIN ONLY" />
-                  <q-tab name="onchain" icon="fa-solid fa-cube" label="OFF-CHAIN + ON-CHAIN"  />
+                  <q-tab name="onchain"  >
+                    <q-img src="/cube2.svg" style="height:29px; width: 29px"></q-img>
+                    OFF-CHAIN + ON-CHAIN
+                  </q-tab>
                 </q-tabs>
                 <q-tab-panels v-model="tab" animated class="stateborn-card">
                   <q-tab-panel name="offchain">

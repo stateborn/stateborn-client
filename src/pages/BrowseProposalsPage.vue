@@ -14,9 +14,9 @@
         </picture-parallax>
       </div>
     </div>
-    <div class="row justify-center q-mt-md" >
+    <div class="row justify-center q-mt-xs" >
       <div class="col-lg-8 col-xs-grow">
-        <q-breadcrumbs class="text-subtitle2 noise text-primary">
+        <q-breadcrumbs class="text-subtitle2 stateborn-card q-pa-xs q-ma-xs text-primary">
           <q-breadcrumbs-el icon="home" to="/">
             <span class="text-underline">Home</span>
           </q-breadcrumbs-el>
@@ -43,6 +43,7 @@
               @request="onTableDataRequest"
               hide-header
             >
+
               <template v-slot:top-right>
                 <q-input borderless dense debounce="500" v-model="filter" placeholder="Search">
                   <template v-slot:append>
@@ -110,6 +111,7 @@ import { getDao } from 'src/api/services/dao-service';
 import { DaoBackend } from 'src/api/model/dao-backend';
 import width = dom.width;
 import { BackendProposal } from 'src/api/model/backend-proposal';
+import { filterImagesAndAttachmentsFromDescription } from 'src/api/services/description-service';
 
 // 200 picture height
 const proposalScrollHeight = ref(window.innerHeight - 50 - 200);
@@ -138,6 +140,9 @@ const loadProposals = async (limit: number, offset: number, filter?: string) => 
     const proposal = await getProposal(proposalHeader.ipfsHash);
     localProposals.push(proposal);
   }
+  localProposals.forEach((_) => {
+    _.clientProposal.description = `${filterImagesAndAttachmentsFromDescription(_.clientProposal.description).substring(0, 500)}...`;
+  })
   return localProposals;
 };
 

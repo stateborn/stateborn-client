@@ -1,22 +1,61 @@
 <template>
   <q-card class="stateborn-card q-ma-xs" >
     <div class="row justify-center text-center items-center q-pt-xs">
-      <div class="col-auto justify-center items-center">
+      <div class="col-auto">
         <q-img
           style="height: 100px; width: 100px;"
           src="/stateborn-logo.webp"
         />
       </div>
     </div>
-    <q-card-section style="padding: 2px; margin:2px;">
-      <div class="text-subtitle2 q-pa-md text-center">
-        Stateborn is a DAO governance platform using decentralized and trustless technology such as blockchain, IPFS and cryptography.
-      </div>
-      <div class="text-subtitle2 text-center">
-        <span class="text-bold">Define your DAO. </span><br>
-        <span class="text-bold">Create proposals. </span><br>
-        <span class="text-bold">Vote on them.</span><br><br>
-        Use simple, free, transparent and trusted governance.
+    <q-card-section style="padding: 0px; margin:0px; ">
+      <div class=" text-center" >
+        <div class="row">
+          <div class="col-12">
+            <q-list >
+              <q-item class="text-center q-pa-md " style="padding:2px; margin:2px; ">
+                <q-item-section>
+                  <q-item-label class="text-overline" style="font-size: 1rem">
+                    Stateborn is a governance platform dedicated to <b>truly autonomous</b> DAOs.
+                  </q-item-label>
+                  <q-item-label  class="text-primary text-subtitle2" style="font-size: 0.9rem;;">
+                    It is a hybrid off-chain + on-chain, voting and smart-contracts DAOs management
+                    protocol.
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </div>
+        </div>
+        <q-separator class="q-ma-md"></q-separator>
+        <div class="row items-center">
+          <div class="col-12 text-left">
+            <q-list>
+              <q-item >
+                  <q-item-section>
+                    <q-item-label class="text-overline" style="font-size: 1rem">OFF-CHAIN</q-item-label>
+                    <q-item-label overline class="text-black text-bold" style="font-size: 1.1rem">0 cost voting</q-item-label>
+                    <q-item-label  class="text-primary text-subtitle2" style="font-size: 0.9rem;;">Create and vote on proposals using free, transparent and cryptography secured governance.</q-item-label>
+                  </q-item-section>
+                  <q-item-section avatar>
+                    <q-img class="offchain-icon" src="/square2.svg"/>
+                  </q-item-section>
+                </q-item>
+              <q-item class="text-right">
+                <q-item-section avatar>
+                  <q-img color="black" size="md"  class="onchain-icon" src="/cube2.svg"/>
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label class="text-overline" style="font-size: 1rem">ON-CHAIN</q-item-label>
+                  <q-item-label overline class="text-black text-bold " style="font-size: 1.1rem">trustless execution</q-item-label>
+                  <q-item-label  class="text-primary text-subtitle2" style="font-size: 0.9rem">
+                    Manage DAO treasury and execute passed proposals on-chain without any permission.
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </div>
+        </div>
       </div>
     </q-card-section>
     <q-card-section style="padding: 2px; margin:2px;" horizontal>
@@ -31,6 +70,11 @@
       <q-card-section horizontal style="padding: 2px; margin:2px;">
         <q-btn align="center" class="full-width" color="primary"
                @click="$router.push(`/about`)" label="About stateborn"/>
+      </q-card-section>
+      <q-card-section horizontal style="padding: 2px; margin:2px;">
+        <q-btn align="center" class="full-width" text-color="secondary" color="primary" glossy
+               @click="$router.push(`/about`)" label="TRULY AUTONOMOUS DAO - HOW IT WORKS">
+        </q-btn>
       </q-card-section>
     </q-card-section>
     <div class="row justify-center">
@@ -127,13 +171,15 @@ import {
 import { Notify } from 'quasar';
 import { reconnectToIpfs } from 'src/api/services/ipfs-service';
 import { goToGithub, goToTwitter } from 'src/api/services/utils-service';
-
+import anime from 'animejs/lib/anime';
+import { animeIcons } from 'src/api/services/anime-service';
 const ipfsGateway = ref('');
 const dropdown = ref(null);
 const editMode = ref(false);
 onMounted(() => {
   const settings: Settings = getSettingsFromStorage();
   ipfsGateway.value = settings.ipfsGateway;
+  animeIcons();
 });
 const saveNewIpfsGatewayAddress = async () => {
   const settings: Settings = getSettingsFromStorage();
@@ -170,5 +216,8 @@ const resetIpfsGatewayAddress = async () => {
   dropdown.value.hide();
   Notify.create({ message: 'Successfully reset IPFS gateway address to default', position: 'top-right', color: 'green' });
 };
+
+
+
 
 </script>

@@ -1,14 +1,12 @@
 <template>
   <q-card class="stateborn-card" square >
     <q-card-section style="padding:0;">
-      <div class="row justify-center items-center">
+      <div class="row justify-center items-center q-pa-xs">
         <div class="col-auto q-pa-xs justify-center">
           <q-icon name="fa-solid fa-square-check"  color="primary" style="font-size: 1.3rem !important;"></q-icon>
         </div>
         <div class="col-auto justify-center">
-          <div class="text-h6 text-center">
-            Vote on proposal
-          </div>
+          <q-item-label class=" text-primary text-overline text-bold" style="font-size: 1rem">Vote on proposal</q-item-label>
         </div>
       </div>
       <q-banner class="text-black text-subtitle2 text-center noisered" v-if="isProposalEnded">
@@ -16,7 +14,7 @@
       </q-banner>
       <div v-if="ethConnectionStore.isConnected && !isProposalEnded && connectedNetworkMatchesTokenNetwork">
           <div class="row text-subtitle2 items-center" v-if="(props.userVotes.length === 0 || changeMyVote)">
-            <div class="col text-bold">Your voting power</div><div class="col text-right">~{{ props.tokenBalance }} {{tokenSymbol}}</div>
+            <div class="col-auto text-bold sectionName">Your voting power</div><div class="col text-right">~{{ props.tokenBalance }} {{tokenSymbol}}</div>
             <q-icon color="primary" name="fa-solid fa-circle-info" class="q-pl-xs">
               <q-tooltip  class="stateborn-tooltip">
                 This is your voting power based on latest block balance. <br>

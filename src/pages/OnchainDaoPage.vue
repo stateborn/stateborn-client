@@ -7,7 +7,7 @@
             <div class=" text-bold q-pb-md" :class="$q.platform.is.mobile ? 'text-h4' : 'text-h3'">About</div>
             Stateborn is a DAO governance platform. It allows to create and manage Decentralized Autonomous Organizations (DAO) using
             decentralized technology such as blockchain, IPFS and cryptography.<br><br>
-            What is a DAO? It can be any governance required community which needs to make decisions in a fair and transparent way.
+            What is a DAO? It can be any governance required community.
             It could be a crypto/blockchain project. It could be a company. But it could be also a school council,
             online game community or any non-profit organization like a charity, political organization or even... a country.
             <br><br>

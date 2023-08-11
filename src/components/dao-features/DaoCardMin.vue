@@ -1,24 +1,26 @@
 <template>
   <q-card class="stateborn-card grow " :style="props.fullWidth ? '' : `width: ${props.width}px;`">
-    <div class="row justify-center text-center items-center q-pt-xs" style="height:50px" >
-      <div class="col-auto justify-center items-center">
-        <div class="text-subtitle2" style="line-height: 1.5rem">
-         <span class="text-bold">  {{ props.dao.clientDao.name }}</span>
+    <div class="row justify-center text-center items-center q-pt-xs" style="height:80px" >
+      <div class="col-grow  items-center">
+        <div class="text-subtitle2 q-pa-md">
+          <q-item-label class=" text-primary text-bold" style="letter-spacing: 1px">{{ props.dao.clientDao.name }}</q-item-label>
         </div>
       </div>
     </div>
+    <q-separator class="q-ma-xs"></q-separator>
     <div class="row items-center justify-center">
-      <div class="col-auto" v-if="props.dao.clientDao.imageBase64 !== ''">
+      <div class="col-grow items-center" v-if="props.dao.clientDao.imageBase64 !== ''">
         <q-img
-          style="height: 120px; width: 120px;opacity: 0.8"
+          style="height: 120px; width: 120px;margin-left: 25%"
           :src="props.dao.clientDao.imageBase64"
         />
       </div>
-      <div class="col-auto" style="padding:0; margin:0;">
-        <q-list dense >
+      <div class="col-grow" style="padding:0; margin:0;">
+        <q-list >
           <q-item >
             <q-item-section avatar>
-              <q-icon color="primary" size="xs" :name="props.dao.clientDao.contractAddress ? 'fa-solid fa-cube' : 'fa-solid fa-square'"/>
+              <q-img src="/cube2.svg" v-if= "props.dao.clientDao.contractAddress" style="height:24px; width: 24px"></q-img>
+              <q-icon color="primary" size="xs" v-else name="fa-solid fa-square"/>
             </q-item-section>
 
             <q-item-section>
@@ -89,14 +91,16 @@
         </q-list>
       </div>
     </div>
-    <div class="row items-center justify-center">
-      <div class="col-auto justify-center q-pa-md">
-        <div class="text-subtitle2 text-left" :style="props.fullWidth ? '' : 'min-height: 100px'">{{ props.dao.clientDao.description }}</div>
+    <div class="row items-center justify-center" :style="props.fullWidth ? '' : 'min-height: 100px'">
+      <div class="col-auto  q-pa-md">
+        <div class="text-subtitle2" >{{ props.dao.clientDao.description }}</div>
       </div>
     </div>
     <q-card-section horizontal style="padding:0; margin:0; " v-if="!fullWidth">
-      <q-btn align="center"  class="full-width" flat text-color="primary" icon-right="fa-solid fa-magnifying-glass"
-             @click="$router.push(`/${props.dao.ipfsHash}`)" label="Proposals"/>
+      <q-btn align="center"  class="full-width" flat text-color="primary"
+             @click="$router.push(`/${props.dao.ipfsHash}`)" label="Proposals">
+        <q-img src="/voting2.svg" style="height:20px; width: 20px"></q-img>
+      </q-btn>
     </q-card-section>
   </q-card>
 </template>

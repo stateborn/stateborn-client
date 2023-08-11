@@ -1,17 +1,19 @@
 <template>
   <q-card class="stateborn-card " square>
-    <q-card-section class="" style="border-bottom: 10px solid white">
-      <div class="row items-center">
-        <div class="col-2">
-          <span class="text-subtitle2 text-bold sectionName">Title</span>
+    <q-card-section>
+      <div class="row justify-center items-center">
+        <div class="col-1">
+          <q-img src="/propa.svg" style="height:50px; width: 50px; "></q-img>
         </div>
-        <div class="col-10 text-right">
-          <span class="text-bold text-h5">{{props.proposal.clientProposal.title}}</span>
+        <div class="col-11">
+          <div class="row text-subtitle2"><div class="col-grow text-bold sectionName q-pb-xs">Title</div></div>
+          <div class=" text-primary text-h5">{{props.proposal.clientProposal.title}}</div>
         </div>
       </div>
     </q-card-section>
     <q-card-section >
-      <div class="row text-subtitle2" v-if="props.proposal.ipfsHash"><div class="col-auto text-bold sectionName">IPFS hash</div>
+      <div class="row text-subtitle2" v-if="props.proposal.ipfsHash">
+        <div class="col-auto text-bold sectionName">IPFS hash</div>
         <div class="col-grow text-right">{{ $q.platform.is.mobile ? `${props.proposal.ipfsHash.substring(0, 10)}...` : props.proposal.ipfsHash }}</div>
         <q-btn flat round color="primary" size="xs" class="q-pl-xs" icon="fa-solid fa-arrow-up-right-from-square" @click="goToIpfs(props.proposal.ipfsHash)"/>
       </div>
@@ -63,27 +65,23 @@
         <div class="col-grow text-right">{{ proposalVerification?.verificationError }}</div>
       </div>
     </q-card-section>
-    <q-card-section class="text-h5" style="border-bottom: 10px solid white">
-      <div class="row text-subtitle2 text-bold"><div class="col-grow text-bold sectionName">Description</div></div>
-      <proposal-description-markdown class="q-pt-md" :description="props.proposal.clientProposal.description"></proposal-description-markdown>
-    </q-card-section>
   </q-card>
 </template>
 
 <script lang="ts" setup>
 
-import ProposalDescriptionMarkdown from 'components/proposal/ProposalDescriptionMarkdown.vue';
 import { computed } from 'vue';
-import dayjs from 'dayjs';
 import { BackendProposal } from 'src/api/model/backend-proposal';
 import { goToEtherscan, goToIpfs } from 'src/api/services/utils-service';
 import { ProposalVerification } from 'src/api/model/proposal-verification';
 import { TOKEN_SERVICE } from 'src/api/services/token-service';
+import { formatDateNice } from 'src/api/services/date-service';
+
 const props = defineProps<{
   proposal: BackendProposal,
   proposalVerification: ProposalVerification | undefined,
   daoTokenChainId: string | undefined,
 }>();
-const startDateUtc = computed(() => dayjs(props.proposal.clientProposal.startDateUtc).format('YYYY-MM-DD HH:mm:ss'));
-const endDateUtc = computed(() => dayjs(props.proposal.clientProposal.endDateUtc).format('YYYY-MM-DD HH:mm:ss'));
+const startDateUtc = computed(() => formatDateNice(props.proposal.clientProposal.startDateUtc));
+const endDateUtc = computed(() => formatDateNice(props.proposal.clientProposal.endDateUtc));
 </script>

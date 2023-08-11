@@ -2,11 +2,11 @@
   <div>
     <div class="row justify-center items-center noise">
       <div class="col-auto q-pa-xs justify-center">
-        <q-icon name="fa-solid fa-user" color="primary" style="font-size: 1.3rem !important;"></q-icon>
+        <q-icon name="fa-solid fa-circle-user" color="primary" style="font-size: 1.2rem !important;"></q-icon>
       </div>
       <div class="col-auto justify-center">
-        <div class="text-h6 text-center" >
-          User votes
+        <div class="col-auto justify-center">
+          <q-item-label class=" text-primary text-overline text-bold" style="font-size: 1rem">Your votes</q-item-label>
         </div>
       </div>
     </div>

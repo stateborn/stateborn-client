@@ -6,7 +6,60 @@
           <q-icon name="fa-solid fa-info" color="primary"  size="lg"/>
         </div>
         <div class="col-8 text-left">
-          NFT address: 0xefA115Bf1398eC05082c43C789714C1fF5D3c1eC<br>
+          <q-item-label class="text-overline q-mb-xs" style="font-size: 1rem">OFF-CHAIN + ON-CHAIN</q-item-label>
+          <q-item-label class="text-overline text-bold q-pt-xs" style="font-size: 0.9rem">Features:</q-item-label>
+          <q-item-label class="text-overline q-mb-md " style="font-size: 0.9rem">All included in off-chain DAO:</q-item-label>
+          • NFT/ERC-20 blockchain based token governance
+          <q-icon color="primary" name="fa-solid fa-circle-info" style="margin-bottom: 3px;">
+            <q-tooltip class="stateborn-tooltip">
+              Your DAO governance will be based on blockchain NFT/ERC-20 token of your choice.<br>
+              Users owning a DAO token will be able to vote on proposals.<br>
+            </q-tooltip>
+          </q-icon><br>
+          • off-chain proposals creation (no cost)
+          <q-icon color="primary" name="fa-solid fa-circle-info" style="margin-bottom: 3px;">
+            <q-tooltip class="stateborn-tooltip">
+              Users owning a DAO token can create proposals. <br>
+              Proposals are stored off-chain (not in blockchain). <br>
+              Users owning a DAO token can vote on proposal. <br>
+              Proposal can be about anything and can include attachments (images, documents). <br>
+              Proposals creation is free.<br>
+              Proposals are transparent, immutable and cryptographically secured and can be verified by anyone.
+            </q-tooltip>
+          </q-icon>
+          <br>
+          • voting on proposals
+          <q-icon color="primary" name="fa-solid fa-circle-info" style="margin-bottom: 3px;">
+            <q-tooltip class="stateborn-tooltip">
+              Users owning a DAO token can vote on proposals.<br>
+              Voting purpose is to pass or reject proposal. <br>
+              Voting is free and votes are stored off-chain (not in blockchain).<br>
+              Votes are transparent, immutable, cryptographically secured and can be verified by anyone.<br>
+            </q-tooltip>
+          </q-icon><br>
+          <q-item-label class="text-overline q-mb-md q-mt-md " style="font-size: 0.9rem">on-chain only features:</q-item-label>
+          • on-chain (smart-contracts based) DAO with treasury  <q-icon color="primary" name="fa-solid fa-circle-info" style="margin-bottom: 3px;">
+          <q-tooltip class="stateborn-tooltip">
+            Smart contracts based DAO will be created in blockchain. <br>
+            DAO will have a treasury (smart contract based wallet) where funds can be stored. <br>
+            Stateborn DAOs are non-permissioned. <br>
+            DAO treasury transfers can be proposed and executed by anyone. <br>
+            DAO should be managed by DAO community and proposals decisions.
+          </q-tooltip>
+        </q-icon><br>
+          • proposals can include on-chain DAO treasury transfers  <q-icon color="primary" name="fa-solid fa-circle-info" style="margin-bottom: 3px;">
+          <q-tooltip class="stateborn-tooltip">
+            Proposals can include transfers of assets (tokens, NFTs) from DAO treasury to any address. <br>
+            Transaction execution is based on DAO community voting. <br>
+          </q-tooltip>
+        </q-icon><br>
+          <br>
+          on-chain + off-chain DAO creation costs <b>transaction fee</b> for on-chain DAO creation (blockchain transaction).<br>
+          DAO definition is stored off-chain (IPFS) and on-chain (smart contracts).<br>
+          You need to provide the address of your governance token (ERC-20 or NFT).
+        </div>
+        <div class="col-8 text-left">
+          NFT address: 0x863AEFeDEb07bF8a9Acc16A45F630c5759B83d44<br>
           DAO proposal creation is <b>free</b>.<br>
           Proposal definition file is stored off-chain (IPFS).<br>
           Total proposal size (with attachments) cannot be greater than 2MB.
@@ -250,7 +303,7 @@ const onFileUploaded = (res: any) => {
   if (res.fileName.endsWith('.png') || res.fileName.endsWith('.jpg') || res.fileName.endsWith('.jpeg') || res.fileName.endsWith('.gif') || res.fileName.endsWith('.webp')) {
     imagesMap.set(res.fileName, {
       fileName: res.fileName,
-      file: `\n<img src="data:image/jpeg;base64, ${res.base64File}" style="max-width:80%;height:100%"/>`,
+      file: `\n<img src="data:image/jpeg;base64, ${res.base64File}" style="max-width:500px;height:100%"/>`,
     });
     description.value += calculateCommentPrefixWithSpace(res.fileName);
   } else {

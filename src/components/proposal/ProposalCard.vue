@@ -1,16 +1,24 @@
 <template>
-  <q-card class="stateborn-card cursor-pointer" square>
-    <q-badge floating align="top" class="font-one-rem text-subtitle2 text-bold"
+  <q-card class="stateborn-card cursor-pointer veryLightBorder" square>
+    <q-badge floating align="top" class="font-one-rem text-subtitle2 text-bold border veryLightBorder sectionName"
              :class="isProposalEnded? 'noisered' : 'noisegreen'"
-             :label="isProposalEnded? 'Ended' : 'Active'" :text-color="isProposalEnded? 'red' : 'green'"
-             style="padding: 7px;"></q-badge>
+             :label="isProposalEnded? 'Ended' : 'VOTING ACTIVE'" :text-color="isProposalEnded? 'red' : 'green'"
+             style="padding:10px;;"></q-badge>
     <q-card-section>
-      <span :class="$q.platform.is.mobile ? 'text-h5' : 'text-h4'" style="line-height: 1.5rem;padding-right:10px">{{ props.proposal.clientProposal.title }}</span>
+      <div class="row justify-center items-center">
+        <div class="col-1">
+          <q-img src="/propa.svg" style="height:50px; width: 50px; "></q-img>
+        </div>
+        <div class="col-11">
+          <div class="row text-subtitle2"><div class="col-grow text-bold sectionName q-pb-xs">Title</div></div>
+          <div class=" text-primary text-h5">{{props.proposal.clientProposal.title}}</div>
+        </div>
+      </div>
     </q-card-section>
-    <q-separator></q-separator>
-
     <q-card-section style="white-space: pre-wrap; word-wrap: break-word; ">
       <q-scroll-area style="height: 200px; width: 100%">
+        <div class="row text-subtitle2"><div class="col-grow text-bold sectionName q-pb-xs">Description preview</div></div>
+
         <proposal-description-markdown :description="props.proposal.clientProposal.description"></proposal-description-markdown>
       </q-scroll-area>
     </q-card-section>

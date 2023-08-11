@@ -77,7 +77,7 @@ export class Erc721Service {
 
   public async readIpfsTokenInfo(tokenAddress: string, tokenId: number): Promise<IpfsNftInfo | undefined> {
     try {
-      const contract = new ethers.Contract(tokenAddress, this.abi, ETH_CONNECTION_SERVICE.getProvider());
+      const contract = new ethers.Contract(tokenAddress, this.abi, ETH_CONNECTION_SERVICE.getProviderQuickProvider());
       let tokenUri = await contract.tokenURI(tokenId);
       console.log(tokenUri);
       if (tokenUri.toLowerCase().startsWith('ipfs')) {

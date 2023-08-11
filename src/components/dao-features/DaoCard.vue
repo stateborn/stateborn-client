@@ -1,16 +1,18 @@
 <template>
   <q-card class="stateborn-card q-ma-xs" >
-    <q-card-section style="padding: 2px !important; margin:2px !important;">
-      <div class="text-h5 text-center">DAO</div>
+    <q-card-section style="padding: 5px !important; margin:5px !important;">
+      <q-item-label class=" text-primary text-center text-overline" style="font-size: 1rem">DAO</q-item-label>
+
     </q-card-section>
     <q-separator class="q-mt-xs q-mb-xs"></q-separator>
-    <div class="row justify-center text-center items-center q-pt-xs">
-      <div class="col-auto justify-center items-center">
-        <div class="text-subtitle2 text-bold q-pa-xs" style="line-height: 1.5rem">
-          {{ props.dao.clientDao.name }}
+    <div class="row  text-center items-center q-pt-xs" style="height:80px" >
+      <div class="col-grow items-center">
+        <div class="text-subtitle2 q-pa-md">
+          <q-item-label class=" text-primary text-bold">{{ props.dao.clientDao.name }}</q-item-label>
         </div>
       </div>
     </div>
+    <q-separator class="q-ma-xs"></q-separator>
     <div class="row justify-center text-center items-center q-pt-xs" v-if="props.dao.clientDao.imageBase64 !== ''">
       <div class="col-auto justify-center items-center">
         <q-img
@@ -27,7 +29,8 @@
       <q-list>
         <q-item v-if="props.isFull">
           <q-item-section avatar>
-            <q-icon :color="props.dao.clientDao.contractAddress ? 'primary' : 'primary'" size="xs" :name="props.dao.clientDao.contractAddress ? 'fa-solid fa-cube' : 'fa-solid fa-square'"/>
+            <q-img src="/cube2.svg" v-if= "props.dao.clientDao.contractAddress" style="height:24px; width: 24px"></q-img>
+            <q-icon color="primary" size="xs" v-else name="fa-solid fa-square"/>
           </q-item-section>
 
           <q-item-section>

@@ -4,6 +4,12 @@ const daoFactoryAabi =  [
   'function createDao() public',
   'event DAOCreated(address daoAddress)',
 ];
+
+const proposalAbi = [
+  'function getChallengeSequencerEndTime() public view returns (uint256)',
+  'function isPassed() public view returns (bool)',
+  'function executed() public view returns (bool)',
+];
 export const createDaoOnChain = (chainId: string): Promise<string> => {
   const contract = new Contract(getDaoFactoryAddress(chainId), daoFactoryAabi, ETH_CONNECTION_SERVICE.getSigner());
   const promise: Promise<string> = new Promise((resolve, reject) => {
@@ -14,6 +20,18 @@ export const createDaoOnChain = (chainId: string): Promise<string> => {
   });
   contract.createDao();
   return promise;
+}
+
+export const getChallengeSequencerEndTimeEpoch = async (proposalAddress: string): Promise<number> => {
+  console.log('dostlaem taki adres', proposalAddress);
+  const contract = new Contract(proposalAddress, proposalAbi, ETH_CONNECTION_SERVICE.getProviderQuickProvider());
+  const res = await contract.getChallengeSequencerEndTime()
+  return Number(res) * 1000;
+}
+
+export const getIsProposalPassed = async (proposalAddress: string): Promise<boolean> => {
+  const contract = new Contract(proposalAddress, proposalAbi, ETH_CONNECTION_SERVICE.getProviderQuickProvider());
+  return await contract.isPassed();
 }
 
 const getDaoFactoryAddress = (chainId: string): string => {

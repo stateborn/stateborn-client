@@ -7,7 +7,7 @@
                    'max-width: 100%;' : `${opacity === undefined ? 'opacity: 0.8': `opacity: ${opacity}`}`"/>
     </template>
 
-    <div class="text-primary" :class="textClass === undefined ? 'text-h3 q-pa-md': textClass"
+    <div class="text-grey-9" :class="textClass === undefined ? 'text-h3 q-pa-md': textClass"
          style="white-space: pre-wrap; word-wrap: break-word; "
          :style="`background-color: rgba(245, 245, 245, ${opacity !== undefined ? opacity : '0.55'}); ${lineHeight !== undefined ? `line-height: ${lineHeight}` :''}`">
       {{title}}

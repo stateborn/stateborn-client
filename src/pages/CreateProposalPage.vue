@@ -1,6 +1,6 @@
 <template>
   <q-page>
-    <div class="row justify-center" :class="$q.platform.is.mobile ? '' : 'q-pa-md'" >
+    <div class="row justify-center " :class="$q.platform.is.mobile ? '' : 'q-pa-md'" >
       <div class="col-lg-8 col-xs-grow justify-center q-pa-xs">
         <picture-parallax
           image-src="/proposalbody2noise.webp"
@@ -10,9 +10,9 @@
           :style="$q.platform.is.mobile ? 'height: 100px !important;' :''"
           :height="$q.platform.is.mobile ? '323': '300'"
         ></picture-parallax>
-        <div class="row q-mt-md">
+        <div class="row q-mt-xs">
           <div class="col-12">
-            <q-breadcrumbs class="text-subtitle2 noise text-primary">
+            <q-breadcrumbs class="text-subtitle2 stateborn-card q-pa-xs q-ma-xs text-primary">
               <q-breadcrumbs-el icon="home" to="/">
                 <span class="text-underline">Home</span>
               </q-breadcrumbs-el>

@@ -1,13 +1,13 @@
 <template>
   <q-card class="stateborn-card" square>
     <q-card-section class="text-center" style="padding:0px;">
-      <div class="row justify-center items-center">
+      <div class="row justify-center items-center q-pa-xs q-pb-md">
         <div class="col-auto q-pa-xs justify-center">
-          <q-icon name="fa-solid fa-clock" color="primary" style="font-size: 1.3rem !important;"></q-icon>
+          <q-icon name="fa-solid fa-clock" color="primary" style="font-size: 1.2rem !important;"></q-icon>
         </div>
         <div class="col-auto justify-center">
-          <div class="text-h6 text-center" >
-            Remaining Time
+          <div class="col-auto justify-center">
+            <q-item-label class=" text-primary text-overline text-bold" style="font-size: 1rem">Remaining Time</q-item-label>
           </div>
         </div>
       </div>

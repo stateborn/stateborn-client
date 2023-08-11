@@ -2,7 +2,7 @@
   <q-page>
     <div class="row justify-center" >
       <div class="col-lg-8 col-xs-grow justify-center">
-        <q-breadcrumbs class="text-subtitle2 noise text-primary q-mt-md">
+        <q-breadcrumbs class="text-subtitle2 stateborn-card q-pa-xs text-primary q-mt-md">
           <q-breadcrumbs-el icon="home" to="/">
             <span class="text-underline">Home</span>
           </q-breadcrumbs-el>
@@ -15,30 +15,41 @@
         </q-breadcrumbs>
         <div class="row q-col-gutter-x-sm q-mt-xs">
           <div class="col-lg-8 col-xs-grow">
-            <q-scroll-area
-              v-show="canShowScrollArea"
-              :style="`height: ${proposalScrollHeight}px; max-width: 100%; min-width:100px`"
-              v-if="!$q.platform.is.mobile">
-              <FullProposalCard
-                class=""
-                :dao-token-chain-id="dao?.clientDao?.token?.chainId"
-                :proposal-verification="proposal?.proposalVerification"
-                :proposal="proposal"
-                v-if="proposal !== undefined">
-              </FullProposalCard>
-            </q-scroll-area>
-            <FullProposalCard
+            <ProposalDetailsCard
+              id="fullProposalCard"
+              :dao-token-chain-id="dao?.clientDao?.token?.chainId"
+              :proposal-verification="proposal?.proposalVerification"
+              :proposal="proposal"
+              v-if="proposal !== undefined">
+            </ProposalDetailsCard>
+            <q-card class="stateborn-card q-mt-md " square v-if="!$q.platform.is.mobile">
+              <q-card-section style="padding-bottom:0;">
+                <div class="row text-subtitle2 text-bold">
+                  <div class="col-grow text-bold sectionName">Description</div>
+                </div>
+              </q-card-section>
+              <q-scroll-area
+                v-show="canShowScrollArea"
+                :style="`height: ${proposalScrollHeight}px; max-width: 100%; min-width:100px;margin-top:10px`"
+              >
+                <q-card-section style="padding-top:0;">
+                  <proposal-description-markdown class="q-pt-md"
+                                                 :description="proposalDescription"></proposal-description-markdown>
+                </q-card-section>
+              </q-scroll-area>
+            </q-card>
+            <ProposalDetailsCard
               v-else
               class="q-mt-md"
               :dao-token-chain-id="dao?.clientDao?.token?.chainId"
               :proposal-verification="proposal.proposalVerification"
               :proposal="proposal"
               v-if="proposal !== undefined">
-            </FullProposalCard>
+            </ProposalDetailsCard>
           </div>
           <div class="col-lg-4 col-xs-grow">
             <div id="other-info-row">
-              <dao-card-min :full-width="true" class="" :dao="dao" v-if="dao !== undefined" :show-token-address="true"></dao-card-min>
+              <DaoCardMin :full-width="true" class="" :dao="dao" v-if="dao !== undefined" :show-token-address="true"></DaoCardMin>
               <VoteCard
                 class="q-mt-md"
                 :trigger-voting-after-different-voting-power-acceptance="triggerVotingAfterDifferentVotingPowerAcceptance"
@@ -82,14 +93,15 @@
         <div class="row noise q-mt-md" id="transactions-row">
           <div class="col-12 ">
             <ProposalTransactionsCard
+              id="proposalTransactionsCard"
               :transactions="proposal.clientProposal.transactions"
-              v-if="proposal !== undefined && proposal.clientProposal.transactions !== undefined"
+              v-if="proposal !== undefined && proposal.clientProposal.transactions && proposal.clientProposal.transactions.length > 0"
               :proposal-ipfs-hash="proposal.ipfsHash">
             </ProposalTransactionsCard>
 
           </div>
         </div>
-        <div class="row q-mt-md q-mb-lg" id="table-votes-row">
+        <div class="row q-mt-xs q-mb-lg" id="table-votes-row">
           <div class="col-12">
             <VotesTable  :votes-count="votesCount"
                         :distinct-votes-count="distinctVotesCount"
@@ -126,7 +138,7 @@
 <script lang="ts" setup>
 import { ref, watch } from 'vue';
 import { api } from 'boot/axios';
-import FullProposalCard from 'components/proposal/FullProposalCard.vue';
+import ProposalDetailsCard from 'components/proposal/ProposalDetailsCard.vue';
 import { useRoute } from 'vue-router';
 import VoteCard from 'components/vote/VoteCard.vue';
 import { useEthConnectionStore } from 'stores/eth-connection-store';
@@ -137,10 +149,7 @@ import ProposalCountdownCard from 'components/proposal/ProposalCountdownCard.vue
 import ValidityCard from 'components/proposal/ValidityCard.vue';
 import { dom, useQuasar } from 'quasar';
 import dayjs from 'dayjs';
-import {
-  validateVoteAndUpdateInStorage,
-  storeVoteCreatedByUser,
-} from 'src/api/services/vote-service';
+import { storeVoteCreatedByUser, validateVoteAndUpdateInStorage, } from 'src/api/services/vote-service';
 import DaoCardMin from 'components/dao-features/DaoCardMin.vue';
 import { getDao } from 'src/api/services/dao-service';
 import { DaoBackend } from 'src/api/model/dao-backend';
@@ -151,9 +160,10 @@ import { ProposalResultDto } from 'src/api/dto/proposal-result-dto';
 import { TOKEN_SERVICE } from 'src/api/services/token-service';
 import { TokenType } from 'src/api/model/ipfs/token-type';
 import { sleep } from 'src/api/services/sleep-service';
-import height = dom.height;
 import { getProposalReport } from 'src/api/services/proposal-report-service';
-import ProposalTransactionsCard from 'components/proposal/ProposalTransactionsCard.vue';
+import ProposalTransactionsCard from 'components/proposal/proposal-transactios/ProposalTransactionsCard.vue';
+import ProposalDescriptionMarkdown from 'components/proposal/ProposalDescriptionMarkdown.vue';
+import height = dom.height;
 
 const route = useRoute();
 const proposal = ref(<BackendProposal | undefined> undefined);
@@ -170,6 +180,7 @@ const canShowScrollArea = ref(false);
 const triggerFillUserVotesTable = ref(false);
 const votesCount = ref('1');
 const distinctVotesCount = ref('1');
+const proposalDescription = ref('');
 const showDifferentVotingPowerDialog = ref(false);
 const readProposalBlock = ref('0');
 const triggerVotingAfterDifferentVotingPowerAcceptance = ref(false);
@@ -177,20 +188,19 @@ const decisionAfterDifferentPowerAcceptance = ref('');
 // eslint-disable-next-line
 const proposalScrollHeight = ref(0);
 const dao = ref(<DaoBackend | undefined > undefined);
-const onVotesRendered = async () => {
-  const otherInfoRowHeight = height(document.getElementById('other-info-row')!);
-  const transactionsRowHeight = height(document.getElementById('transactions-row')!);
-  // eslint-disable-next-line
-  const scrollHeight = window.innerHeight - 90 - height(document.getElementById('table-votes-row')!) - height(document.getElementById('transactions-row')!);
-  if (otherInfoRowHeight > scrollHeight) {
-    proposalScrollHeight.value = otherInfoRowHeight;
-  } else {
-    proposalScrollHeight.value = scrollHeight;
-  }
-  canShowScrollArea.value = true;
+
+const adjustDescriptionHeight = () => {
   sleep(100).then(() => {
+    const otherInfoRowHeight = height(document.getElementById('other-info-row')!);
+    const a = height(document.getElementById('fullProposalCard')!);
+    // the goal is to have description the same length as right columns row, to finish on the same line
+    proposalScrollHeight.value = otherInfoRowHeight - a - 64;
+    canShowScrollArea.value = true;
     $q.loading.hide();
   });
+}
+const onVotesRendered = async () => {
+  adjustDescriptionHeight();
 };
 const fetchTableVotes = (limit: number, offset: number) => {
   api.get(`/api/rest/v1/proposal/${proposalIpfsHash}/votes?limit=${limit}&offset=${offset}`).then(async (response) => {
@@ -238,6 +248,7 @@ const fetchProposalData = async () => {
   };
   getProposal(proposalIpfsHash, onProposalValidationDoneCallback).then((_) => {
     proposal.value = _;
+    proposalDescription.value = _.clientProposal.description;
     isProposalEnded.value = dayjs().isAfter(proposal.value.clientProposal.endDateUtc);
     if (isProposalEnded.value === true) {
       getProposalReport(proposalIpfsHash).then((_) => {
@@ -255,7 +266,6 @@ fetchProposalData();
 
 const getTokenBalance = async (tokenAddress: string, tokenType: TokenType, decimals?: string) => {
   TOKEN_SERVICE.readTokenBalance(ethConnectionStore.account, tokenAddress, tokenType, decimals).then((res) => {
-    console.log('wumku', res);
     tokenBalance.value = res;
   }, (error) => {
     console.log(error);
@@ -276,6 +286,7 @@ const fetchUserVotes = async () => {
 }
 
 watch(() => [ethConnectionStore.isConnected, ethConnectionStore.networkName], async () => {
+  adjustDescriptionHeight();
   if (ethConnectionStore.isConnected) {
     if (tokenBalance.value === '') {
       getTokenBalance(dao.value.clientDao.token.address,dao.value.clientDao.token.type, dao.value.clientDao.token.decimals);
