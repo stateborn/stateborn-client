@@ -11,6 +11,5 @@ export const filterImagesAndAttachmentsFromDescription = (description: string) =
       description = description.replace(attachment, '');
     });
   }
-  console.log(description);
   return description;
 }

@@ -7,11 +7,11 @@
       </div>
       <div class="col-auto justify-center">
         <div class="col-auto justify-center">
-          <q-item-label class=" text-primary text-overline text-bold" style="font-size: 1rem">Transactions
+          <q-item-label class=" text-primary text-overline text-bold" style="font-size: 1rem">Transfers
             <q-icon color="primary" name="fa-solid fa-circle-info" style="margin-bottom: 3px;">
               <q-tooltip class="stateborn-tooltip">
-                Transactions to be executed if proposal passes.<br>
-                These transactions will be <b class="text-red">executed only all together</b> if proposal passes.<br>
+                Transfers to be executed if proposal passes.<br>
+                These transfers will be <b class="text-red">executed only all together</b> if proposal passes.<br>
               </q-tooltip>
             </q-icon></q-item-label>
         </div>
@@ -84,11 +84,11 @@
                           <q-icon color="primary" name="fa-solid fa-circle-info" class="q-pl-xs"
                                   style="margin-bottom: 3px;padding-right:5px">
                             <q-tooltip class="stateborn-tooltip" v-if="item.tokenType === TokenType.ERC20">
-                              Transaction description: Transfer {{item.amount}} {{item.tokenSymbol}} of DAO treasury to
+                              Description: Transfer {{item.amount}} {{item.tokenSymbol}} of DAO treasury to
                               address {{item.transferToAddress}}.
                             </q-tooltip>
                             <q-tooltip class="stateborn-tooltip" v-if="item.tokenType === TokenType.NFT">
-                              Transaction description: Transfer {{item.tokenSymbol}} NFT with ID {{item.tokenId}} owned by DAO to
+                              Description: Transfer {{item.tokenSymbol}} NFT with ID {{item.tokenId}} owned by DAO to
                               address {{item.transferToAddress}}.
                             </q-tooltip>
                           </q-icon>
@@ -225,7 +225,7 @@ const fillTable = async () => {
     }
     rows.value.push(
       new TransactionRow(
-        `Transaction #${i - 1}`,
+        `Transfer #${i - 1}`,
         _.transactionType,
         `${data.token.name} (${data.token.symbol})`,
         data.token.decimals,

@@ -6,7 +6,7 @@
         <q-icon :name="isEverythingFilled ? 'fa-solid fa-circle-check' : 'fa-solid fa-circle-xmark'"
                 style="margin-bottom:2px"
                 :color="isEverythingFilled ? 'green-8' : 'red-8'"/>
-        Transaction #{{ txIndex + 1 }}
+        Transfer #{{ txIndex + 1 }}
       </div>
       <q-separator class="q-mb-md"></q-separator>
       <q-banner class="text-primary text-subtitle2 text-center "
@@ -17,19 +17,19 @@
           </div>
           <div class="col-8 text-left text-subtitle2 text-black">
             <div v-if="thereIsAlreadyTransactionWithThisToken">
-              There is already transaction with token {{tokenSymbol}}. Please choose another token.
+              There is already transfer of {{tokenSymbol}} token. Please choose another token.
             </div>
             <div v-if="tokenName === ''">
               Please provide correct token address which will be send from DAO.
             </div>
             <div v-if="tokenName !== '' && (tokenAddress.trim() === transferToAddress.trim())">
-              Receiver address is the same as sender address. Transaction cannot be sent.
+              Receiver address is the same as sender address. Transfer cannot be sent.
             </div>
             <div v-if="tokenName !== '' && (transferToAddress.trim() === daoAddress.trim())">
               DAO cannot be receiver, because DAO is the sender.
             </div>
             <div v-if="tokenName !== '' && Number(daoFunds).toFixed(0) === '0'">
-              DAO has 0 {{ tokenSymbol }} tokens. Transaction cannot be sent.
+              DAO has 0 {{ tokenSymbol }} tokens. Transfer cannot be sent.
             </div>
             <div v-if="tokenName !== '' && Number(daoFunds).toFixed(0) !== '0' && transferToAddress.trim() === ''">
               Please provide address of {{ tokenSymbol }} tokens receiver.
@@ -41,7 +41,7 @@
               Please provide correct NFT id to send.
             </div>
             <div v-if="isEverythingFilled && transactionType.value === TokenType.ERC20">
-              Transaction: <b>send {{ amountOfTokensToSend }} {{ tokenSymbol }} tokens owned by DAO to {{ transferToAddress }}.</b><br>
+              Transfer: <b>send {{ amountOfTokensToSend }} {{ tokenSymbol }} tokens owned by DAO to {{ transferToAddress }}.</b><br>
               After the transaction DAO will own {{ (Number(daoFunds) - Number(amountOfTokensToSend)).toFixed(0) }} {{ tokenSymbol }} tokens.
             </div>
             <div v-if="isEverythingFilled && transactionType.value === TokenType.NFT">
@@ -56,7 +56,7 @@
   </div>
   <div class="row justify-left">
     <div class="col-6 q-pa-xs">
-      <q-select filled :options="transactionTypes" square v-model="transactionType" label="Transaction type" class="q-mt-md">
+      <q-select filled :options="transactionTypes" square v-model="transactionType" label="Transfer type" class="q-mt-md">
         <template v-slot:prepend>
           <q-badge style="padding:5px" :label="transactionType.value"
                             :color="transactionType.value === TokenType.ERC20 ? 'primary' : 'secondary'"
@@ -137,12 +137,12 @@
       </q-input>
     </div>
   </div>
-  <div class="row  q-mt-md items-center" v-show="tokenName !== ''">
-    <div class="col-6 q-pa-xs">
+  <div class="row q-mt-md items-center" v-show="tokenName !== ''">
+    <div class="col-6 q-pa-xs" id="tokenInfoColumn">
       <token-info-card
         v-if="transactionType.value === TokenType.ERC20"
         :big-token="false"
-        label="Transaction token"
+        label="Transfer asset"
         :token-symbol="tokenSymbol"
         :decimals="decimals"
         :token-name="tokenName"
@@ -154,7 +154,7 @@
         :big-token="false"
         :nft-id="nftId"
         :token-address="tokenAddress"
-        label="Transaction token"
+        label="Transfer asset"
         :token-symbol="tokenSymbol"
         :decimals="decimals"
         :token-name="tokenName"
@@ -164,8 +164,9 @@
       >
       </nft-token-info-card>
     </div>
-    <div class="col-6 q-pa-xs" v-show="tokenName !== ''">
+    <div class="col-6 q-pa-xs" v-show="tokenName !== ''" :class="Number(daoFunds) > 0 ? 'noisegreencard' : 'noiseredcard'" >
       <dao-wallet-card
+        style="height:100% !important;"
         v-if="tokenType === TokenType.ERC20"
         :token-symbol="tokenSymbol"
         :dao-funds="daoFunds"
@@ -189,7 +190,7 @@ import { computed, ref, watch } from 'vue';
 import { useEthConnectionStore } from 'stores/eth-connection-store';
 import { ERC_721_SERVICE } from 'src/api/services/erc-721-service';
 import { TokenType } from 'src/api/model/ipfs/token-type';
-import { Notify, useQuasar } from 'quasar';
+import { dom, Notify, useQuasar } from 'quasar';
 import { ERC_20_SERVICE } from 'src/api/services/erc-20-service';
 import { ClientProposalTransaction } from 'src/api/model/ipfs/proposal-transaction/client-proposal-transaction';
 import { TransferErc20TransactionData } from 'src/api/model/ipfs/proposal-transaction/transfer-erc-20-transaction-data';

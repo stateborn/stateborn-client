@@ -1,7 +1,7 @@
 <template>
   <q-page>
     <div class="row justify-center " :class="$q.platform.is.mobile ? '': 'q-pa-lg'" >
-      <div class="col-lg-8 col-xs-grow justify-center q-pa-xs">
+      <div class="col-lg-8 col-xs-grow justify-center q-pa-xs" >
         <picture-parallax image-src="statebornnoise.webp" alt="stateborn image" title="Create a DAO"
                           :style="$q.platform.is.mobile ? 'height: 100px': ''"
                           :text-class="$q.platform.is.mobile ? 'text-h5': 'text-h3 q-pa-md'"
@@ -32,7 +32,7 @@
                     OFF-CHAIN + ON-CHAIN
                   </q-tab>
                 </q-tabs>
-                <q-tab-panels v-model="tab" animated class="stateborn-card">
+                <q-tab-panels v-model="tab" animated class="stateborn-card" style="border: 0px;">
                   <q-tab-panel name="offchain">
                     <create-dao-form :onchain="false"></create-dao-form>
                   </q-tab-panel>

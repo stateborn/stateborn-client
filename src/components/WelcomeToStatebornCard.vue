@@ -73,7 +73,7 @@
       </q-card-section>
       <q-card-section horizontal style="padding: 2px; margin:2px;">
         <q-btn align="center" class="full-width" text-color="secondary" color="primary" glossy
-               @click="$router.push(`/about`)" label="TRULY AUTONOMOUS DAO - HOW IT WORKS">
+               @click="$router.push(`/onchain-dao`)" label="Stateborn protocol">
         </q-btn>
       </q-card-section>
     </q-card-section>
@@ -158,6 +158,8 @@
         </q-icon>
       </div>
     </div>
+    <q-separator ></q-separator>
+    <div class="text-center">© 2023 stateborn.org</div>
   </q-card>
 </template>
 <script lang="ts" setup>

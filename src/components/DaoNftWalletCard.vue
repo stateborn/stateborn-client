@@ -2,7 +2,7 @@
   <q-card class="my-card  q-pb-md"  square :class=" nftId ? (daoOwnsNft ? 'noisegreencard' : 'noiseredcard') : 'stateborn-card2'">
     <q-card-section class="text-center" style="padding-top:0;">
       <div class="text-overline">Current {{tokenSymbol}} holdings</div>
-      <div class="text-h6 ">DAO wallet</div>
+      <div class="text-h6 ">DAO  wallet</div>
     </q-card-section>
 
     <div class="row items-center">

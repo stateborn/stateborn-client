@@ -93,14 +93,15 @@ const initialPagination = ref({
 });
 const hasData = ref(false);
 
-onMounted(async () => {
+const adjustDaoEntriesHeight = () => {
   daoEntryWidth.value = width(document.getElementById('daosTable')!)  / 2 - 40;
-  // if (daoEntryWidth.value > 400) {
-  //   daoEntryWidth.value = 400;
-  // }
   if (daoEntryWidth.value <= 300) {
     daoEntryWidth.value = 400;
   }
+}
+
+onMounted(async () => {
+  adjustDaoEntriesHeight();
   daos.value = await loadDaos(initialPagination.value.rowsPerPage, (initialPagination.value.page - 1) * initialPagination.value.rowsPerPage);
   if (daos.value.length > 0) {
     hasData.value = true;
@@ -159,5 +160,9 @@ const columns = [
   { name: 'tokenAddress', label: 'Fat (g)', field: 'fat', sortable: true },
   { name: 'tokenType', label: 'Fat (g)', field: 'fat', sortable: true },
 ];
+window.addEventListener('resize',function() {
+  adjustDaoEntriesHeight();
+});
+
 
 </script>

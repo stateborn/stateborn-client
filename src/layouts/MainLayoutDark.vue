@@ -1,9 +1,9 @@
 <template>
   <q-layout view="lHh Lpr lFf" >
-    <q-header bordered class="headernoise text-primary" >
+    <q-header class="text-primary" style="background: rgb(0, 0, 0, 1) !important;border-bottom: 1px solid   #4d4d4d" >
       <q-toolbar>
 
-        <q-toolbar-title>
+        <q-toolbar-title class="text-white">
           <router-link to="/" style="text-decoration: none">
             <span :style="$q.platform.is.mobile ? 'font-size:12px': ''">stateborn - minimum trust democracy</span>
             <q-badge class="q-ma-md" label="beta"></q-badge>

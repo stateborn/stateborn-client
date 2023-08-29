@@ -3,66 +3,61 @@
     <q-banner class="text-primary text-subtitle2 text-center noisegreen">
       <div class="row items-center">
         <div class="col-4">
-          <q-icon name="fa-solid fa-info" color="primary"  size="lg"/>
+          <q-img src="/propa.svg" class="maker" style="height:50px; width: 50px; "></q-img>
         </div>
         <div class="col-8 text-left">
-          <q-item-label class="text-overline q-mb-xs" style="font-size: 1rem">OFF-CHAIN + ON-CHAIN</q-item-label>
-          <q-item-label class="text-overline text-bold q-pt-xs" style="font-size: 0.9rem">Features:</q-item-label>
-          <q-item-label class="text-overline q-mb-md " style="font-size: 0.9rem">All included in off-chain DAO:</q-item-label>
-          • NFT/ERC-20 blockchain based token governance
+          NFT 0x742ed94AbB4e556F22b21B1aBEdcd0cB4099c11d
+          <q-item-label class="text-overline q-mb-xs" style="font-size: 1rem">CREATE PROPOSAL</q-item-label>
+          <q-item-label class="text-overline text-bold q-pt-xs q-mb-md" style="font-size: 0.9rem">Features:</q-item-label>
+          • describe proposals in markdown (easy formatting)
           <q-icon color="primary" name="fa-solid fa-circle-info" style="margin-bottom: 3px;">
             <q-tooltip class="stateborn-tooltip">
-              Your DAO governance will be based on blockchain NFT/ERC-20 token of your choice.<br>
-              Users owning a DAO token will be able to vote on proposals.<br>
+              Format proposal text using markdown syntax. <br>
+              You can format headers, subheaders, links, etc. <br>
             </q-tooltip>
           </q-icon><br>
-          • off-chain proposals creation (no cost)
+          • add attachments like images, pdfs, etc.
           <q-icon color="primary" name="fa-solid fa-circle-info" style="margin-bottom: 3px;">
             <q-tooltip class="stateborn-tooltip">
-              Users owning a DAO token can create proposals. <br>
-              Proposals are stored off-chain (not in blockchain). <br>
-              Users owning a DAO token can vote on proposal. <br>
-              Proposal can be about anything and can include attachments (images, documents). <br>
-              Proposals creation is free.<br>
-              Proposals are transparent, immutable and cryptographically secured and can be verified by anyone.
+                You can add attachments to your proposal. <br>
+                Attachments are directly encoded in proposal document. <br>
+                They will be be cryptographically secured and immutable. <br>
+            </q-tooltip>
+          </q-icon><br>
+          • choose proposal voting options (YES/NO, options)
+          <q-icon color="primary" name="fa-solid fa-circle-info" style="margin-bottom: 3px;">
+            <q-tooltip class="stateborn-tooltip">
+                Users owning DAO governance token will be able to vote on proposal. <br>
+                Voting power will be determined by amount of tokens owned by user. <br>
+                There are 2 proposal types: <br>
+              • YES/NO - user vote on proposal by choosing YES or NO option <br>
+              • options - user vote on proposal by choosing one of the options (defined by proposal author)<br>
             </q-tooltip>
           </q-icon>
           <br>
-          • voting on proposals
+          • proposal creation is free
           <q-icon color="primary" name="fa-solid fa-circle-info" style="margin-bottom: 3px;">
             <q-tooltip class="stateborn-tooltip">
-              Users owning a DAO token can vote on proposals.<br>
-              Voting purpose is to pass or reject proposal. <br>
-              Voting is free and votes are stored off-chain (not in blockchain).<br>
-              Votes are transparent, immutable, cryptographically secured and can be verified by anyone.<br>
+              Proposal document will be saved in IPFS - distributed file storage system. <br>
+              It will be be cryptographically secured and immutable.
             </q-tooltip>
           </q-icon><br>
-          <q-item-label class="text-overline q-mb-md q-mt-md " style="font-size: 0.9rem">on-chain only features:</q-item-label>
-          • on-chain (smart-contracts based) DAO with treasury  <q-icon color="primary" name="fa-solid fa-circle-info" style="margin-bottom: 3px;">
-          <q-tooltip class="stateborn-tooltip">
-            Smart contracts based DAO will be created in blockchain. <br>
-            DAO will have a treasury (smart contract based wallet) where funds can be stored. <br>
-            Stateborn DAOs are non-permissioned. <br>
-            DAO treasury transfers can be proposed and executed by anyone. <br>
-            DAO should be managed by DAO community and proposals decisions.
-          </q-tooltip>
-        </q-icon><br>
-          • proposals can include on-chain DAO treasury transfers  <q-icon color="primary" name="fa-solid fa-circle-info" style="margin-bottom: 3px;">
-          <q-tooltip class="stateborn-tooltip">
-            Proposals can include transfers of assets (tokens, NFTs) from DAO treasury to any address. <br>
-            Transaction execution is based on DAO community voting. <br>
-          </q-tooltip>
-        </q-icon><br>
-          <br>
-          on-chain + off-chain DAO creation costs <b>transaction fee</b> for on-chain DAO creation (blockchain transaction).<br>
-          DAO definition is stored off-chain (IPFS) and on-chain (smart contracts).<br>
-          You need to provide the address of your governance token (ERC-20 or NFT).
-        </div>
-        <div class="col-8 text-left">
-          NFT address: 0x863AEFeDEb07bF8a9Acc16A45F630c5759B83d44<br>
-          DAO proposal creation is <b>free</b>.<br>
-          Proposal definition file is stored off-chain (IPFS).<br>
-          Total proposal size (with attachments) cannot be greater than 2MB.
+          • voting on proposals is free
+          <q-icon color="primary" name="fa-solid fa-circle-info" style="margin-bottom: 3px;">
+            <q-tooltip class="stateborn-tooltip">
+              Votes will be saved in IPFS - distributed file storage system. <br>
+              They will be be cryptographically secured and immutable.
+            </q-tooltip>
+          </q-icon><br>
+          • add DAO treasury transfers to proposal
+          <q-badge label="ONLY ON-CHAIN"  text-color="yellow" class="q-pa-xs" style="margin-right:5px"></q-badge>
+          <q-icon color="primary" name="fa-solid fa-circle-info" style="margin-bottom: 3px;">
+            <q-tooltip class="stateborn-tooltip">
+              Proposal can contain DAO treasury assets (tokens, NFTs) transfers. <br>
+              Based on proposals voting result decisions it should be available to execute on-chain. <br>
+
+            </q-tooltip>
+          </q-icon><br>
         </div>
       </div>
     </q-banner>
@@ -159,7 +154,7 @@
           :disable="!ethConnectionStore.isConnected"
           v-model="createDaoOnChainTransaction"
         >
-          <span class="text-subtitle2">Create DAO <span class="text-bold">on-chain</span> transaction</span>
+          <span class="text-subtitle2">Create DAO treasury assets <span class="text-bold">on-chain</span> transfer</span>
         </q-toggle>
       </div>
     </div>
@@ -204,7 +199,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { computed, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { api } from 'boot/axios';
 import { useEthConnectionStore } from 'stores/eth-connection-store';
 import { signProposal } from 'src/api/services/signature-service';
@@ -213,8 +208,7 @@ import dayjs from 'dayjs';
 import dayjsPluginUTC from 'dayjs-plugin-utc';
 import DefineVotingOptionsCard from 'components/proposal/DefineVotingOptionsCard.vue';
 import { Notify, useQuasar } from 'quasar';
-import { useRoute, useRouter } from 'vue-router';
-import ProposalDescriptionMarkdown from 'components/proposal/ProposalDescriptionMarkdown.vue';
+import { useRouter } from 'vue-router';
 import { getLatestBlockNumber } from 'src/api/services/eth-service';
 import { ClientProposal } from 'src/api/model/ipfs/client-proposal';
 import { ProposalType } from 'src/api/model/ipfs/proposal-type';
@@ -225,6 +219,7 @@ import CreateProposalTransactionRow from 'components/proposal/CreateProposalTran
 import { ClientProposalTransaction } from 'src/api/model/ipfs/proposal-transaction/client-proposal-transaction';
 import { generateRandomString } from 'src/api/services/utils-service';
 import { TokenType } from 'src/api/model/ipfs/token-type';
+import anime from 'animejs/lib/anime';
 
 dayjs.extend(dayjsPluginUTC);
 const title = ref('New proposal');
@@ -458,5 +453,15 @@ const addAnotherTransactionToEdit = () => {
 const notAllTransactionsAreAlreadyEdited = computed(() => {
   return transactions.value.length !== transactionsCurrentlyEdited.value;
 
+});
+onMounted(() => {
+  anime({
+    targets: '.maker',
+    rotate: '360',
+    duration: function() { return anime.random(1200, 2800); },
+    delay: function() { return anime.random(0, 400); },
+    direction: 'alternate',
+    loop: true
+  });
 });
 </script>
