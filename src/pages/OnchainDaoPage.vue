@@ -24,7 +24,7 @@
         <div class="col-lg-9 col-xs-grow">
           <q-scroll-area :style="`height: ${scrollHeight}px; width:100%;`" ref="scrollAreaRef" :bar-style="barStyle" :thumb-style="thumbStyle" @scroll="onScroll">
             <div class="row">
-              <div class="col-lg-8 col-xs-12">
+              <div class="col-lg-9 col-xs-12">
                 <div class="q-pa-xs">
                   <div class="row" >
                     <div class="col-12">
@@ -32,7 +32,7 @@
                         <div class="text-center" :class="$q.platform.is.mobile ? 'text-h2' : 'text-h1'" id="statebornProtocol">
                           Stateborn protocol
                         </div>
-                        <div class="text-overline text-center q-pb-md" style="font-size: 1.3rem">In 60 seconds</div>
+                        <div class="text-overline text-center q-pb-md" style="font-size: 1.7rem">in 60 seconds</div>
                       </div>
                       Stateborn on-chain DAO is a EVM compatible, smart contracts based, DAO treasury wallet. DAO can own
                       assets like native blockchain cryptocurrency (e.g. ETH), ERC-20 or NFT tokens.
@@ -79,7 +79,7 @@
                         <div class="text-center " :class="$q.platform.is.mobile ? 'text-h2' : 'text-h1'" id="mechanics">
                           Mechanics
                         </div>
-                        <div class="text-overline text-center q-pb-md" style="font-size: 1.3rem">Of stateborn protocol</div>
+                        <div class="text-overline text-center q-pb-md" style="font-size: 1.7rem">of stateborn protocol</div>
                       </div>
                       Stateborn protocol defines off-chain + on-chain stateborn DAOs working principles and dependencies.
                       It is set of rules and techniques which aims to allow manage non-permissioned on-chain DAOs treasury
@@ -103,6 +103,9 @@
                       off-chain DAO is not technically related to on-chain DAO treasury. off-chain DAO can be created without on-chain DAO treasury.
                       on-chain DAO treasury smart-contracts can be deployed to blockchain network without off-chain DAO, however <a href="https://stateborn.org" target="_blank">stateborn.org</a> doesn't support that.<br><br>
 
+                      This document focuses on on-chain DAO treasury description. off-chain DAO proposal and voting process and components are described in detail here:
+                      <router-link to="/about" span class="text-underline text-bold">ABOUT STATEBORN</router-link><br><br>
+
                       on-chain DAO treasury governance is non-permissioned and ideally all decisions should be based on DAO off-chain voting.
                       off-chain DAO proposal results are a reference for on-chain DAO treasury governance, but on-chain DAO treasury
                       smart contracts don't operate or process off-chain DAO proposals.<br><br>
@@ -114,7 +117,7 @@
 
                       <div class="q-pa-lg">
                         <div class="text-h1 text-center q-pt-lg">DAO</div>
-                        <div class="text-overline text-center q-pb-md" style="font-size: 1.3rem">Lifecycle</div>
+                        <div class="text-overline text-center q-pb-md" style="font-size: 1.7rem">lifecycle</div>
                       </div>
 
                       The lifecycle of stateborn DAO from DAO creation to proposal execution, described below, illustrates
@@ -340,7 +343,7 @@
 
                       <div class="q-pa-lg">
                         <div class="text-h1 text-center q-pt-lg">Challenges</div>
-                        <div class="text-overline text-center q-pb-md" style="font-size: 1.3rem">Related to dispute process</div>
+                        <div class="text-overline text-center q-pb-md" style="font-size: 1.7rem">related to dispute process</div>
                       </div>
 
                       The non-permissioned nature of stateborn DAOs and the fact that anyone can create on-chain proposals
@@ -435,7 +438,7 @@
 
                       <div class="q-pa-lg">
                         <div class="text-h1 text-center q-pt-lg">Scenarios</div>
-                        <div class="text-overline text-center q-pb-md" style="font-size: 1.3rem">Interest driven voters actions</div>
+                        <div class="text-overline text-center q-pb-md" style="font-size: 1.7rem">Interest driven voters actions</div>
                       </div>
 
                       on-chain DAO proposals voting is available to various actors having various motivations. on-chain proposal
@@ -528,7 +531,7 @@
 
                       <div class="q-pa-lg">
                         <div class="text-h1 text-center ">Strategies</div>
-                        <div class="text-overline text-center q-pb-md" style="font-size: 1.3rem">To secure on-chain DAO treasury</div>
+                        <div class="text-overline text-center q-pb-md" style="font-size: 1.7rem">to secure on-chain DAO treasury</div>
                       </div>
 
 
@@ -625,7 +628,7 @@
 
                       <div class="q-pa-lg">
                         <div class="q-pt-md q-pb-xs text-center" :class="$q.platform.is.mobile ? 'text-h5' : 'text-h1'" id="summary">Summary</div>
-                        <div class="text-overline text-center q-pb-md" style="font-size: 1.3rem">Why stateborn DAO?</div>
+                        <div class="text-overline text-center q-pb-md" style="font-size: 1.7rem">Why stateborn DAO?</div>
                       </div>
 
                       Stateborn protocol can be an effective solution for truly decentralized autonomous organizations.
@@ -744,17 +747,11 @@
 import { onMounted, ref } from 'vue';
 import { sleep } from 'src/api/services/sleep-service';
 import { goToGithub, goToTwitter } from 'src/api/services/utils-service';
+import { getElementOffset } from 'src/api/services/ui-utils';
 
 
-// takes an element object
-// function scrollToElement (el: any) {
-//   let target = getScrollTarget(el)
-//   let offset = el.offsetTop // do not subtract the el.scrollHeight here
-//   let duration = 1000
-//   setScrollPosition(target, offset, duration)
-// }
-const scrollAreaRef = ref(null)
-const position = ref(300)
+const scrollAreaRef = ref(null);
+const position = ref(300);
 
 const scrollToElement = (el: any) => {
   const ele = document.getElementById(el);
@@ -763,17 +760,6 @@ const scrollToElement = (el: any) => {
   // @ts-ignore
   scrollAreaRef.value.setScrollPosition('vertical', offset, 500);
   position.value = Math.floor(Math.random() * 1001) * 20;
-};
-
-const getElementOffset = (el: any): number => {
-  try {
-    const ele = document.getElementById(el);
-    // -100 for scroll UX behavior
-    // @ts-ignore
-    return ele.offsetTop - ele.scrollHeight - 100;
-  } catch (e) {
-    return 0;
-  }
 };
 
 const barStyle = ref({
@@ -1030,7 +1016,6 @@ onMounted(async () => {
 
 const onScroll = (val: any) => {
   const verticalPosition: number = val.verticalPosition;
-  console.log('vertical position', items.value);
   let index = 0;
   for (let i = 0 ; i < items.value.length; i++) {
     const item = items.value[i];

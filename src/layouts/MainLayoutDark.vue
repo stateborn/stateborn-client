@@ -9,7 +9,6 @@
             <q-badge class="q-ma-md" label="beta"></q-badge>
           </router-link>
         </q-toolbar-title>
-        <ConnectWithWallet></ConnectWithWallet>
       </q-toolbar>
     </q-header>
 

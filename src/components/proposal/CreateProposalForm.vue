@@ -53,8 +53,8 @@
           <q-badge label="ONLY ON-CHAIN"  text-color="yellow" class="q-pa-xs" style="margin-right:5px"></q-badge>
           <q-icon color="primary" name="fa-solid fa-circle-info" style="margin-bottom: 3px;">
             <q-tooltip class="stateborn-tooltip">
-              Proposal can contain DAO treasury assets (tokens, NFTs) transfers. <br>
-              Based on proposals voting result decisions it should be available to execute on-chain. <br>
+              Proposal can contain DAO treasury assets (cryptocurrency, tokens, NFTs) transfers. <br>
+              Based on proposals voting result decision, it should be available to execute on-chain. <br>
 
             </q-tooltip>
           </q-icon><br>

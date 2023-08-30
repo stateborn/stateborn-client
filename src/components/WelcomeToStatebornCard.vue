@@ -19,7 +19,7 @@
                     Stateborn is a governance platform dedicated to <b>truly autonomous</b> DAOs.
                   </q-item-label>
                   <q-item-label  class="text-primary text-subtitle2" style="font-size: 0.9rem;;">
-                    It is a hybrid off-chain + on-chain, voting and smart-contracts DAOs management
+                    It is a hybrid off-chain + on-chain voting and smart-contracts DAO treasury management
                     protocol.
                   </q-item-label>
                 </q-item-section>
@@ -49,7 +49,7 @@
                   <q-item-label class="text-overline" style="font-size: 1rem">ON-CHAIN</q-item-label>
                   <q-item-label overline class="text-black text-bold " style="font-size: 1.1rem">trustless execution</q-item-label>
                   <q-item-label  class="text-primary text-subtitle2" style="font-size: 0.9rem">
-                    Manage DAO treasury and execute passed proposals on-chain without any permission.
+                    Manage on-chain DAO treasury and execute assets transfers in non-permissioned manner.
                   </q-item-label>
                 </q-item-section>
               </q-item>
@@ -72,25 +72,11 @@
                @click="$router.push(`/about`)" label="About stateborn"/>
       </q-card-section>
       <q-card-section horizontal style="padding: 2px; margin:2px;">
-        <q-btn align="center" class="full-width" text-color="secondary" color="primary" glossy
-               @click="$router.push(`/onchain-dao`)" label="Stateborn protocol">
+        <q-btn align="center" class="full-width" text-color="secondary" color="primary"
+               @click="$router.push(`/onchain-dao`)" label="About Stateborn protocol">
         </q-btn>
       </q-card-section>
     </q-card-section>
-    <div class="row justify-center">
-      <div class="col-auto">
-        <q-btn  round flat @click="goToGithub()">
-          <q-avatar size="25px">
-            <img src="/brands/icons8-github-50.png">
-          </q-avatar>
-        </q-btn>
-        <q-btn  round flat @click="goToTwitter()">
-          <q-avatar size="25px">
-            <img src="/brands/icons8-twitter-50.png">
-          </q-avatar>
-        </q-btn>
-      </div>
-    </div>
     <q-card-section>
       <q-input dense bottom-slots v-model="ipfsGateway" label="IPFS gateway" :readonly="!editMode"
                :filled="editMode">
@@ -159,6 +145,20 @@
       </div>
     </div>
     <q-separator ></q-separator>
+    <div class="row justify-center">
+      <div class="col-auto">
+        <q-btn  round flat @click="goToGithub()">
+          <q-avatar size="25px">
+            <img src="/brands/icons8-github-50.png">
+          </q-avatar>
+        </q-btn>
+        <q-btn  round flat @click="goToTwitter()">
+          <q-avatar size="25px">
+            <img src="/brands/icons8-twitter-50.png">
+          </q-avatar>
+        </q-btn>
+      </div>
+    </div>
     <div class="text-center">© 2023 stateborn.org</div>
   </q-card>
 </template>
