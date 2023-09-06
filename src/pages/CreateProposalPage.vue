@@ -30,7 +30,7 @@
             <dao-card :is-full="true" :dao="dao"  v-if="dao !== undefined" :full-width="true" :show-required-token-quantity="true" :is-create-proposal-mode="true"></dao-card>
           </div>
           <div class="col-lg-9 col-md-7 col-xs-grow ">
-            <CreateProposalCard @proposal-changed="proposalChanged"></CreateProposalCard>
+            <CreateProposalCard></CreateProposalCard>
           </div>
         </div>
       </div>
@@ -39,14 +39,12 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
 import CreateProposalCard from 'components/proposal/CreateProposalCard.vue';
-import { useEthConnectionStore } from 'stores/eth-connection-store';
 import PictureParallax from 'components/PictureParallax.vue';
 import { useRoute } from 'vue-router';
 import { DaoBackend } from 'src/api/model/dao-backend';
 import { getDao } from 'src/api/services/dao-service';
-import DaoCardMin from 'components/dao-features/DaoCardMin.vue';
 import DaoCard from 'components/dao-features/DaoCard.vue';
 
 const route = useRoute();
@@ -57,28 +55,27 @@ getDao(daoIpfsHash).then(_ => {
   dao.value = _;
 });
 
-const ethConnectionStore = useEthConnectionStore();
-const proposal = ref({
-  clientProposal: {
-    title: ' ',
-    description: ' ',
-    sequencerAddress: ethConnectionStore.account,
-    startDateUtc: '',
-    endDateUtc: '',
-  },
-});
-watch(() => ethConnectionStore.account, () => {
-  proposal.value.clientProposal.sequencerAddress = ethConnectionStore.account;
-});
-const proposalChanged = (changedProposal: any) => {
-  proposal.value = {
-    clientProposal: {
-      title: changedProposal.title,
-      description: changedProposal.description,
-      sequencerAddress: ethConnectionStore.account,
-      startDateUtc: changedProposal.startDateUtc,
-      endDateUtc: changedProposal.endDateUtc,
-    },
-  };
-};
+// const proposal = ref({
+//   clientProposal: {
+//     title: ' ',
+//     description: ' ',
+//     sequencerAddress: ethConnectionStore.account,
+//     startDateUtc: '',
+//     endDateUtc: '',
+//   },
+// });
+// watch(() => ethConnectionStore.account, () => {
+//   proposal.value.clientProposal.sequencerAddress = ethConnectionStore.account;
+// });
+// const proposalChanged = (changedProposal: any) => {
+//   proposal.value = {
+//     clientProposal: {
+//       title: changedProposal.title,
+//       description: changedProposal.description,
+//       sequencerAddress: ethConnectionStore.account,
+//       startDateUtc: changedProposal.startDateUtc,
+//       endDateUtc: changedProposal.endDateUtc,
+//     },
+//   };
+// };
 </script>

@@ -8,14 +8,14 @@
       </div>
     </div>
     <q-separator class="q-ma-xs"></q-separator>
-    <div class="row items-center ">
-      <div class="col-4  text-center" v-if="props.dao.clientDao.imageBase64 !== ''">
+    <div class="row items-center justify-center">
+      <div class="col-4 text-center" v-if="props.dao.clientDao.imageBase64 !== ''">
         <q-img
           style="max-height: 120px; max-width: 120px;"
           :src="props.dao.clientDao.imageBase64"
         />
       </div>
-      <div class="col-8 justify-center" style="padding:0; margin:0;">
+      <div :class="props.dao.clientDao.imageBase64 !== '' ? 'col-8' : 'col-auto'" style="padding:0; margin:0;">
         <q-list>
           <q-item >
             <q-item-section avatar>

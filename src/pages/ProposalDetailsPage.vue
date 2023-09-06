@@ -69,7 +69,9 @@
               <ProposalCountdownCard class="q-mt-md"
                                      :is-proposal-ended="isProposalEnded"
                                      :end-date-utc="proposal.clientProposal.endDateUtc"
-                                     v-if="proposal !== undefined"></ProposalCountdownCard>
+                                     v-if="proposal !== undefined"
+                                    @voting-time-ended="onVotingTimeEnded">
+              </ProposalCountdownCard>
               <ResultCard class="q-mt-md"
                           :token-symbol="dao !== undefined ? dao.clientDao.token.symbol : ''"
                           :proposal-result-dto="proposalResultDto"
@@ -94,6 +96,7 @@
           <div class="col-12 ">
             <ProposalTransactionsCard
               :dao="dao"
+              :refresh-transactions="triggerRefreshingTransactions"
               id="proposalTransactionsCard"
               :transactions="proposal.clientProposal.transactions"
               v-if="dao !== undefined && proposal !== undefined && proposal.clientProposal.transactions && proposal.clientProposal.transactions.length > 0"
@@ -311,4 +314,11 @@ const onDifferentVotingPower = (data: any) => {
   decisionAfterDifferentPowerAcceptance.value = data.decision;
   showDifferentVotingPowerDialog.value = true;
 };
+
+const triggerRefreshingTransactions = ref(false);
+const onVotingTimeEnded = () => {
+  sleep(100).then(() => {
+    triggerRefreshingTransactions.value = true;
+  });
+}
 </script>

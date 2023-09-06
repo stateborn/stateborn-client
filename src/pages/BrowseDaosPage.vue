@@ -92,7 +92,6 @@ const initialPagination = ref({
   rowsNumber: 10
 });
 const hasData = ref(false);
-console.log('height bro' , window.innerWidth);
 
 const adjustDaoEntriesHeight = () => {
   daoEntryWidth.value = width(document.getElementById('daosTable')!)  / 2 - 40;

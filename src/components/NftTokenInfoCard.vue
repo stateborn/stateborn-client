@@ -7,7 +7,7 @@
     <div class="row q-gutter-col-xs items-center justify-center">
       <div class="col-12">
         <div class="row items-center">
-          <div class="col-6" style="border-right: 1px solid #9E9E9E">
+          <div class="col-6">
             <q-list class="text-left">
               <q-item>
                 <q-item-section avatar>

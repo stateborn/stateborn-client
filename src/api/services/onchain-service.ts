@@ -1,5 +1,5 @@
 import { ETH_CONNECTION_SERVICE } from 'src/api/services/eth-connection-service';
-import { ERC20DaoFactory__factory } from 'src/typechain-types/factories/contracts/dao/factory';
+import { ERC20DaoFactory__factory, NFTDaoFactory__factory } from 'src/typechain-types/factories/contracts/dao/factory';
 import { Dao__factory } from 'src/typechain-types/factories/contracts/dao';
 import { Proposal__factory } from 'src/typechain-types/factories/contracts';
 import { ethers, ZeroAddress } from 'ethers';
@@ -8,18 +8,32 @@ import { ClientProposalTransaction } from 'src/api/model/ipfs/proposal-transacti
 import { TransferErc20TransactionData } from 'src/api/model/ipfs/proposal-transaction/transfer-erc-20-transaction-data';
 import { ProposalTransactionType } from 'src/api/model/ipfs/proposal-transaction-type';
 import { TransferNftTransactionData } from 'src/api/model/ipfs/proposal-transaction/transfer-nft-transaction-data';
+import { TokenType } from 'src/api/model/ipfs/token-type';
 
-export const createDaoOnChain = async (tokenAddress: string, tokenCollateral: bigint, chainId: string): Promise<string> => {
-    const daoFactory = ERC20DaoFactory__factory.connect(getDaoFactoryAddress(chainId), ETH_CONNECTION_SERVICE.getSigner());
-    const promise: Promise<string> = new Promise((resolve, reject) => {
-        // @ts-ignore
-        daoFactory.on('DaoCreated', (daoAddress: string) => {
-            console.log('DAO created:', daoAddress);
-            resolve(daoAddress);
+export const createDaoOnChain = async (tokenAddress: string, tokenCollateral: bigint, chainId: string, tokenType: TokenType): Promise<string> => {
+    if (tokenType === TokenType.ERC20) {
+        const daoFactory = ERC20DaoFactory__factory.connect(getErc20DaoFactoryAddress(chainId), ETH_CONNECTION_SERVICE.getSigner());
+        const promise: Promise<string> = new Promise((resolve, reject) => {
+            // @ts-ignore
+            daoFactory.on('DaoCreated', (daoAddress: string) => {
+                console.log('DAO created:', daoAddress);
+                resolve(daoAddress);
+            });
         });
-    });
-    await daoFactory.createDao(tokenAddress, tokenCollateral);
-    return promise;
+        await daoFactory.createDao(tokenAddress, tokenCollateral);
+        return promise;
+    } else {
+        const daoFactory = NFTDaoFactory__factory.connect(getNftDaoFactoryAddress(chainId), ETH_CONNECTION_SERVICE.getSigner());
+        const promise: Promise<string> = new Promise((resolve, reject) => {
+            // @ts-ignore
+            daoFactory.on('DaoCreated', (daoAddress: string) => {
+                console.log('DAO created:', daoAddress);
+                resolve(daoAddress);
+            });
+        });
+        await daoFactory.createDao(tokenAddress, tokenCollateral);
+        return promise;
+    }
 }
 export const getIsProposalPassed = async (proposalAddress: string): Promise<boolean> => {
     const contract = Proposal__factory.connect(proposalAddress, ETH_CONNECTION_SERVICE.getProviderQuickProvider());
@@ -112,7 +126,7 @@ export const executeOnChainProposal = async (proposalAddress: string) => {
     }
 }
 
-const getDaoFactoryAddress = (chainId: string): string => {
+const getErc20DaoFactoryAddress = (chainId: string): string => {
     switch (chainId) {
         case '1':
             return '0x0';
@@ -121,8 +135,24 @@ const getDaoFactoryAddress = (chainId: string): string => {
         case '137':
             return '0x0';
         case process.env.DEVELOPMENT_NETWORK_CHAIN_ID:
-            return process.env.DEVELOPMENT_NETWORK_DAO_FACTORY_ADDRESS!;
+            return process.env.DEVELOPMENT_NETWORK_ERC_20_DAO_FACTORY_ADDRESS!;
         default:
             throw new Error(`Unsupported chainId: ${chainId}`);
     }
 }
+
+const getNftDaoFactoryAddress = (chainId: string): string => {
+    switch (chainId) {
+        case '1':
+            return '0x0';
+        case '42161':
+            return '0x0';
+        case '137':
+            return '0x0';
+        case process.env.DEVELOPMENT_NETWORK_CHAIN_ID:
+            return process.env.DEVELOPMENT_NETWORK_NFT_DAO_FACTORY_ADDRESS!;
+        default:
+            throw new Error(`Unsupported chainId: ${chainId}`);
+    }
+}
+

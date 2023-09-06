@@ -82,7 +82,7 @@
           <vue-countdown class="text-subtitle2"
                          :time="challengeEndDateEpoch - nowEpoch"
                          v-slot="{ days, hours, minutes, seconds }"
-                         @end="challengeSequencerPeriodEndedCallback">
+                         @end="challengeTimeEnded">
             {{ days }} days, {{ hours }} hours, {{ minutes }} minutes, {{ seconds }} seconds
           </vue-countdown>
         </div>
@@ -100,6 +100,7 @@ import { useEthConnectionStore } from 'stores/eth-connection-store';
 import { formatDateNice } from 'src/api/services/date-service';
 import { onMounted, ref, watch } from 'vue';
 import { OnChainProposalDetails } from 'src/api/model/on-chain-proposal-details';
+import { sleep } from 'src/api/services/sleep-service';
 
 const isProposalPassed = ref(false);
 const ethConnectionStore = useEthConnectionStore();
@@ -108,7 +109,7 @@ const challengeEndDateEpoch = ref(0);
 const forVotes = ref(0);
 const votesLabel = ref('');
 const votesNum = ref(0);
-const isChallengeSequencerPeriodEnded = ref(false);
+const emit = defineEmits(['challengeTimeEnded']);
 
 const props = defineProps(
   {
@@ -143,7 +144,9 @@ watch(() => [props.onChainProposalDetails], () => {
     setValues();
   }
 });
-const challengeSequencerPeriodEndedCallback = () => {
-  isChallengeSequencerPeriodEnded.value = true;
+const challengeTimeEnded = () => {
+  sleep(2000).then(() => {
+    emit('challengeTimeEnded', true);
+  });
 }
 </script>

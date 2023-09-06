@@ -13,7 +13,8 @@
       </div>
       <vue-countdown class="text-bold text-subtitle2"
                      :time="new Date(props.endDateUtc).getTime() - new Date().getTime()" v-slot="{ days, hours, minutes, seconds }"
-                     v-if="!isProposalEnded">
+                     v-if="!isProposalEnded"
+                     @end="votingTimeEnded">
         <span :class="getTimeCounterColorDependingOTimeLeft(days, hours)">
           {{ days }} days, {{ hours }} hours, {{ minutes }} minutes, {{ seconds }} seconds
         </span>
@@ -29,6 +30,15 @@
 
 import VueCountdown from '@chenfengyuan/vue-countdown';
 import { getTimeCounterColorDependingOTimeLeft } from 'src/api/services/utils-service';
+import { sleep } from 'src/api/services/sleep-service';
 
 const props = defineProps(['endDateUtc', 'isProposalEnded']);
+const emit = defineEmits(['votingTimeEnded']);
+
+const votingTimeEnded = () => {
+  sleep(2000).then(() => {
+    emit('votingTimeEnded', true);
+  });
+}
+
 </script>

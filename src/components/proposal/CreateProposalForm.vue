@@ -122,14 +122,13 @@
       </template>
     </q-select>
     <define-voting-options-card v-if="proposalType.value === 'OPTIONS'" @proposal-option-added="proposalOptionAdded"></define-voting-options-card>
-    <div class="row items-center q-pt-md">
-      <div class="col-6">
+    <div class="row q-pt-md">
+      <div class="col-8 q-pr-xs">
         <q-input
           filled
           v-model.number="durationHours"
           type="number"
           label="Duration (time for voting)"
-          suffix="hours"
           :error="durationHours < 1"
         >
           <template v-slot:error>
@@ -138,13 +137,22 @@
           <template v-slot:prepend>
            <q-icon name="fa-solid fa-clock" color="primary"  size="xs"/>
           </template>
+          <template v-slot:append>
+            <div class="text-subtitle1 text-primary">{{timeUnit.label2}}</div>
+          </template>
         </q-input>
+
       </div>
-      <div class="col-6 text-subtitle2">
-        <span class="text-bold">Duration:</span> {{durationString}}
+      <div class="col-4 q-pl-xs">
+        <q-select filled :options="timeUnits" square v-model="timeUnit" label="Time unit">
+        </q-select>
       </div>
     </div>
-
+    <div class="row">
+      <div class="col-12">
+            <span class="text-bold">Duration:</span> {{durationString}}
+      </div>
+    </div>
     <div class="row justify-left">
       <div class="col-auto">
         <q-toggle
@@ -226,6 +234,11 @@ const title = ref('New proposal');
 const description = ref('This proposal is about...');
 const proposalTypeOptions = ref([{ value: 'YES/NO', label: 'YES / NO - vote YES or NO' }, { value: 'OPTIONS', label: 'OPTIONS - vote for one of the options' }]);
 const proposalType = ref({ value: 'YES/NO', label: 'YES / NO - vote YES or NO' });
+const timeUnits = ref([
+    { value: 'hour', label: 'Hour', label2: 'hours', unit: 'h' },
+    { value: 'minute', label: 'Minute', label2: 'minutes', unit: 'm' },
+    {value: 'day', label: 'Day', label2: 'days', unit: 'd'}]);
+const timeUnit = ref({ value: 'hour', label: 'Hour', label2: 'hours', unit: 'h' });
 const durationHours = ref(72);
 const tokenBalance = ref('');
 const hasRequiredAmountOfTokens = ref(true);
@@ -236,7 +249,6 @@ const imagesMap = new Map();
 const showSignProposalDialog = ref(false);
 const createDaoOnChainTransaction = ref(false);
 const transactions = ref(<ClientProposalTransaction[]>[]);
-const startDate = dayjs();
 const router = useRouter();
 class TxIndex {
   index: number;
@@ -274,25 +286,28 @@ const calculateDescriptionValue = () => {
 };
 const durationString = computed(() => {
   const now = dayjs();
-  const to = now.add(durationHours.value, 'h');
+  //@ts-ignore
+  const to = now.add(durationHours.value, timeUnit.value.unit);
   const diffDays = to.diff(now, 'day');
   const date1PlusDays = now.add(diffDays, 'day');
   const diffHours = to.diff(date1PlusDays, 'hour');
-  return `${diffDays} days and ${diffHours} hours`;
+  const date1PlusDaysPluHours = now.add(diffDays, 'day').add(diffHours, 'hour');
+  const diffMinutes = to.diff(date1PlusDaysPluHours, 'minute');
+  return `${diffDays} days, ${diffHours} hours, ${diffMinutes} minutes`;
 });
-const emitProposalChanged = () => {
-  emit('proposalChanged', {
-    title: title.value.trim(),
-    description: calculateDescriptionValue().trim(),
-    durationHours: durationHours.value,
-    startDateUtc: startDate.utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
-    endDateUtc: startDate.add(durationHours.value, 'h').utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
-  });
-};
-emitProposalChanged();
-watch([title, description, durationHours], async () => {
-  emitProposalChanged();
-});
+// const emitProposalChanged = () => {
+//   emit('proposalChanged', {
+//     title: title.value.trim(),
+//     description: calculateDescriptionValue().trim(),
+//     durationHours: durationHours.value,
+//     startDateUtc: startDate.utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+//     endDateUtc: startDate.add(durationHours.value, 'h').utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+//   });
+// };
+// emitProposalChanged();
+// watch([title, description, durationHours], async () => {
+//   emitProposalChanged();
+// });
 
 const onFileUploaded = (res: any) => {
   if (res.fileName.endsWith('.png') || res.fileName.endsWith('.jpg') || res.fileName.endsWith('.jpeg') || res.fileName.endsWith('.gif') || res.fileName.endsWith('.webp')) {
@@ -371,6 +386,7 @@ const callCreateProposal = async () => {
   $q.loading.hide();
   Notify.create({ message: `Latest block number: ${latestBlockNumber}`, position: 'top', color: 'primary' });
   const fullDescription = calculateDescriptionValue();
+  const startDate = dayjs();
   const clientProposal: ClientProposal = new ClientProposal(
     ethConnectionStore.account,
     props.dao.ipfsHash,
@@ -378,7 +394,8 @@ const callCreateProposal = async () => {
     fullDescription,
     <ProposalType>proposalType.value.value,
     startDate.utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
-    startDate.add(durationHours.value, 'h').utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+    //@ts-ignore
+    startDate.add(durationHours.value, timeUnit.value.unit).utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
     latestBlockNumber.toString(),
     getDataObject(),
     transactions.value.length > 0? transactions.value.map((_) => _) : undefined

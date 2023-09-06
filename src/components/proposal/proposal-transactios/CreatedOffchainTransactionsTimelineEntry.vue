@@ -3,6 +3,7 @@
                     :style="transactionStatus === BlockchainProposalStatus.CREATED_OFFCHAIN ? '': 'height:40px'"
                     :icon="[
                         BlockchainProposalStatus.CREATED_OFFCHAIN,
+                        BlockchainProposalStatus.PROPOSAL_REJECTED,
                         BlockchainProposalStatus.READY_TO_DEPLOY_ONCHAIN,
                         BlockchainProposalStatus.CREATED_ON_CHAIN,
                         BlockchainProposalStatus.READY_TO_EXECUTE,

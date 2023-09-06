@@ -409,7 +409,8 @@ const callCreateDao = async () => {
     daoContractAddress = await createDaoOnChain(
       tokenAddress.value,
       ethers.parseUnits(minimalTokens.value.toString(), Number(decimals.value)),
-      ethConnectionStore.chainId);
+      ethConnectionStore.chainId,
+      tokenType.value);
     Notify.create({ message: `DAO created on-chain. Address: ${daoContractAddress}`, position: 'top-right', color: 'green' });
     $q.loading.hide();
   }

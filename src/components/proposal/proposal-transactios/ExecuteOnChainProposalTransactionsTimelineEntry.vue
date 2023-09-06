@@ -19,26 +19,48 @@
             Creation can be done by anyone. <br>
           </q-tooltip>
         </q-icon>
-      </div>
 
-      <q-btn color="green-8" square class="full-width q-mt-xs" label="EXECUTE TRANSFERS"
-             @click="executeTransfersOnChain"></q-btn>
+        <div class="row items-center justify-center" v-if="!connectedToMatchingNetwork"
+             :style="$q.platform.is.mobile ? 'height:50px': ``">
+          <div class="col-12">
+            <div class="row justify-center" v-if="!$q.platform.is.mobile">
+              <div class="col-12">
+                <q-banner class="text-black text-subtitle2 text-center noisered">
+                  <span class="text-bold text-red">Please connect</span>
+                </q-banner>
+              </div>
+            </div>
+            <div class="text-center text-subtitle2 text-red" v-else>Please connect</div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-12">
+            <q-btn color="green-8"
+                   :disable="!connectedToMatchingNetwork || buttonClicked"
+                   square class="full-width q-mt-xs" label="EXECUTE TRANSFERS"
+                   @click="executeTransfersOnChain"></q-btn>
+          </div>
+        </div>
+      </div>
     </div>
   </q-timeline-entry>
 </template>
 
 <script lang="ts" setup>
 
-import { executeOnChainProposal, getCreateProposalRequiredCollateral } from 'src/api/services/onchain-service';
+import { executeOnChainProposal } from 'src/api/services/onchain-service';
 import { useEthConnectionStore } from 'stores/eth-connection-store';
-import { onMounted, ref } from 'vue';
 import { BlockchainProposalStatus } from 'src/api/model/blockchain-proposal-status';
 import { Notify, useQuasar } from 'quasar';
 import { OnChainProposalDetails } from 'src/api/model/on-chain-proposal-details';
+import { sleep } from 'src/api/services/sleep-service';
+import { computed, ref } from 'vue';
 
 const ethConnectionStore = useEthConnectionStore();
+const buttonClicked = ref(false);
 
-const emit = defineEmits(['challengeSequencerPeriodEnded']);
+const emit = defineEmits(['onExecuteTransfersOnChain']);
 const $q = useQuasar();
 const executeTransfersOnChain = async () => {
   $q.loading.show({
@@ -48,8 +70,11 @@ const executeTransfersOnChain = async () => {
     messageColor: 'white',
   });
   await executeOnChainProposal(props.onChainProposalDetails?.address!);
+  await sleep(1000);
+  Notify.create({message: 'Successfully executed on-chain proposal transfers!', position: 'top-right', color: 'green'});
+  await sleep(500);
   $q.loading.hide();
-  Notify.create({ message: 'Successfully executed on-chain proposal transfers!', position: 'top-right', color: 'green' });
+  emit('onExecuteTransfersOnChain', true);
 };
 
 const props = defineProps(
@@ -62,6 +87,19 @@ const props = defineProps(
         type: OnChainProposalDetails,
         required: false,
       },
+      chainId: {
+        type: String,
+        required: true,
+      }
     }
 );
+
+const connectedToMatchingNetwork = computed(() => {
+  if (ethConnectionStore.isConnected) {
+    return ethConnectionStore.chainId === props.chainId;
+  } else {
+    return false;
+  }
+});
+
 </script>

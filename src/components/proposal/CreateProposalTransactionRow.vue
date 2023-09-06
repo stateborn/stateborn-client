@@ -205,7 +205,7 @@ import { isEthAddress } from 'src/api/services/utils-service';
 const transactionTypes = ref([{ value: TokenType.ERC20, label: 'ERC-20 transfer' }, { value: TokenType.NFT, label: 'NFT transfer' }]);
 const transactionType = ref({ value: TokenType.ERC20, label: 'ERC-20 transfer' });
 const tokenAddress = ref('');
-const transferToAddress = ref('0x12613538A1074D34968aB41137ed628e7c452B04');
+const transferToAddress = ref('0x3d7aEfaeCDb38A32AD6b376397d7BB0aaA9Abf73');
 const tokenName = ref('');
 const tokenSymbol = ref('');
 const daoFunds = ref('');

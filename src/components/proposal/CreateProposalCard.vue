@@ -5,7 +5,7 @@
     </q-card-section>
       <q-separator class="q-mt-xs q-mb-xs"></q-separator>
     <q-card-section>
-     <create-proposal-form @proposal-changed="proposalChanged" class="text-center q-pt-md" :dao="dao" v-if="dao !== undefined"></create-proposal-form>
+     <create-proposal-form class="text-center q-pt-md" :dao="dao" v-if="dao !== undefined"></create-proposal-form>
     </q-card-section>
   </q-card>
 </template>
@@ -25,8 +25,4 @@ const daoIpfsHash: string = <string>route.params.daoIpfsHash;
 getDao(daoIpfsHash).then(_ => {
   dao.value = _;
 });
-
-const proposalChanged = (changedProposal: any) => {
-  emit('proposalChanged', changedProposal);
-};
 </script>
