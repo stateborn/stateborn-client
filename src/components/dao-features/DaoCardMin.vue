@@ -8,15 +8,15 @@
       </div>
     </div>
     <q-separator class="q-ma-xs"></q-separator>
-    <div class="row items-center justify-center">
-      <div class="col-grow items-center" v-if="props.dao.clientDao.imageBase64 !== ''">
+    <div class="row items-center ">
+      <div class="col-4  text-center" v-if="props.dao.clientDao.imageBase64 !== ''">
         <q-img
-          style="height: 120px; width: 120px;margin-left: 25%"
+          style="max-height: 120px; max-width: 120px;"
           :src="props.dao.clientDao.imageBase64"
         />
       </div>
-      <div class="col-grow" style="padding:0; margin:0;">
-        <q-list >
+      <div class="col-8 justify-center" style="padding:0; margin:0;">
+        <q-list>
           <q-item >
             <q-item-section avatar>
               <q-img src="/cube2.svg" v-if= "props.dao.clientDao.contractAddress" style="height:24px; width: 24px"></q-img>

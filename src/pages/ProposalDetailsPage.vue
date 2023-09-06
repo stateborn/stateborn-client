@@ -93,17 +93,18 @@
         <div class="row noise q-mt-md" id="transactions-row">
           <div class="col-12 ">
             <ProposalTransactionsCard
+              :dao="dao"
               id="proposalTransactionsCard"
               :transactions="proposal.clientProposal.transactions"
-              v-if="proposal !== undefined && proposal.clientProposal.transactions && proposal.clientProposal.transactions.length > 0"
-              :proposal-ipfs-hash="proposal.ipfsHash">
+              v-if="dao !== undefined && proposal !== undefined && proposal.clientProposal.transactions && proposal.clientProposal.transactions.length > 0"
+              :proposal="proposal">
             </ProposalTransactionsCard>
 
           </div>
         </div>
         <div class="row q-mt-xs q-mb-lg" id="table-votes-row">
           <div class="col-12">
-            <VotesTable  :votes-count="votesCount"
+            <VotesTable :votes-count="votesCount"
                         :distinct-votes-count="distinctVotesCount"
                         :dao-token-chain-id="dao?.clientDao?.token?.chainId"
                         :votes="votes" @rendered="onVotesRendered" @votesTableRequest="onVotesTableRequest">

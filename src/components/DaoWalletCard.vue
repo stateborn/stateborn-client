@@ -38,7 +38,7 @@
             <q-item-section>
               <q-item-label class="text-h6" v-if="amountOfTokensToSendIsCorrect">{{Number(daoFunds) - Number(amountOfTokensToSend)}} {{tokenSymbol}}</q-item-label>
               <q-item-label class="text-h6" v-else>-</q-item-label>
-              <q-item-label caption class="text-primary">DAO treasury holding after transfer</q-item-label>
+              <q-item-label caption class="text-primary">DAO treasury holdings after transfer</q-item-label>
             </q-item-section>
           </q-item>
 

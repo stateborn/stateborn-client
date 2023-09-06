@@ -1,9 +1,8 @@
 <template>
   <div>
     <q-page class="noise" :class="$q.platform.is.mobile ? 'q-pa-xs text-subtitle2' : 'text-subtitle1'">
-
       <div class="row items-center justify-center" >
-        <div class="col-lg-3 col-xs-auto items-center">
+        <div class="col-lg-3 col-xs-auto items-center" v-if="!$q.platform.is.mobile">
           <q-list separator class="q-ma-lg text-grey-9">
             <div v-for="item in items">
               <q-item-label header v-if="item.isLabelOnly">{{ item.label }}</q-item-label>
@@ -22,24 +21,26 @@
           </q-list>
         </div>
         <div class="col-lg-9 col-xs-grow">
-          <q-scroll-area :style="`height: ${scrollHeight}px; width:100%;`" ref="scrollAreaRef" :bar-style="barStyle" :thumb-style="thumbStyle" @scroll="onScroll">
+          <q-scroll-area :style="`height: ${scrollHeight}px; width:100%;`" ref="scrollAreaRef"
+                         :bar-style="barStyle" :thumb-style="thumbStyle" @scroll="onScroll">
             <div class="row">
               <div class="col-lg-9 col-xs-12">
                 <div class="q-pa-xs">
                   <div class="row">
                     <div class="col-12">
                       <div class="q-pa-lg">
-                        <div class="text-center" :class="$q.platform.is.mobile ? 'text-h2' : 'text-h1'" id="about">
+                        <div class="text-center text-h1" id="about">
                           About
                         </div>
-                        <div class="text-overline text-center q-pb-md" style="font-size: 1.7rem">Stateborn</div>
+                        <div class="text-overline text-center q-pb-md text-sub">Stateborn</div>
                       </div>
                       Stateborn is a DAO governance platform. It allows to create and manage Decentralized Autonomous Organizations (DAO) using
                       decentralized technology such as blockchain, IPFS and cryptography.<br><br>
                       What is a DAO? It can be any governance required community which needs to make decisions in a fair and transparent way.
                       It could be a crypto/blockchain project. It could be a company. But it could be also a school council,
                       online game community or any non-profit organization like a charity, political organization or even... a country. <br><br>
-                      Imagine a community of people having truly fair governance process - like a democratic voting system. Participants of DAO owns a token (blockchain token), giving them
+                      Imagine a community of people having truly fair governance process - like a democratic voting system.
+                      Participants of DAO owns a token (blockchain token), giving them
                       right to take part in DAO's governance. They propose and they vote.
                       DAO can have a treasury, assets managed by governance decisions.
                       There is no cheating, everything is transparent, votes are easy to calculate,
@@ -76,11 +77,12 @@
                       <div class="row q-pt-lg">
                         <div class="col-12">
                           <div class="q-pa-lg">
-                            <div class="text-center" :class="$q.platform.is.mobile ? 'text-h2' : 'text-h1'" id="anatomy">
+                            <div class="text-center text-h1" id="anatomy">
                               Anatomy
                             </div>
-                            <div class="text-overline text-center q-pb-md" style="font-size: 1.7rem">of stateborn off-chain DAO</div>
-                          </div>              Stateborn DAO is hybrid off-chain + on-chain governance protocol. DAO can be only off-chain, or off-chain + on-chain.
+                            <div class="text-overline text-center q-pb-md text-sub">of stateborn off-chain DAO</div>
+                          </div>
+                          Stateborn DAO is hybrid off-chain + on-chain governance protocol. DAO can be only off-chain, or off-chain + on-chain.
                           <ul>
                             <li>
                               <b>off-chain</b> only DAO is a dedicated to communities which
@@ -88,23 +90,39 @@
                               stateborn platform
                             </li>
                             <li>
-                              <b>off-chain + on-chain</b> DAO is dedicated to communities who additionally wants to utilize
+                              <b>off-chain + on-chain</b> DAO is dedicated to communities who additionally to off-chain voting want to have
                               non-permissioned on-chain DAO treasury, owning and managing assets like cryptocurrency, ERC-20 tokens or NFTs
                             </li>
                           </ul>
 
-                          The description below references to off-chain DAO - the proposal and voting system based on cryptography,
-                          blockchain governance token and cryptography. <br><br>
+                          <div class="q-pa-md text-center" :class="$q.platform.is.mobile ? 'text-h5' : 'text-h2'">off-chain DAO = cryptography + governance token + IPFS</div>
+
+                          Stateborn off-chain DAO data is cryptographically secured data saved in IPFS and blockchain.
+                          Creating DAOs, proposals and votes is cryptographically client side signed by the users.
+                          This provides a digital data seal which allows to prove validity, authenticity and ownership of every single DAO related data.<br><br>
+
+                          All stateborn DAO related data, except token definition is saved off-chain - in IPFS.
+                          <a href="https://ipfs.tech/" target="_blank">InterPlanetary File System (IPFS)</a> is a distributed file storage where data saved is immutable and publicly
+                          available to everyone.
+                          Governance token saved in blockchain represents the user's share in DAO.
+                          Owning a token allows to interact with DAOs, creating proposals and vote on them.<br><br>
+
+                          The role of <a href="https://stateborn.org" target="_blank">stateborn.org</a> is to provide a technical infrastructure for processing DAOs data but it has no control over the authenticity
+                          of the data. Data cryptographically signed by the users saved in IPFS/blockchain are available
+                          to everyone and its validity can be verified by anyone.<br><br>
 
                           on-chain + off-chain DAO mechanics which additionally to off-chain features allows to manage on-chain DAO treasury is described in detail here:
-                          <router-link to="/onchain-dao" span class="text-underline text-bold">ABOUT STATEBRON PROTOCOL</router-link>
+                          <router-link to="/onchain-dao" span class="text-underline text-bold">ABOUT STATEBRON PROTOCOL</router-link><br><br>
+
+                          The description below references to off-chain DAO components - data processed by users and <a href="https://stateborn.org" target="_blank">stateborn.org</a>, saved in IPFS.
                           <div class="q-pa-md text-center" :class="$q.platform.is.mobile ? 'text-h5' : 'text-h2'" id="daoDefinitionDocument">DAO definition document</div>
-                          A stateborn DAO definition document contains all the information about the DAO.
-                          Every DAO definition document is an immutable document saved in IPFS.
+                          A stateborn DAO definition document contains all the information about the DAO, such as name, description, logo, governance token,
+                          on-chain DAO treasury address (if off-chain + on-chain DAO), proposal requirements, creator's digital signature,etc.
+                          Every DAO definition document (JSON) is an immutable document saved in IPFS.
                           <div class="q-pa-md text-center" :class="$q.platform.is.mobile ? 'text-h5' : 'text-h2'" id="governanceToken">Governance token</div>
                           Every DAO has a blockchain token which represents the share of the DAO.
-                          Users owning a token can create proposals and vote on them. The amount of tokens owned by a user is the voting power.
-                          Stateborn supports different token standards on various blockchain networks.<br>
+                          Users owning a token can be part of DAO governance - create proposals and vote on them. The amount of tokens owned by a user is the voting power.
+                          Stateborn supports different token standards on various blockchain networks.<br><br>
                           Supported DAO token standards:
                           <ul>
                             <li><q-badge style="padding:5px" label="ERC-20" color="primary" text-color="white"></q-badge> - voting power units is amount of tokens user owns</li>
@@ -133,22 +151,21 @@
                           </q-list>
 
                           <div class="q-pa-md text-center" :class="$q.platform.is.mobile ? 'text-h5' : 'text-h2'" id="proposals">Proposals</div>
-                          Users owning a DAO token can create proposals. It can be anything that requires a voting from the DAO community.
-                          Every proposal is an immutable document saved in IPFS.
+                          Users owning a DAO token can create proposals. It can be about anything that requires a voting from the DAO community.
+                          Proposal data contains all information related to proposal such as title, description, attachments, voting period, creator's digital signature, etc.
+                          If DAO is on-chain + off-chain, proposals can contain on-chain DAO treasury assets transfers, which can be proposed
+                          on a blockchain to be executed by the DAO community.
+                          Every proposal (JSON) is an immutable document saved in IPFS.
                           <div class="q-pa-md text-center" :class="$q.platform.is.mobile ? 'text-h5' : 'text-h2'" id="votes">Votes</div>
                           Users owning a DAO token can vote on proposals.
+                          Vote data contains information about voter, his voting power, voting time, voter's digital signature, etc.
                           Every vote is an immutable document saved in IPFS.
                           <div class="q-pa-md text-center" :class="$q.platform.is.mobile ? 'text-h5' : 'text-h2'" id="proposalSummaryReport">Proposal summary reports</div>
                           A proposal summary report is a proposal voting summary generated when the proposal voting period ends.
                           It allows to validate all the votes and obtain final proposal decision result.
                           Every proposal summary report is an immutable document saved in IPFS.<br><br>
 
-                          Creating DAOs, proposals and votes is cryptographically client side signed by the users. This provides a digital data seal
-                          which allows to prove validity, authenticity and ownership of every single DAO related data.<br><br>
 
-                          All stateborn DAO related data except token definition is saved off-chain - in IPFS.
-                          InterPlanetary File System (IPFS) is a decentralized file storage where data saved is immutable and publicly
-                          available to everyone.
 
                           <q-banner dense class="q-mt-md q-mb-xs state noisegreencard">
                             <template v-slot:avatar>
@@ -157,24 +174,16 @@
                             Every DAO, proposal, vote and proposal summary report is an immutable document saved in IPFS. Every DAO, proposal and vote
                             is cryptographically client side signed by the users. This provides a digital data seal which allows to prove validity, authenticity and ownership of every single DAO related data.
                           </q-banner>
-
-                          <div class="q-pa-md text-center" :class="$q.platform.is.mobile ? 'text-h5' : 'text-h2'">off-chain DAO = blockchain + IPFS + cryptography</div>
-
-                          All stateborn DAOs data is cryptographically secured data saved in IPFS and blockchain.
-                          Governance token saved in blockchain allows to interact with DAOs and their data saved in IPFS.
-                          The role of stateborn.org is to provide a technical infrastructure for processing DAOs data but it has no control over the authenticity
-                          of the data. Data cryptographically signed by the users saved in IPFS/blockchain are available
-                          to everyone and its validity can be verified by anyone.<br>
                         </div>
                       </div>
 
                       <div class="row q-mt-lg">
                         <div class="col-12">
                           <div class="q-pa-lg">
-                            <div class="text-center" :class="$q.platform.is.mobile ? 'text-h2' : 'text-h1'" id="whatMakesUnique">
+                            <div class="text-center text-h1" id="whatMakesUnique">
                               What
                             </div>
-                            <div class="text-overline text-center q-pb-md" style="font-size: 1.7rem">makes stateborn off-chain DAO unique?</div>
+                            <div class="text-overline text-center q-pb-md text-sub">makes stateborn off-chain DAO unique?</div>
                           </div>
                           Stateborn design philosophy is to <b>minimize trust in the third party as much as possible</b>.
                           The ideal scenario is to completely eliminate third party and blockchain is the solution to this problem.
@@ -185,10 +194,10 @@
 
 
                           <div class="row items-center q-pt-lg">
-                            <div class="col-2 text-center">
-                              <q-img src="/add.png" style="width: 80px"/>
+                            <div class="col-lg-2 col-xs-grow text-center">
+                              <q-img src="/add.png" :style="$q.platform.is.mobile ? 'width: 50px' : 'width: 80px' "/>
                             </div>
-                            <div class="col-10 justify-center">
+                            <div class="col-lg-10 col-xs-grow justify-center">
                               <div class="q-pb-md" :class="$q.platform.is.mobile ? 'text-h5' : 'text-h2'" id="doesntAddData">
                                 Stateborn backend doesn't add any data to DAOs, proposals or votes
                               </div>
@@ -201,24 +210,24 @@
                           <q-separator color="grey-5" class="q-mt-md q-mb-md"></q-separator>
 
                           <div class="row items-center q-pt-lg">
-                            <div class="col-2 text-center">
-                              <q-img src="/ipfs.png" style="width: 80px"/>
+                            <div class="col-lg-2 col-xs-grow text-center">
+                              <q-img src="/ipfs.png" :style="$q.platform.is.mobile ? 'width: 50px' : 'width: 80px' "/>
                             </div>
-                            <div class="col-10 justify-center">
+                            <div class="col-lg-10 col-xs-grow justify-center">
                               <div class="q-pb-md" :class="$q.platform.is.mobile ? 'text-h5' : 'text-h2'" id="creation">
                                 Every DAO, proposal, user vote and proposal summary report is client side validated with IPFS                  </div>
                               Data returned by stateborn backend is validated with data saved in IPFS. It eliminates the possibility to rely on malformed
-                              or incorrect data from the backend. In any case of stateborn backend data manipulation, user will see the validation result in stateborn.org interface.
-                              Moreover, users have the possibility to <b>set custom IPFS gateway address in stateborn.org user interface</b> in order to validate the data with custom IPFS gateway.
+                              or incorrect data from the backend. In any case of stateborn backend data manipulation, user will see the validation result in <a href="https://stateborn.org" target="_blank">stateborn.org</a> interface.
+                              Moreover, users have the possibility to <b>set custom IPFS gateway address in <a href="https://stateborn.org" target="_blank">stateborn.org</a> user interface</b> in order to validate the data with custom IPFS gateway.
                             </div>
                           </div>
                           <q-separator color="grey-5" class="q-mt-md q-mb-md"></q-separator>
 
                           <div class="row items-center q-pt-lg">
-                            <div class="col-2 text-center">
-                              <q-img src="/indexeddb.png" style="width: 80px"/>
+                            <div class="col-lg-2 col-xs-grow text-center">
+                              <q-img src="/indexeddb.png" style="width:80px"/>
                             </div>
-                            <div class="col-10 justify-center">
+                            <div class="col-lg-10 col-xs-grow justify-center">
                               <div class="q-pb-md" :class="$q.platform.is.mobile ? 'text-h5' : 'text-h2'" id="creation">
                                 Every DAO, proposal, user vote and proposal summary report is stored in the client side database (IndexedDB)
                               </div>
@@ -226,7 +235,7 @@
                               saved to client database after first fetching from backend and validation with IPFS. User votes are saved to client database
                               even before sent to backend in order to examine the possibility of stateborn backend votes censorship (not submission).
                               This enhances the process of client side validation but also provides theoretically the possibility to rebuild the DAO
-                              in case of stateborn.org shutdown or data removal.
+                              in case of <a href="https://stateborn.org" target="_blank">stateborn.org</a> shutdown or data removal.
                             </div>
                           </div>
 
@@ -244,19 +253,19 @@
                       <div class="row">
                         <div class="col-12">
                           <div class="q-pa-lg">
-                            <div class="text-center" :class="$q.platform.is.mobile ? 'text-h2' : 'text-h1'" id="voting">
+                            <div class="text-center text-h1" id="voting">
                               Voting
                             </div>
-                            <div class="text-overline text-center q-pb-md" style="font-size: 1.7rem">process</div>
+                            <div class="text-overline text-center q-pb-md text-sub">process</div>
                           </div>
 
                           Voting process describes a lifecycle of decision making process from initial proposal creation to the final voting result.
                           <div class="row items-center q-pt-lg">
-                            <div class="col-2 text-center">
+                            <div class="col-lg-2 col-xs-grow text-center">
                               <q-icon name="fa-solid fa-1" size="xl"></q-icon>
                             </div>
-                            <div class="col-10 justify-center">
-                              <div class="q-pb-md" :class="$q.platform.is.mobile ? 'text-h5' : 'text-h2'" id="creation">
+                            <div class="col-lg-10 col-xs-grow justify-center">
+                              <div class="q-pb-md" :class="$q.platform.is.mobile ? 'text-h5' : 'text-h3'" id="creation">
                                 User creates a proposal
                               </div>
                               Every user has the ability to create proposals and vote on them.
@@ -273,7 +282,7 @@
                                 <template v-slot:avatar>
                                   <q-icon name="fa-regular fa-lightbulb" color="primary" />
                                 </template>
-                                Every proposal previewed in stateborn.org interface by any user is validated with IPFS document content.
+                                Every proposal previewed in <a href="https://stateborn.org" target="_blank">stateborn.org</a> interface by any user is validated with IPFS document content.
                                 This allows to prove the authenticity of the proposal.
                               </q-banner>
                             </div>
@@ -282,10 +291,10 @@
                           <q-separator color="grey-5" class="q-mt-md q-mb-md"></q-separator>
 
                           <div class="row items-center q-pt-lg">
-                            <div class="col-2 text-center">
+                            <div class="col-lg-2 col-xs-grow text-center">
                               <q-icon name="fa-solid fa-2" size="xl"></q-icon>
                             </div>
-                            <div class="col-10 justify-center">
+                            <div class="col-lg-10 col-xs-grow justify-center">
                               <div class="q-pb-md" :class="$q.platform.is.mobile ? 'text-h5' : 'text-h2'" id="creation">
                                 Users vote on the proposal
                               </div>
@@ -297,7 +306,7 @@
                                 <template v-slot:avatar>
                                   <q-icon name="fa-regular fa-lightbulb" color="primary" />
                                 </template>
-                                Every user vote is saved in stateborn.org user interface client side database (IndexedDB) before sending to backend.
+                                Every user vote is saved in <a href="https://stateborn.org" target="_blank">stateborn.org</a> user interface client side database (IndexedDB) before sending to backend.
                                 This can prove the attempts of votes censorship by stateborn backend.
                               </q-banner>
                               <q-banner dense class="q-mt-xs q-mb-xs noisegreencard">
@@ -313,10 +322,10 @@
                           <q-separator color="grey-5" class="q-mt-md q-mb-md"></q-separator>
 
                           <div class="row items-center q-pt-lg">
-                            <div class="col-2 text-center">
+                            <div class="col-lg-2 col-xs-grow text-center">
                               <q-icon name="fa-solid fa-3" size="xl"></q-icon>
                             </div>
-                            <div class="col-10 justify-center">
+                            <div class="col-lg-10 col-xs-grow justify-center">
                               <div class="q-pb-md" :class="$q.platform.is.mobile ? 'text-h5' : 'text-h2'" id="creation">
                                 Voting period ends. <br>
                                 A proposal summary report is generated.
@@ -325,26 +334,19 @@
                               with references to IPFS documents containing the votes. Based on the proposal summary report, the final result and voting
                               decision can be obtained.
 
-                              Every user previewing the ended proposal in stateborn.org interface fetches the proposal summary report from backend and then directly from IPFS.
+                              Every user previewing the ended proposal in <a href="https://stateborn.org" target="_blank">stateborn.org</a> interface fetches the proposal summary report from backend and then directly from IPFS.
                               Then the proposal summary report is validated to include correct single vote of user previewing the proposal.
-                              In any case of invalid vote inclusion in the proposal summary report, user will see the validation result in stateborn.org interface.
+                              In any case of invalid vote inclusion in the proposal summary report, user will see the validation result in <a href="https://stateborn.org" target="_blank">stateborn.org</a> interface.
 
                               <q-banner dense class="q-mt-xs q-mb-xs noisegreencard">
                                 <template v-slot:avatar>
                                   <q-icon name="fa-regular fa-lightbulb" color="primary" />
                                 </template>
-                                For every ended proposal previewed on stateborn.org interface the proposal summary report is fetched from backend.
+                                For every ended proposal previewed on <a href="https://stateborn.org" target="_blank">stateborn.org</a> interface the proposal summary report is fetched from backend.
                                 Then the proposal summary report document is fetched from IPFS and is verified to include the correct single vote of user previewing the proposal.
                               </q-banner>
                             </div>
                           </div>
-
-
-
-
-
-
-
 
                         </div>
                       </div>
@@ -352,15 +354,15 @@
                       <div class="row q-pt-lg">
                         <div class="col-12">
                           <div class="q-pa-lg">
-                            <div class="text-center" :class="$q.platform.is.mobile ? 'text-h2' : 'text-h1'" id="howToCreateDao">
+                            <div class="text-center text-h1" id="howToCreateDao">
                               How to
                             </div>
-                            <div class="text-overline text-center q-pb-md" style="font-size: 1.7rem">create a DAO?</div>
+                            <div class="text-overline text-center q-pb-md text-sub">create a DAO?</div>
                           </div>
                           Stateborn off-chain DAO creation is <b>free and available to everyone</b>.
                           There are not any requirements except governance token to be deployed on the blockchain network.
                           Stateborn supports ERC-20 and NFT governance tokens.
-                          off-chain + on-chain DAO creation requires a small fee to be paid in order to deploy the DAO treasury smart-contract.<br><br>
+                          off-chain + on-chain DAO creation requires a transaction fee to be paid in order to deploy the DAO treasury smart-contract.<br><br>
 
 
                           <router-link to="/create-dao" span class="text-underline text-bold">Click here to create your custom DAO</router-link>
@@ -368,10 +370,10 @@
                       </div>
 
                       <div class="q-pa-lg">
-                        <div class="text-center" :class="$q.platform.is.mobile ? 'text-h2' : 'text-h1'" id="role">
+                        <div class="text-center text-h1" id="role">
                           Role
                         </div>
-                        <div class="text-overline text-center q-pb-md" style="font-size: 1.7rem">of stateborn.org</div>
+                        <div class="text-overline text-center q-pb-md text-sub">of <a href="https://stateborn.org" target="_blank">stateborn.org</a></div>
                       </div>
                       <div class="row justify-center">
                         <div class="col-lg-12">
@@ -379,12 +381,12 @@
                           <div class="row items-center">
                             <div class="col-lg-8 col-xs-grow justify-center">
 
-                              <span class="text-bold">stateborn.org cannot steal any token, cannot change or modify any DAO, proposal or vote related data. </span><br>
-                              As a centralized third party in the stateborn DAO ecosystem, stateborn.org application acts as an intermediary between
+                              <span class="text-bold"><a href="https://stateborn.org" target="_blank">stateborn.org</a> cannot steal any token, cannot change or modify any DAO, proposal or vote related data. </span><br>
+                              As a centralized third party in the stateborn DAO ecosystem, <a href="https://stateborn.org" target="_blank">stateborn.org</a> application acts as an intermediary between
                               users and blockchain/IPFS.
                               Its main role is to provide user interface and backend services for operating DAOs.
-                              Users saving DAO data, send them to stateborn.org backend services where they are validated and saved in blockchain/IPFS.
-                              Since the data are cryptograhically signed by the users, stateborn.org backend services cannot change them.<br><br>
+                              Users saving DAO data, send them to <a href="https://stateborn.org" target="_blank">stateborn.org</a> backend services where they are validated and saved in blockchain/IPFS.
+                              Since the data are cryptograhically signed by the users, <a href="https://stateborn.org" target="_blank">stateborn.org</a> backend services cannot change them.<br><br>
 
                               We are delighted to provide the solid and honest third party service however we believe tools should be designed to
                               eliminate and minimize the need of trust as much as possible.
@@ -405,18 +407,18 @@
                       <div class="row q-pt-lg">
                         <div class="col-12">
                           <div class="q-pa-lg">
-                            <div class="text-center" :class="$q.platform.is.mobile ? 'text-h2' : 'text-h1'" id="risks">
+                            <div class="text-center text-h1" id="risks">
                               Risks
                             </div>
-                            <div class="text-overline text-center q-pb-md" style="font-size: 1.7rem">of stateborn off-chain DAOs</div>
+                            <div class="text-overline text-center q-pb-md text-sub">of stateborn off-chain DAOs</div>
                           </div>
                           We want to design as much trustless off-chain DAO ecosystem as possible. In the same time we want this tool to be user friendly
                           and available to big audience.<br><br>
-                          The only real power stateborn.org has as a centralized infrastructure provider for processing DAOs data
+                          The only real power <a href="https://stateborn.org" target="_blank">stateborn.org</a> has as a centralized infrastructure provider for processing DAOs data
                           is <span class="text-bold">the ability to censor the data. </span><br>
                           Since there is no technical possibility to modify the data, there is no risk of data manipulation.
                           Since data is saved in IPFS and blockchain, there is no risk of data loss or intentional removal. <br>
-                          However, users can create DAOs, proposals and votes but stateborn.org can decide not to process them.
+                          However, users can create DAOs, proposals and votes but <a href="https://stateborn.org" target="_blank">stateborn.org</a> can decide not to process them.
                           Unfortunately, it's impossible to eliminate censorship risk relying on 3th party.
                           Our client side data saving and validation strategy is the method to track and prevent the attempts of data censorship by backend.
                           The possibility to rely on a custom IPFS gateway is the user-friendly method to partially eliminate trust in
@@ -442,7 +444,7 @@
                       </q-btn>
                     </div>
                   </div>
-                  <div class="text-center text-subtitle2 q-pb-lg">© 2023 stateborn.org</div>
+                  <div class="text-center text-subtitle2 q-pb-lg">© 2023 <a href="https://stateborn.org" target="_blank">stateborn.org</a></div>
 
 
 
@@ -468,10 +470,9 @@ import { onMounted, ref } from 'vue';
 import { sleep } from 'src/api/services/sleep-service';
 import { getElementOffset } from 'src/api/services/ui-utils';
 
-
 const height = window.innerHeight - 75;
 const scrollHeight = ref(height);
-window.addEventListener('resize',function(){
+window.addEventListener('resize',function() {
   scrollHeight.value = window.innerHeight - 75;
 });
 
@@ -628,7 +629,7 @@ const setItems = () => {
 };
 setItems();
 onMounted(async () => {
-  await sleep(500);
+  await sleep(200);
   setItems();
   onScroll({verticalPosition: 0});
 });
@@ -644,21 +645,29 @@ const scrollToElement = (el: any) => {
 };
 
 const onScroll = (val: any) => {
-  const verticalPosition: number = val.verticalPosition;
-  console.log(val);
-  let index = 0;
-  for (let i = 0 ; i < items.value.length; i++) {
-    const item = items.value[i];
-    if (item.topOffset !== 0) {
-      if (item.topOffset <= verticalPosition) {
-        index = i;
-      } else {
-        break;
+  if (scrollAreaRef.value) {
+    if (scrollAreaRef.value.getScrollPercentage().top === 1) {
+      for (let i = 0; i < items.value.length; i++) {
+        items.value[i].active = false;
+      }
+      items.value[items.value.length - 1].active = true;
+    } else {
+      const verticalPosition: number = val.verticalPosition;
+      let index = 0;
+      for (let i = 0; i < items.value.length; i++) {
+        const item = items.value[i];
+        if (item.topOffset !== 0) {
+          if (item.topOffset <= verticalPosition) {
+            index = i;
+          } else {
+            break;
+          }
+        }
+      }
+      for (let i = 0; i < items.value.length; i++) {
+        items.value[i].active = i === index;
       }
     }
-  }
-  for (let i = 0 ; i < items.value.length; i++) {
-    items.value[i].active = i === index;
   }
 }
 </script>

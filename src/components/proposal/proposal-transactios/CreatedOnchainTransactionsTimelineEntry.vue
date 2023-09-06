@@ -2,33 +2,41 @@
   <q-timeline-entry
     :style="transactionStatus === BlockchainProposalStatus.CREATED_ON_CHAIN ? '': 'height:40px'"
     :class="transactionStatus === BlockchainProposalStatus.CREATED_ON_CHAIN ? 'noisegreen' : ''"
-    :icon="transactionStatus === BlockchainProposalStatus.CREATED_ON_CHAIN ? 'fa-solid fa-check' : undefined"
-    :color=" transactionStatus === BlockchainProposalStatus.CREATED_ON_CHAIN? 'green-9' : ''"
-    subtitle="2. Created on-chain - transaction proposal created on-chain"
+    :icon="[
+        BlockchainProposalStatus.CREATED_ON_CHAIN,
+        BlockchainProposalStatus.READY_TO_EXECUTE,
+        BlockchainProposalStatus.EXECUTED].includes(transactionStatus) ? 'fa-solid fa-check' : undefined"
+    :color="[
+        BlockchainProposalStatus.CREATED_ON_CHAIN,
+        BlockchainProposalStatus.READY_TO_EXECUTE,
+        BlockchainProposalStatus.EXECUTED].includes(transactionStatus) ? 'green-9': ''"
+    subtitle="3. Created on-chain - transfers proposal created on-chain"
     side="left"
   >
-    <div v-if="transactionStatus === BlockchainProposalStatus.CREATED_ON_CHAIN">
+    <div v-if="transactionStatus === BlockchainProposalStatus.CREATED_ON_CHAIN && props.onChainProposalDetails !== undefined">
       <div class="row text-subtitle2">
         <div class="col-auto text-bold sectionName">Overview</div>
-        <div class="col-grow text-right">Proposal passed. Transaction proposal created on-chain.</div>
+        <div class="col-grow text-right">Transfers proposal created on-chain.</div>
       </div>
       <span class="text-primary"></span>
-      <div class="row text-subtitle2">
-        <div class="col-auto text-bold sectionName">Tx hash</div>
-        <div class="col-grow text-right">{{ `${txHash.substring(0, 40)}...` }}
-          <q-btn flat round color="primary" size="xs" icon="fa-solid fa-arrow-up-right-from-square" @click="goToEtherscanTx(txHash, chainId)"/>
-        </div>
-      </div>
+<!--      <div class="row text-subtitle2">-->
+<!--        <div class="col-auto text-bold sectionName">Tx hash</div>-->
+<!--        <div class="col-grow text-right">{{ `${txHash.substring(0, 40)}...` }}-->
+<!--          <q-btn flat round color="primary" size="xs" icon="fa-solid fa-arrow-up-right-from-square" @click="goToEtherscanTx(txHash, chainId)"/>-->
+<!--        </div>-->
+<!--      </div>-->
       <div class="row text-subtitle2">
         <div class="col-auto text-bold sectionName">Proposal address</div>
-        <div class="col-grow text-right ">{{ proposalAddress }}
-          <q-btn flat round color="primary" size="xs" icon="fa-solid fa-arrow-up-right-from-square" @click="goToEtherscan(proposalAddress, chainId)"/>
+        <div class="col-grow text-right ">{{ props.onChainProposalDetails.address }}
+          <q-btn flat round color="primary" size="xs" icon="fa-solid fa-arrow-up-right-from-square" @click="goToEtherscan(props.onChainProposalDetails.address, chainId)"/>
         </div>
       </div>
       <div class="row text-subtitle2" v-if="transactionStatus === BlockchainProposalStatus.CREATED_ON_CHAIN">
         <div class="col-auto text-bold sectionName">PROPOSAL STATUS</div>
 
-        <div class="col-grow"><div class="float-right" style="width:150px; max-width:150px; margin-right:0;"><q-skeleton type="rect" /></div></div>
+        <div class="col-grow">
+<!--          <div class="float-right" style="width:150px; max-width:150px; margin-right:0;"><q-skeleton type="rect" /></div>-->
+        </div>
         <div class="col-grow text-right " v-if="isProposalPassed">
           <q-badge class=q-pa-xs label="READY TO EXECUTE"></q-badge>
           <q-icon color="primary" name="fa-solid fa-circle-info" class="q-pl-xs" style="margin-bottom: 3px;padding-right:5px">
@@ -49,16 +57,30 @@
         </div>
 
       </div>
-      <div class="row text-subtitle2" v-if="!isProposalPassed && !isChallengeSequencerPeriodEnded">
+      <div class="row">
+        <div class="col-12">
+          <div class="row">
+            <div class="col-auto text-bold sectionName">Votes</div>
+            <div class="col-grow text-right">{{votesNum}}</div>
+          </div>
+          <q-linear-progress size="40px" :value="forVotes" color="green" track-color="red" stripe>
+            <div class="absolute-full flex flex-center">
+              <q-badge style="height: 30px" color="primary" text-color="white" :label="votesLabel" />
+            </div>
+          </q-linear-progress>
+        </div>
+      </div>
+
+      <div class="row text-subtitle2">
         <div class="col-auto text-bold sectionName">CHALLENGE END DATE</div>
-        <div class="col-grow text-right ">{{ formatDateNice(challengeSequencerEndTimeEpoch) }}</div>
+        <div class="col-grow text-right ">{{ formatDateNice(challengeEndDateEpoch) }}</div>
 
       </div>
-      <div class="row text-subtitle2" v-if="!isProposalPassed && !isChallengeSequencerPeriodEnded">
+      <div class="row text-subtitle2">
         <div class="col-auto text-bold sectionName">CHALLENGE REMAINING TIME</div>
         <div class="col-grow text-right ">
           <vue-countdown class="text-subtitle2"
-                         :time="challengeSequencerEndTimeEpoch - nowEpoch"
+                         :time="challengeEndDateEpoch - nowEpoch"
                          v-slot="{ days, hours, minutes, seconds }"
                          @end="challengeSequencerPeriodEndedCallback">
             {{ days }} days, {{ hours }} hours, {{ minutes }} minutes, {{ seconds }} seconds
@@ -72,21 +94,21 @@
 <script lang="ts" setup>
 
 import { BlockchainProposalStatus } from 'src/api/model/blockchain-proposal-status';
-import { goToEtherscan, goToEtherscanTx } from 'src/api/services/utils-service';
+import { goToEtherscan } from 'src/api/services/utils-service';
 import VueCountdown from '@chenfengyuan/vue-countdown';
-import { getIsProposalPassed, getChallengeSequencerEndTimeEpoch } from 'src/api/services/onchain-service';
 import { useEthConnectionStore } from 'stores/eth-connection-store';
 import { formatDateNice } from 'src/api/services/date-service';
 import { onMounted, ref, watch } from 'vue';
-import {
-  BlockchainCreatedOnchainClientProposalStatus
-} from 'src/api/model/blockchain-created-onchain-client-proposal-status';
+import { OnChainProposalDetails } from 'src/api/model/on-chain-proposal-details';
+
 const isProposalPassed = ref(false);
 const ethConnectionStore = useEthConnectionStore();
 const nowEpoch = ref(new Date().getTime());
-const challengeSequencerEndTimeEpoch = ref(0);
+const challengeEndDateEpoch = ref(0);
+const forVotes = ref(0);
+const votesLabel = ref('');
+const votesNum = ref(0);
 const isChallengeSequencerPeriodEnded = ref(false);
-const blockchainCreatedOnchainClientProposalStatus = ref(BlockchainCreatedOnchainClientProposalStatus.LOADING);
 
 const props = defineProps(
   {
@@ -94,13 +116,9 @@ const props = defineProps(
       type: String,
       required: true,
     },
-    txHash: {
-      type: String,
-      required: true,
-    },
-    proposalAddress: {
-      type: String,
-      required: true,
+    onChainProposalDetails: {
+      type: OnChainProposalDetails,
+      required: false,
     },
     chainId: {
       type: String,
@@ -108,33 +126,21 @@ const props = defineProps(
     }
   }
 );
-onMounted(() => {
-  if (props.transactionStatus === BlockchainProposalStatus.CREATED_ON_CHAIN) {
-    readOnChainProposalStatus();
-  }
-});
-
-const readOnChainProposalStatus = async () => {
-  if (props.proposalAddress !== '') {
-    challengeSequencerEndTimeEpoch.value = await getChallengeSequencerEndTimeEpoch(props.proposalAddress);
-    nowEpoch.value = new Date().getTime();
-    isChallengeSequencerPeriodEnded.value = (challengeSequencerEndTimeEpoch.value = nowEpoch.value) < 0;
-
-    if (isChallengeSequencerPeriodEnded.value) {
-      isProposalPassed.value = await getIsProposalPassed(props.proposalAddress);
-      //if challenge sequencer period ended and is passed -> ready to execute, otherwise dispute processs started
-      if (isProposalPassed.value) {
-        blockchainCreatedOnchainClientProposalStatus.value = BlockchainCreatedOnchainClientProposalStatus.READY_TO_EXECUTE;
-      } else {
-        blockchainCreatedOnchainClientProposalStatus.value = BlockchainCreatedOnchainClientProposalStatus.DISPUTE_PROCESS_STARTED;
-      }
-    }
+const setValues = () => {
+  if (props.onChainProposalDetails !== undefined) {
+    forVotes.value = props.onChainProposalDetails.forVotes / (props.onChainProposalDetails.forVotes + props.onChainProposalDetails.againstVotes);
+    votesNum.value = props.onChainProposalDetails.forVotes + props.onChainProposalDetails.againstVotes;
+    votesLabel.value = `FOR ${props.onChainProposalDetails.forVotes} : ${props.onChainProposalDetails.againstVotes} AGAINST`;
+    challengeEndDateEpoch.value = props.onChainProposalDetails.endsDate.getTime();
   }
 }
+onMounted(() => {
+  setValues();
+});
 
-watch(() => [ethConnectionStore.isConnected, props.proposalAddress], () => {
-  if (ethConnectionStore.isConnected && props.transactionStatus === BlockchainProposalStatus.CREATED_ON_CHAIN) {
-    readOnChainProposalStatus();
+watch(() => [props.onChainProposalDetails], () => {
+  if (props.transactionStatus === BlockchainProposalStatus.CREATED_ON_CHAIN) {
+    setValues();
   }
 });
 const challengeSequencerPeriodEndedCallback = () => {

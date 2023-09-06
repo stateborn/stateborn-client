@@ -164,9 +164,8 @@
       >
       </nft-token-info-card>
     </div>
-    <div class="col-6 q-pa-xs" v-show="tokenName !== ''" :class="Number(daoFunds) > 0 ? 'noisegreencard' : 'noiseredcard'" >
+    <div class="col-6 q-pa-xs" v-show="tokenName !== ''" :class="Number(daoFunds) > 0 ? 'noisegreencard' : 'noiseredcard'">
       <dao-wallet-card
-        style="height:100% !important;"
         v-if="tokenType === TokenType.ERC20"
         :token-symbol="tokenSymbol"
         :dao-funds="daoFunds"
@@ -229,6 +228,7 @@ const thereIsAlreadyTransactionWithThisToken = computed(() => {
     //show only to next txs, not first
     && props.txIndex !== 0;
   } else if (transactionType.value.value === TokenType.NFT) {
+    console.log('ength', props.previousTransactions.filter(_ => (<TransferNftTransactionData>_.data).token.address === tokenAddress.value).length);
     return props.previousTransactions.filter(_ => (<TransferNftTransactionData>_.data).token.address === tokenAddress.value).length > 0
       //show only to next txs, not first
       && props.txIndex !== 0;

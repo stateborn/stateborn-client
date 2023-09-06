@@ -268,6 +268,7 @@ import { createDaoOnChain } from 'src/api/services/onchain-service';
 import TokenInfoCard from 'components/TokenInfoCard.vue';
 import NftTokenInfoCard from 'components/NftTokenInfoCard.vue';
 import { animeIcons } from 'src/api/services/anime-service';
+import { ethers } from 'ethers';
 
 dayjs.extend(dayjsPluginUTC);
 const ethConnectionStore = useEthConnectionStore();
@@ -405,7 +406,10 @@ const callCreateDao = async () => {
       backgroundColor: 'black',
       messageColor: 'white',
     });
-    daoContractAddress = await createDaoOnChain(ethConnectionStore.chainId);
+    daoContractAddress = await createDaoOnChain(
+      tokenAddress.value,
+      ethers.parseUnits(minimalTokens.value.toString(), Number(decimals.value)),
+      ethConnectionStore.chainId);
     Notify.create({ message: `DAO created on-chain. Address: ${daoContractAddress}`, position: 'top-right', color: 'green' });
     $q.loading.hide();
   }

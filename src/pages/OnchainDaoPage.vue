@@ -61,7 +61,7 @@
                       as reward involve various participants in on-chain voting process. If on-chain proposal gets no vote
                       against,
                       or more votes for than against - can be executed by anyone. When on-chain proposal gets the same or more against
-                      votes than for votes, is rejected.
+                      votes than for votes - is rejected.
                       on-chain proposal voting is not related to off-chain proposals but off-chain voting result is a
                       reference for
                       on-chain voting decision.
@@ -103,11 +103,11 @@
                       off-chain DAO is not technically related to on-chain DAO treasury. off-chain DAO can be created without on-chain DAO treasury.
                       on-chain DAO treasury smart-contracts can be deployed to blockchain network without off-chain DAO, however <a href="https://stateborn.org" target="_blank">stateborn.org</a> doesn't support that.<br><br>
 
-                      This document focuses on on-chain DAO treasury description. off-chain DAO proposal and voting process and components are described in detail here:
+                      This document focuses on on-chain DAO treasury overview. off-chain DAO proposal and voting process and components are described in detail here:
                       <router-link to="/about" span class="text-underline text-bold">ABOUT STATEBORN</router-link><br><br>
 
                       on-chain DAO treasury governance is non-permissioned and ideally all decisions should be based on DAO off-chain voting.
-                      off-chain DAO proposal results are a reference for on-chain DAO treasury governance, but on-chain DAO treasury
+                      off-chain DAO proposal voting results are a reference for on-chain DAO treasury governance, but on-chain DAO treasury
                       smart contracts don't operate or process off-chain DAO proposals.<br><br>
 
                       Stateborn DAO model is based on a division, where governance decisions obtaining process is based on off-chain (no-cost) voting,
@@ -164,7 +164,7 @@
                             off-chain DAO proposal creation
                           </div>
                           on-chain DAO treasury should be governed by off-chain proposals.
-                          off-chain DAO proposals allow DAO community to create proposals and vote on them.
+                          off-chain DAO proposals allow DAO community to propose ideas and vote on them.
                           DAO off-chain governance is based on DAO governance token, which can be ERC-20 token or NFT.
                           Users owning these tokens can create proposals and vote on them.
 
@@ -194,9 +194,9 @@
                             on-chain DAO proposal creation
                           </div>
                           on-chain DAO proposal is a smart-contract which describes assets transfer from DAO treasury to any address.
-                          It has own lifecycle and the transfer of DAO treasury assets is not immediate.
+                          It has own lifecycle and the transfer of DAO treasury assets is not immediate after on-chain proposal creation.
                           on-chain proposal smart-contract includes all data required to execute the transfer from DAO treasury.
-                          Proposal off-chain result IPFS hash and result merkle proof saved in smart-contracts are a reference to off-chain proposal voting result.
+                          Off-chain proposal result IPFS hash and result merkle root hash saved in smart-contracts are a reference to off-chain proposal voting result.
                           It should be used for anyone who wants to verify if on-chain proposal is legit and reflects the will of DAO community.<br><br>
                           Creating on-chain proposal requires collateral (e.g. 1 ETH) - its requirements are specified in DAO smart contract.
                           Creating proposal without collateral is not possible.
@@ -216,7 +216,7 @@
                               <div class="col-12 text-subtitle1">
                                 No.
                                 Anyone can submit on-chain DAO proposal of transferring DAO assets.
-                                It can be done by honest or by any kind of malicious actor like hacker, scammer, DAO
+                                It can be done by honest or any kind of malicious actor like hacker, scammer, DAO
                                 saboteur, etc.
                                 Nevertheless creating on-chain proposal of transferring DAO assets always requires
                                 collateral defined by DAO smart contract.
@@ -266,8 +266,7 @@
                           Ideally this should be a scenario for every on-chain proposal based on legit, passed off-chain
                           proposal.
                           Unchallenged on-chain proposal is ready to be executed after challenge period ends.
-                          Execution of on-chain proposal means transferring DAO assets to addresses specified in off-chain
-                          proposal data.
+                          Execution of on-chain proposal means transferring DAO assets to the addresses specified in this on-chain proposal.
                           It can be executed by anyone by submitting an on-chain transaction - invoking proposal smart-contract
                           execute function.
                           After execution, on-chain proposal collateral is transferred back to proposal creator, proposal
@@ -282,7 +281,7 @@
                           the proposal is cancelled and voteAgainst voters receives: his initial collateral + proposal
                           creation collateral (from proposal creator).
                           Initial creation collateral is a reward for voteAgainst voter.<br><br>
-                          If there are multiple voteAgainst votes for single voteFor vote (from proposal creator) for proposal
+                          If there are multiple voteAgainst votes for single voteFor vote (from proposal creator)
                           during challenge period,
                           the proposal is cancelled and creation (initial) collateral is split among voteAgainst voters
                           proportionally to their voteAgainst collateral.
@@ -304,7 +303,7 @@
                           <div class="q-pb-md" :class="$q.platform.is.mobile ? 'text-h5' : 'text-h2'" id="disputeProcess">
                             Dispute process
                           </div>
-                          Proposal dispute process is when there are proposal challengers (voteAgainst) and also
+                          Proposal dispute process is when there are proposal challengers (voteAgainst) and
                           proposal supporters (voteFor).
                           Initially, when on-chain proposal is created there is only single proposal supporter - proposal creator.
                           However, during challenge period, anyone can become proposal supporter by submitting voteFor
@@ -319,10 +318,10 @@
 
                           <div class="row items-center q-pt-md">
                             <div class="col-10 justify-center">
-                              Voting in stateborn DAOs proposals has <span class="text-green text-bold">economic incentive</span> - proposal collateral is a reward
-                              for voters.
+                              Voting in stateborn DAOs proposals has <span class="text-green text-bold">economic incentive</span> -
+                              when proposal ends, its collateral becomes a reward for part of the voters.
                               More voteFor votes will result in voteAgainst voters collateral to be distributed to voteFor voters.
-                              More voteAgainst votes will result in voteFor collateral will be distributed to voteAgainst voters.
+                              More or equal voteAgainst votes (to voteFor) will result in voteFor collateral being distributed to voteAgainst voters.
                               Voting on proposal is available for everyone using blockchain, the only requirement is providing a collateral.
                             </div>
                             <div class="col-2 text-center">
@@ -337,7 +336,7 @@
                           Correct and secure operation of stateborn DAOs is based on passing only valid (legit) proposals.
                           Ideally every on-chain proposal should be based on legit, passed off-chain proposal.
                           However technically since everyone can create on-chain proposals and vote on on-onchain proposals,
-                          there various security risks related to voters motivations, interests and goals.
+                          there are various operational risks related to voters motivations, interests and goals.
                         </div>
                       </div>
 
@@ -358,25 +357,25 @@
                           <div class="q-pb-md" :class="$q.platform.is.mobile ? 'text-h5' : 'text-h2'" id="howToAsses">
                             How to assess validity of proposal?
                           </div>
-                          Valid proposal should be defined as proposal which received majority of votes of DAO member
+                          "Valid" proposal should be defined as proposal which received majority of votes of DAO member
                           voters.
                           Stateborn proposals voting is off-chain. on-chain proposal is only transfer of DAO assets to
                           addresses specified in off-chain proposal data.
                           <a href="https://stateborn.org" target="_blank">stateborn.org</a> is a platform which allows to create off-chain proposals and vote on them.
                           Proposal document including proposal overview and on-chain assets transfer description is
                           cryptographically secure, immutable and stored in IPFS - open, distributed data storage.
-                          off-chain votes are client signed, immutable and also stored IPFS.
-                          When off-chain proposal voting is ended, "proposal report" which includes all the votes of the
-                          proposal is generated and saved to IPFS. <br><br>
+                          off-chain votes are client signed, immutable and also stored in IPFS.
+                          When off-chain proposal voting is ended, "proposal report" which includes all the proposal votes
+                          is generated and saved to IPFS. <br><br>
 
                           on-chain proposal contains the IPFS hash of off-chain "proposal report" which contains
-                          IPFS hash of off-chain proposal document (description).
-                          Validity of proposal should be assessed based on artefacts generated by off-chain voting, which
+                          all the votes data and IPFS hash of off-chain proposal document (description).
+                          Validity of proposal should be assessed based on these artefacts generated by off-chain voting, which
                           are proposal document and proposal report (including votes).
-                          Data included in "proposal report" should ibe enough to obtain/calculate proposal result. The data format
+                          Data included in "proposal report" should be enough to obtain/calculate proposal voting result. The data format
                           allows to parse it automatically.
-                          Since off-chain voting reflects DAO community will,
-                          on-chain proposal vote decision making should be based on off-chain proposal artefacts data.
+                          To summary, since off-chain voting reflects DAO community will,
+                          on-chain proposal vote decision making should be based on off-chain proposal result artefacts.
                         </div>
                       </div>
                       <q-separator color="grey-9" class="q-mt-md q-mb-md"></q-separator>
@@ -387,7 +386,7 @@
                         </div>
                         <div class="col-10 justify-center">
                           <div class="q-pb-md" :class="$q.platform.is.mobile ? 'text-h5' : 'text-h2'" id="howToAssure">
-                            How to technically assure only valid proposals pass?
+                            How to technically assure only valid on-chain proposals pass?
                           </div>
                           Stateborn on-chain DAO treasury proposals are not built to technically solve that problem.
                           In other words, it is not currently solved on smart-contracts level in the way stateborn
@@ -396,8 +395,7 @@
                           off-chain governance separates votes from on-chain DAO treasury.<br><br>
 
                           off-chain voting in stateborn gives DAO community to utilize no-cost voting. Collateral based
-                          on-chain voting part of that solution
-                          gives economic incentive for different group of actors to participate in proposal lifecycle for
+                          on-chain mechanics create economic incentive for different group of actors to participate in proposal lifecycle for
                           personal interest - which is potential profit.
                           This is well known blockchain pattern where exist correctness checking mechanisms like Oracles,
                           Slashers or Watchtowers.
@@ -420,9 +418,9 @@
                           <div class="q-pb-md" :class="$q.platform.is.mobile ? 'text-h5' : 'text-h2'" id="howToMotivate">
                             How to motivate on-chain voters to vote on valid proposals?
                           </div>
-                          on-chain voters can or not have an interest in voting on on-chain proposals. <br><br>
-                          Voting on invalid (not legit) proposal which doesn't reflect the will of DAO
-                          community - will most likely be the end of such DAO, due to
+                          on-chain voters can or not have an interest in on-chain proposals voting. <br><br>
+                          Voting on invalid (not legit) proposal which doesn't reflect the DAO
+                          community will - most likely will result the end of such DAO, due to
                           loss of trust and possibly DAO treasury funds. Anyone having interest in DAOs success should not vote on
                           invalid proposals. <br><br>
                           Invalid proposal which was successfully executed on-chain will also result in Stateborn DAOs
@@ -442,8 +440,8 @@
                       </div>
 
                       on-chain DAO proposals voting is available to various actors having various motivations. on-chain proposal
-                      mechanics may influence voters decisions. Below we describe some scenarios describing various possible
-                      actions of on-chain voters who are motivated with own interest.
+                      mechanics may influence voters decisions. Below we describe some scenarios of various, possible
+                      on-chain voters actions who are motivated with their own interest.
 
                       <div class="row items-center q-pt-lg">
                         <div class="col-2 text-center">
@@ -460,7 +458,7 @@
                           to not pass. voteAgainst voter, after proposal ends, will get 1 ETH as reward.
                           Such proposal is cancelled. <br>
                           voteAgainst voter may be motivated to get collateral reward (challenging proposal),
-                          however takes a risk also to loose own collateral if proposal will pass (more supporters engage).
+                          however takes a risk to loose own collateral if proposal will pass (more supporters engage).
                         </div>
                       </div>
                       <q-separator color="grey-9" class="q-mt-md q-mb-md"></q-separator>
@@ -540,7 +538,7 @@
                       risk of single vote against cancellation.
                       DAOs operating big treasury are in risk of on-chain theft proposals. Multiple for and against voters operate a non-obvious
                       result decision making process which can drive away using Stateborn DAO solution.<br><br>
-                      Fortunately, there are some strategies to mitigate these risk.
+                      Fortunately, there are some strategies to mitigate these risks.
 
                       <div class="row items-center q-pt-lg">
                         <div class="col-2 text-center">
@@ -550,9 +548,8 @@
                           <div class="q-pb-md" :class="$q.platform.is.mobile ? 'text-h5' : 'text-h2'" id="acquisition">
                             DAO voting power acquisition
                           </div>
-                          The DAO interest is to acquire more on-chain voting power in order to vote for proposals accordingly
-                          to
-                          DAO community will. This means - acquire more "for" votes for legit proposals and more "against"
+                          The DAO interest is to acquire on-chain voting power in order to vote for proposals accordingly
+                          to DAO community will. This means - acquire more "for" votes for legit proposals and more "against"
                           votes for not legit proposals.
                           on-chain proposal voting is trustless so it doesn't mean DAO needs to directly acquire more funds.
                           Collateral as a reward acts a motivation for actions related to DAO voting power acquisition.
@@ -585,12 +582,12 @@
                           to vote in on-chain proposals.
                           For example on-chain proposal vote would require 1 ETH for vote or owning 100 DAO governance tokens in
                           "DAO token pool".
-                          DAO governance tokens as collateral are very important economical factor for on-chain proposal
+                          DAO governance tokens as collateral mechanism is very important economical factor for on-chain proposal
                           voting.<br><br>
 
 
-                          DAO governance token owners act an effective contrary force for malicious voters who vote against
-                          DAO community will reflected as off-chain voting.
+                          DAO governance token owners act an effective contrary force for malicious voters, who vote against
+                          DAO community decisions reflected in off-chain voting.
                           Voting on-chain by DAO community members is not a way stateborn DAOs should normally operate (voting
                           off-chain)
                           but if necessary - is a method to protect DAO treasury from malicious actors.
@@ -601,13 +598,13 @@
                           potential reward for malicious voters. DAO members votes put a DAO governance tokens to "DAO token pool"
                           but these tokens never become a reward for a majority side voters of on-chain proposal.
                           Owners of tokens in "DAO token pool" own them as long as on-chain proposals on which they vote, are ended with
-                          a decision these owners vote. If token owner votes voteFor with 100 tokens and on-chain proposal passes - token owner
-                          still owns tokens in pool. However if the proposal not passes, token owner loses tokens in pool and these
+                          a decision these owners voted. If token owner votes voteFor with 100 tokens and on-chain proposal passes - token owner
+                          still owns tokens in pool. However if the proposal not passes, token owner loses the tokens in pool and these
                           tokens are transferred to on-chain DAO treasury. <br><br>
 
 
                           DAO governance tokens can have a value but are not a reward for on-chain proposals voters.
-                          The only reward is cryptocurrency collateral provided by voters.
+                          The only reward is a cryptocurrency collateral provided by voters.
                           The more DAO governance based votes for on-chain proposal side, the less economically rational is to vote on contrary decision.
                           Opposite voters risk to be in lost voting side when DAO on-chain token voters group is big enough to obtain more votes than opposite voters.
                           Additionally token votes don't increase potential collateral reward.
@@ -615,7 +612,7 @@
                           which will loose their tokens if they vote on lost side - their tokens will be transferred to DAO on-chain treasury.
                           <br><br>
 
-                          It is possible for malicious DAO token owners to compete in on-chain proposal voting with token votes,
+                          It is possible for malicious DAO token owners to compete in on-chain proposal voting with honest token votes,
                           however such scenario could be minimized with healthy distribution of DAO governance tokens and lack of
                           centralization (big token holders). Transferring DAO governance tokens back to DAO from
                           lost on-chain proposal side voters (like malicious voters) is a self regulation and DAO saboteurs
@@ -633,7 +630,7 @@
 
                       Stateborn protocol can be an effective solution for truly decentralized autonomous organizations.
                       We believe that stateborn proposes unique DAO solution utilizing technologies and concepts widely
-                      adopted on the market. <br><br>
+                      researched and adopted on the market. <br><br>
 
                       off-chain voting is no-cost governance method which can attract communities to participate in
                       DAO governance process.
@@ -1009,27 +1006,34 @@ const setItems = () => {
 };
 setItems();
 onMounted(async () => {
-  await sleep(500);
+  await sleep(200);
   setItems();
 });
 
 
 const onScroll = (val: any) => {
-  const verticalPosition: number = val.verticalPosition;
-  let index = 0;
-  for (let i = 0 ; i < items.value.length; i++) {
-    const item = items.value[i];
-    if (item.topOffset !== 0) {
-      if (item.topOffset <= verticalPosition) {
-        index = i;
-      } else {
-        break;
+  if (scrollAreaRef.value.getScrollPercentage().top === 1) {
+    for (let i = 0 ; i < items.value.length; i++) {
+      items.value[i].active = false;
+    }
+    items.value[items.value.length - 1].active = true;
+  } else {
+    const verticalPosition: number = val.verticalPosition;
+    let index = 0;
+    for (let i = 0; i < items.value.length; i++) {
+      const item = items.value[i];
+      if (item.topOffset !== 0) {
+        if (item.topOffset <= verticalPosition) {
+          index = i;
+        } else {
+          break;
+        }
       }
     }
+    for (let i = 0; i < items.value.length; i++) {
+      items.value[i].active = i === index;
+    }
+    console.log('vertical position', verticalPosition);
   }
-  for (let i = 0 ; i < items.value.length; i++) {
-    items.value[i].active = i === index;
-  }
-  console.log('vertical position', verticalPosition);
 }
 </script>

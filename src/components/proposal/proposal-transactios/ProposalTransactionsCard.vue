@@ -19,27 +19,44 @@
     </div>
     <q-separator class="q-ma-xs"></q-separator>
     <div class="row q-mt-md">
-      <div class="col-xl-6 col-xs-auto ">
+      <div class="col-xl-6 col-md-6 col-xs-auto ">
         <q-card class="stateborn-card q-pl-md">
           <div class="row">
             <div class="col-grow">
               <q-item-label class=" text-primary text-left text-overline" style="font-size: 1rem">Timeline</q-item-label>
               <q-timeline layout="dense" side="right" color="grey-7">
                 <CreatedOffchainTransactionsTimelineEntry
-                  :proposal-ipfs-hash="proposalIpfsHash"
+                  :proposal-ipfs-hash="props.proposal.ipfsHash"
                   :transaction-status="transactionStatus">
                 </CreatedOffchainTransactionsTimelineEntry>
-                <ProposalRejectedTransactionsTimelineEntry
-                  :transaction-status="transactionStatus">
+
+                <ProposalRejectedTransactionsTimelineEntry v-if="transactionStatus === BlockchainProposalStatus.PROPOSAL_REJECTED">
                 </ProposalRejectedTransactionsTimelineEntry>
+
+                <DeployOnChainProposalTransactionsTimelineEntry
+                    :chain-id="dao.clientDao.token.chainId"
+                    :transactions="proposal.clientProposal.transactions!"
+                    :proposal-merkle-root="proposalMerkleRoot"
+                    :proposal-id="proposal.ipfsHash"
+                    :dao-address="props.dao.clientDao.contractAddress!"
+                    :transaction-status="transactionStatus">
+                </DeployOnChainProposalTransactionsTimelineEntry>
+
                 <CreatedOnchainTransactionsTimelineEntry
-                  :proposal-address="proposalAddress"
-                  :tx-hash="txHash"
-                  :transaction-status="transactionStatus"
-                  :chain-id="chainId"
-                  @challengeSequencerPeriodEnded="onChallengeSequencerPeriodEnded"
-                >
+                    :on-chain-proposal-details="onChainProposalDetails"
+                    :transaction-status="transactionStatus"
+                    :chain-id="chainId"
+                    @challengeSequencerPeriodEnded="onChallengeSequencerPeriodEnded">
                 </CreatedOnchainTransactionsTimelineEntry>
+
+                <ExecuteOnChainProposalTransactionsTimelineEntry
+                    :on-chain-proposal-details="onChainProposalDetails"
+                    :chain-id="dao.clientDao.token.chainId"
+                    :transactions="proposal.clientProposal.transactions!"
+                    :proposal-merkle-root="proposalMerkleRoot"
+                    :proposal-id="proposal.ipfsHash"
+                    :transaction-status="transactionStatus">
+                </ExecuteOnChainProposalTransactionsTimelineEntry>
 
                 <q-timeline-entry
                   subtitle="3. Executed"
@@ -54,7 +71,7 @@
           </div>
         </q-card>
       </div>
-      <div class="col-6">
+      <div class="col-xl-6 col-md-6 col-xs-grow">
         <q-scroll-area style="height: 330px; width:100%;">
           <q-list class="rounded-borders">
             <q-item v-for="item in rows" class="bodynoise q-ma-xs" dense >
@@ -84,11 +101,11 @@
                           <q-icon color="primary" name="fa-solid fa-circle-info" class="q-pl-xs"
                                   style="margin-bottom: 3px;padding-right:5px">
                             <q-tooltip class="stateborn-tooltip" v-if="item.tokenType === TokenType.ERC20">
-                              Description: Transfer {{item.amount}} {{item.tokenSymbol}} of DAO treasury to
+                              Description: Transfer {{item.amount}} {{item.tokenSymbol}} frp, DAO treasury to
                               address {{item.transferToAddress}}.
                             </q-tooltip>
                             <q-tooltip class="stateborn-tooltip" v-if="item.tokenType === TokenType.NFT">
-                              Description: Transfer {{item.tokenSymbol}} NFT with ID {{item.tokenId}} owned by DAO to
+                              Description: Transfer {{item.tokenSymbol}} NFT with ID {{item.tokenId}} from DAO treasury to
                               address {{item.transferToAddress}}.
                             </q-tooltip>
                           </q-icon>
@@ -112,12 +129,12 @@
                         </div>
                       </div>
                       <div class="row text-subtitle2" v-if="item.tokenType === TokenType.NFT && item.ipfsNftInfo?.name">
-                        <div class="col-auto text-bold sectionName">NFT #{{ item.tokenId }} name</div>
+                        <div class="col-auto text-bold sectionName">NFT name</div>
                         <div class="col-grow text-right">{{ item.ipfsNftInfo?.name }}
                         </div>
                       </div>
                       <div class="row text-subtitle2" v-if="item.tokenType === TokenType.NFT && item.ipfsNftInfo?.description">
-                        <div class="col-auto text-bold sectionName">NFT #{{ item.tokenId }} description</div>
+                        <div class="col-auto text-bold sectionName">NFT description</div>
                         <div class="col-grow text-right">{{ item.ipfsNftInfo?.description.substring(0, 30) }}...
                         </div>
                       </div>
@@ -142,8 +159,6 @@
 <script lang="ts" setup>
 import { onMounted, ref, watch } from 'vue';
 import { useEthConnectionStore } from 'stores/eth-connection-store';
-import { api } from 'boot/axios';
-import { BlockchainProposalDto } from 'src/api/dto/blockchain-proposal-dto';
 import { TokenType } from 'src/api/model/ipfs/token-type';
 import { goToEtherscan } from 'src/api/services/utils-service';
 import { ProposalTransactionType } from 'src/api/model/ipfs/proposal-transaction-type';
@@ -156,6 +171,15 @@ import ProposalRejectedTransactionsTimelineEntry
   from 'components/proposal/proposal-transactios/ProposalRejectedTransactionsTimelineEntry.vue';
 import CreatedOnchainTransactionsTimelineEntry
   from 'components/proposal/proposal-transactios/CreatedOnchainTransactionsTimelineEntry.vue';
+import { getOnChainProposalDetails } from 'src/api/services/onchain-service';
+import { BackendProposal } from 'src/api/model/backend-proposal';
+import { getProposalReport } from 'src/api/services/proposal-report-service';
+import DeployOnChainProposalTransactionsTimelineEntry
+  from 'components/proposal/proposal-transactios/DeployOnChainProposalTransactionsTimelineEntry.vue';
+import { DaoBackend } from 'src/api/model/dao-backend';
+import { OnChainProposalDetails } from 'src/api/model/on-chain-proposal-details';
+import ExecuteOnChainProposalTransactionsTimelineEntry
+  from 'components/proposal/proposal-transactios/ExecuteOnChainProposalTransactionsTimelineEntry.vue';
 
 class TransactionRow {
   description: string;
@@ -198,12 +222,16 @@ class TransactionRow {
   }
 }
 const rows = ref(<TransactionRow[]>[]);
-const props = defineProps(['transactions', 'proposalIpfsHash']);
+const props = defineProps<{
+  proposal: BackendProposal,
+  dao: DaoBackend,
+}>();
 const ethConnectionStore = useEthConnectionStore();
 const txHash = ref('');
 const chainId = ref('');
-const proposalAddress = ref('');
 const transactionStatus = ref(BlockchainProposalStatus.CREATED_ON_CHAIN);
+const proposalMerkleRoot = ref('');
+const onChainProposalDetails = ref(<OnChainProposalDetails | undefined> undefined);
 
 const getNftDetails = async (tokenAddress: string, tokenId: number): Promise<IpfsNftInfo | undefined> => {
   try {
@@ -215,8 +243,8 @@ const getNftDetails = async (tokenAddress: string, tokenId: number): Promise<Ipf
 const fillTable = async () => {
   let i = 1;
   rows.value = [];
-  chainId.value = props.transactions[0].data.token.chainId;
-  for (const _ of props.transactions) {
+  chainId.value = props.proposal.clientProposal.transactions![0].data.token.chainId;
+  for (const _ of props.proposal.clientProposal.transactions!) {
     const data = _.data;
     i++;
     let ipfsNftInfo: IpfsNftInfo | undefined;
@@ -240,28 +268,64 @@ const fillTable = async () => {
       );
   }
 };
-const fetchTransactionAggregate = async () => {
-  if (props.proposalIpfsHash) {
-    const res = await api.get(`/api/rest/v1/proposal/${props.proposalIpfsHash}/blockchain`);
-    const blockchainProposalDto: BlockchainProposalDto = <BlockchainProposalDto>res.data;
-    txHash.value = blockchainProposalDto.blockchainProposalChainTransactions[0]?.txHash ?? '';
-    transactionStatus.value = blockchainProposalDto.status;
-    if (BlockchainProposalStatus.CREATED_ON_CHAIN) {
-      proposalAddress.value = blockchainProposalDto.address!;
+// const fetchTransactionAggregate = async () => {
+//   if (props.proposal.ipfsHash) {
+//     const res = await api.get(`/api/rest/v1/proposal/${props.proposal.ipfsHash}/blockchain`);
+//     const blockchainProposalDto: BlockchainProposalDto = <BlockchainProposalDto>res.data;
+//     console.log('blockchain proposal dto', blockchainProposalDto);
+//     txHash.value = blockchainProposalDto.blockchainProposalChainTransactions[0]?.txHash ?? '';
+//     transactionStatus.value = blockchainProposalDto.status;
+//     if (BlockchainProposalStatus.CREATED_ON_CHAIN) {
+//       proposalAddress.value = blockchainProposalDto.address!;
+//     }
+//   }
+// };
+
+const calculateTransactionStatus = async () => {
+  const proposalReport = await getProposalReport(props.proposal.ipfsHash);
+  // if proposal report is undefined, it means proposal is still under voting
+  if (proposalReport === undefined) {
+    transactionStatus.value = BlockchainProposalStatus.CREATED_OFFCHAIN;
+  } else {
+    if (proposalReport.proposalResult === 'YES') {
+      proposalMerkleRoot.value = proposalReport.merkleRootHex;
+      transactionStatus.value = BlockchainProposalStatus.READY_TO_DEPLOY_ONCHAIN;
+      onChainProposalDetails.value = await getOnChainProposalDetails(props.proposal.ipfsHash, props.dao.clientDao.contractAddress!);
+      console.log('mam obiekt', onChainProposalDetails.value);
+      if (onChainProposalDetails.value !== undefined) {
+        transactionStatus.value = BlockchainProposalStatus.CREATED_ON_CHAIN;
+        if (onChainProposalDetails.value.ended) {
+          if (onChainProposalDetails.value.passed) {
+            if (onChainProposalDetails.value.executed) {
+              transactionStatus.value = BlockchainProposalStatus.EXECUTED;
+            } else {
+              transactionStatus.value = BlockchainProposalStatus.READY_TO_EXECUTE;
+            }
+          } else {
+            transactionStatus.value = BlockchainProposalStatus.REJECTED_ONCHAIN;
+          }
+        }
+      } else {
+        transactionStatus.value = BlockchainProposalStatus.READY_TO_DEPLOY_ONCHAIN;
+      }
+    } else {
+      transactionStatus.value = BlockchainProposalStatus.PROPOSAL_REJECTED;
     }
   }
-};
+  console.log('mam status', transactionStatus.value);
+}
 
-watch(() => [props.transactions, ethConnectionStore.isConnected], () => {
+watch(() => [props.proposal, ethConnectionStore.isConnected], () => {
   fillTable();
 });
 
-watch(() => [props.proposalIpfsHash], () => {
-  fetchTransactionAggregate();
-});
+// watch(() => [props.proposalIpfsHash], () => {
+//   fetchTransactionAggregate();
+// });
 onMounted(() => {
   fillTable();
-  fetchTransactionAggregate();
+  // fetchTransactionAggregate();
+  calculateTransactionStatus();
 });
 
 const onChallengeSequencerPeriodEnded = () => {

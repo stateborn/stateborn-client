@@ -17,24 +17,28 @@ export class TokenService {
         name: 'Ethereum Mainnet',
         icon: '/ethereum.svg',
         chainIdHex: '0x1',
+        currency: 'ETH',
       },
       {
         chainId: '42161',
         name: 'Arbitrum One',
         icon: '/arbitrum.svg',
         chainIdHex: '0xA4B1',
+        currency: 'ETH',
       },
       {
         chainId: '137',
         name: 'Polygon Mainnet',
         icon: '/polygon.svg',
         chainIdHex: '0x89',
+        currency: 'MATIC',
       },
       {
         chainId: process.env.DEVELOPMENT_NETWORK_CHAIN_ID!,
         name: process.env.DEVELOPMENT_NETWORK_NAME!,
         icon: process.env.DEVELOPMENT_NETWORK_ICON_NAME!,
         chainIdHex: process.env.DEVELOPMENT_NETWORK_CHAIN_ID_HEX!,
+        currency: 'LOCAL-ETH',
       },
     ]
       :
@@ -44,18 +48,21 @@ export class TokenService {
       name: 'Ethereum Mainnet',
       icon: '/ethereum.svg',
       chainIdHex: '0x1',
+      currency: 'ETH',
     },
     {
       chainId: '42161',
       name: 'Arbitrum One',
       icon: '/arbitrum.svg',
       chainIdHex: '0xA4B1',
+      currency: 'ETH',
     },
     {
       chainId: '137',
       name: 'Polygon Mainnet',
       icon: '/polygon.svg',
       chainIdHex: '0x89',
+      currency: 'MATIC',
     },
   ]
 
@@ -88,6 +95,11 @@ export class TokenService {
   getNetworkIcon(chainId: string): string {
     return this.getProperty(chainId, 'icon');
   }
+
+  getNetworkCurrency(chainId: string): string {
+    return this.getProperty(chainId, 'currency');
+  }
+
 
   isSupportedNetwork(chainId: string): boolean {
     return  this.supportedNetwork.filter(_ => _.chainId === chainId).length > 0

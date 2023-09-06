@@ -1,13 +1,13 @@
 <template>
   <q-card class="stateborn-card" square>
     <q-card-section style="padding:0px;" v-if="ethConnectionStore.isConnected && connectedNetworkMatchesTokenNetwork">
-      <div class="row justify-center items-center">
-        <div class="col-auto q-pa-xs justify-center">
-          <q-icon name="fa-solid fa-file-circle-check" color="primary" style="font-size: 1.5rem !important;"></q-icon>
+      <div class="row justify-center items-center q-pa-xs">
+        <div class="col-auto justify-center q-pa-xs">
+          <q-icon name="fa-solid fa-file-circle-check" color="primary" style="font-size: 1.1rem !important;"></q-icon>
         </div>
         <div class="col-auto justify-center">
-          <div class="text-h6 text-center">
-            Proposal summary
+          <div class="col-auto justify-center">
+            <q-item-label class=" text-primary text-overline text-bold" style="font-size: 1rem">Proposal report</q-item-label>
           </div>
         </div>
       </div>

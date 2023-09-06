@@ -3,6 +3,7 @@ import { UserVotesStorage } from 'src/api/model/user-votes-storage';
 import Dexie from 'dexie';
 import { BackendProposal } from 'src/api/model/backend-proposal';
 import { DaoBackend } from 'src/api/model/dao-backend';
+import { ProposalReport } from 'src/api/model/proposal-report';
 
 const db = new Dexie('stateborndb');
 
@@ -10,6 +11,7 @@ const db = new Dexie('stateborndb');
 db.version(1).stores({
   votes: 'proposalIpfsHash_userAddress, vote',
   clientProposalReports: 'proposalIpfsHash_userAddress, proposalReport',
+  proposalReports: 'proposalIpfsHash, proposalReport',
   proposals: 'proposalIpfsHash, proposal',
   daos: 'daoIpfsHash, dao',
 });
@@ -49,7 +51,6 @@ export const getProposalFromStorage = async (proposalIpfsHash: string): Promise<
   return item !== undefined ? item.proposal : undefined;
 };
 
-
 export const setDaoInStorage = async (daoIpfsHash: string, dao: DaoBackend) => {
   await db.daos.put({
     daoIpfsHash,
@@ -62,14 +63,14 @@ export const getDaoFromStorage = async (daoIpfsHash: string): Promise<DaoBackend
   return item !== undefined ? item.dao : undefined;
 };
 
-// export const setProposalReportInStorage = async (proposalIpfsHash: string, proposalReport: ProposalReport) => {
-//   await db.proposalReports.put({
-//     proposalIpfsHash,
-//     proposalReport,
-//   });
-// };
-//
-// export const getProposalReportFromStorage = async (proposalIpfsHash: string): Promise<ProposalReport | undefined> => {
-//   const item = await db.proposalReports.where("proposalIpfsHash").equals(proposalIpfsHash).first();
-//   return item !== undefined ? item.proposalReport : undefined;
-// };
+export const setProposalReportInStorage = async (proposalIpfsHash: string, proposalReport: ProposalReport) => {
+  await db.proposalReports.put({
+    proposalIpfsHash,
+    proposalReport,
+  });
+};
+
+export const getProposalReportFromStorage = async (proposalIpfsHash: string): Promise<ProposalReport | undefined> => {
+  const item = await db.proposalReports.where("proposalIpfsHash").equals(proposalIpfsHash).first();
+  return item !== undefined ? item.proposalReport : undefined;
+};
