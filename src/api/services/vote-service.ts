@@ -6,11 +6,12 @@ import { abiEncodeVote, isVoteValid } from 'src/api/services/signature-service';
 import { ProposalVerification } from 'src/api/model/proposal-verification';
 import { VoteDataSource } from 'src/api/model/vote-data-source';
 import { ClientVote } from 'src/api/model/ipfs/client-vote';
+import cloneDeep from 'lodash/cloneDeep';
 
 export const getAllUserVotes = async (proposalIpfsHash: string, userAddress: string): Promise<SingleUserVoteStorage[]> => {
   const userVote = await getUserVoteFromStorage(proposalIpfsHash, userAddress);
   if (userVote !== undefined) {
-    return userVote.votes;
+    return cloneDeep(userVote.votes);
   } else {
     return [];
   }

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <q-page class="noise" :class="$q.platform.is.mobile ? 'q-pa-xs text-subtitle2' : 'text-subtitle1'">
+    <q-page class="noise" :class="$q.platform.is.mobile ? 'q-pa-xs text-subtitle2' : 'text-subtitle1'" :style="$q.platform.is.mobile ? 'line-height: 25px' : ''">
       <div class="row items-center justify-center" >
         <div class="col-lg-3 col-xs-auto items-center" v-if="!$q.platform.is.mobile">
           <q-list separator class="q-ma-lg text-grey-9">
@@ -95,7 +95,7 @@
                             </li>
                           </ul>
 
-                          <div class="q-pa-md text-center" :class="$q.platform.is.mobile ? 'text-h5' : 'text-h2'">off-chain DAO = cryptography + governance token + IPFS</div>
+                          <div class="q-pa-md text-center" :class="$q.platform.is.mobile ? 'text-h2 text-center' : 'text-h2'">off-chain DAO = cryptography + governance token + IPFS</div>
 
                           Stateborn off-chain DAO data is cryptographically secured data saved in IPFS and blockchain.
                           Creating DAOs, proposals and votes is cryptographically client side signed by the users.
@@ -115,11 +115,11 @@
                           <router-link to="/onchain-dao" span class="text-underline text-bold">ABOUT STATEBRON PROTOCOL</router-link><br><br>
 
                           The description below references to off-chain DAO components - data processed by users and <a href="https://stateborn.org" target="_blank">stateborn.org</a>, saved in IPFS.
-                          <div class="q-pa-md text-center" :class="$q.platform.is.mobile ? 'text-h5' : 'text-h2'" id="daoDefinitionDocument">DAO definition document</div>
+                          <div class="q-pa-md text-center" :class="$q.platform.is.mobile ? 'text-h2 text-center' : 'text-h2'" id="daoDefinitionDocument">DAO definition document</div>
                           A stateborn DAO definition document contains all the information about the DAO, such as name, description, logo, governance token,
                           on-chain DAO treasury address (if off-chain + on-chain DAO), proposal requirements, creator's digital signature,etc.
                           Every DAO definition document (JSON) is an immutable document saved in IPFS.
-                          <div class="q-pa-md text-center" :class="$q.platform.is.mobile ? 'text-h5' : 'text-h2'" id="governanceToken">Governance token</div>
+                          <div class="q-pa-md text-center" :class="$q.platform.is.mobile ? 'text-h2 text-center' : 'text-h2'" id="governanceToken">Governance token</div>
                           Every DAO has a blockchain token which represents the share of the DAO.
                           Users owning a token can be part of DAO governance - create proposals and vote on them. The amount of tokens owned by a user is the voting power.
                           Stateborn supports different token standards on various blockchain networks.<br><br>
@@ -150,17 +150,17 @@
                             </q-item>
                           </q-list>
 
-                          <div class="q-pa-md text-center" :class="$q.platform.is.mobile ? 'text-h5' : 'text-h2'" id="proposals">Proposals</div>
+                          <div class="q-pa-md text-center" :class="$q.platform.is.mobile ? 'text-h2 text-center' : 'text-h2'" id="proposals">Proposals</div>
                           Users owning a DAO token can create proposals. It can be about anything that requires a voting from the DAO community.
                           Proposal data contains all information related to proposal such as title, description, attachments, voting period, creator's digital signature, etc.
                           If DAO is on-chain + off-chain, proposals can contain on-chain DAO treasury assets transfers, which can be proposed
                           on a blockchain to be executed by the DAO community.
                           Every proposal (JSON) is an immutable document saved in IPFS.
-                          <div class="q-pa-md text-center" :class="$q.platform.is.mobile ? 'text-h5' : 'text-h2'" id="votes">Votes</div>
+                          <div class="q-pa-md text-center" :class="$q.platform.is.mobile ? 'text-h2 text-center' : 'text-h2'" id="votes">Votes</div>
                           Users owning a DAO token can vote on proposals.
                           Vote data contains information about voter, his voting power, voting time, voter's digital signature, etc.
                           Every vote is an immutable document saved in IPFS.
-                          <div class="q-pa-md text-center" :class="$q.platform.is.mobile ? 'text-h5' : 'text-h2'" id="proposalSummaryReport">Proposal summary reports</div>
+                          <div class="q-pa-md text-center" :class="$q.platform.is.mobile ? 'text-h2 text-center' : 'text-h2'" id="proposalSummaryReport">Proposal summary reports</div>
                           A proposal summary report is a proposal voting summary generated when the proposal voting period ends.
                           It allows to validate all the votes and obtain final proposal decision result.
                           Every proposal summary report is an immutable document saved in IPFS.<br><br>
@@ -198,7 +198,7 @@
                               <q-img src="/add.png" :style="$q.platform.is.mobile ? 'width: 50px' : 'width: 80px' "/>
                             </div>
                             <div class="col-lg-10 col-xs-grow justify-center">
-                              <div class="q-pb-md" :class="$q.platform.is.mobile ? 'text-h5' : 'text-h2'" id="doesntAddData">
+                              <div class="q-pb-md" :class="$q.platform.is.mobile ? 'text-h2 text-center' : 'text-h2'" id="doesntAddData">
                                 Stateborn backend doesn't add any data to DAOs, proposals or votes
                               </div>
                               Every single "business" data is created client side and cryptograhically client signed by the users. Backend after receiving the data from a client,
@@ -214,7 +214,7 @@
                               <q-img src="/ipfs.png" :style="$q.platform.is.mobile ? 'width: 50px' : 'width: 80px' "/>
                             </div>
                             <div class="col-lg-10 col-xs-grow justify-center">
-                              <div class="q-pb-md" :class="$q.platform.is.mobile ? 'text-h5' : 'text-h2'" id="creation">
+                              <div class="q-pb-md" :class="$q.platform.is.mobile ? 'text-h2 text-center' : 'text-h2'" id="creation">
                                 Every DAO, proposal, user vote and proposal summary report is client side validated with IPFS                  </div>
                               Data returned by stateborn backend is validated with data saved in IPFS. It eliminates the possibility to rely on malformed
                               or incorrect data from the backend. In any case of stateborn backend data manipulation, user will see the validation result in <a href="https://stateborn.org" target="_blank">stateborn.org</a> interface.
@@ -228,7 +228,7 @@
                               <q-img src="/indexeddb.png" style="width:80px"/>
                             </div>
                             <div class="col-lg-10 col-xs-grow justify-center">
-                              <div class="q-pb-md" :class="$q.platform.is.mobile ? 'text-h5' : 'text-h2'" id="creation">
+                              <div class="q-pb-md" :class="$q.platform.is.mobile ? 'text-h2 text-center' : 'text-h2'" id="creation">
                                 Every DAO, proposal, user vote and proposal summary report is stored in the client side database (IndexedDB)
                               </div>
                               Every DAO, proposal and user vote related data is saved to user's Internet browser database (IndexedDB). DAOs, proposals and proposal summary reports are
@@ -240,7 +240,7 @@
                           </div>
 
 
-                          <div class="q-pt-md q-pb-md" :class="$q.platform.is.mobile ? 'text-h5' : 'text-h2'"></div>
+                          <div class="q-pt-md q-pb-md" :class="$q.platform.is.mobile ? 'text-h2 text-center' : 'text-h2'"></div>
 
                         </div>
                       </div>
@@ -262,10 +262,10 @@
                           Voting process describes a lifecycle of decision making process from initial proposal creation to the final voting result.
                           <div class="row items-center q-pt-lg">
                             <div class="col-lg-2 col-xs-grow text-center">
-                              <q-icon name="fa-solid fa-1" size="xl"></q-icon>
+                              <q-icon name="fa-solid fa-1" :size="$q.platform.is.mobile ? 'md' : 'xl'"></q-icon>
                             </div>
                             <div class="col-lg-10 col-xs-grow justify-center">
-                              <div class="q-pb-md" :class="$q.platform.is.mobile ? 'text-h5' : 'text-h3'" id="creation">
+                              <div class="q-pb-md" :class="$q.platform.is.mobile ? 'text-h2 text-center' : 'text-h2'" id="creation">
                                 User creates a proposal
                               </div>
                               Every user has the ability to create proposals and vote on them.
@@ -292,10 +292,10 @@
 
                           <div class="row items-center q-pt-lg">
                             <div class="col-lg-2 col-xs-grow text-center">
-                              <q-icon name="fa-solid fa-2" size="xl"></q-icon>
+                              <q-icon name="fa-solid fa-2" :size="$q.platform.is.mobile ? 'md' : 'xl'"></q-icon>
                             </div>
                             <div class="col-lg-10 col-xs-grow justify-center">
-                              <div class="q-pb-md" :class="$q.platform.is.mobile ? 'text-h5' : 'text-h2'" id="creation">
+                              <div class="q-pb-md" :class="$q.platform.is.mobile ? 'text-h2 text-center' : 'text-h2'" id="creation">
                                 Users vote on the proposal
                               </div>
                               Users vote on proposals. Every vote is an immutable document saved in IPFS.
@@ -323,10 +323,10 @@
 
                           <div class="row items-center q-pt-lg">
                             <div class="col-lg-2 col-xs-grow text-center">
-                              <q-icon name="fa-solid fa-3" size="xl"></q-icon>
+                              <q-icon name="fa-solid fa-3" :size="$q.platform.is.mobile ? 'md' : 'xl'"></q-icon>
                             </div>
                             <div class="col-lg-10 col-xs-grow justify-center">
-                              <div class="q-pb-md" :class="$q.platform.is.mobile ? 'text-h5' : 'text-h2'" id="creation">
+                              <div class="q-pb-md" :class="$q.platform.is.mobile ? 'text-h2 text-center' : 'text-h2'" id="creation">
                                 Voting period ends. <br>
                                 A proposal summary report is generated.
                               </div>
@@ -373,7 +373,7 @@
                         <div class="text-center text-h1" id="role">
                           Role
                         </div>
-                        <div class="text-overline text-center q-pb-md text-sub">of <a href="https://stateborn.org" target="_blank">stateborn.org</a></div>
+                        <div class="text-overline text-center q-pb-md text-sub">of stateborn.org</div>
                       </div>
                       <div class="row justify-center">
                         <div class="col-lg-12">
@@ -469,24 +469,26 @@ import { goToGithub, goToTwitter } from 'src/api/services/utils-service';
 import { onMounted, ref } from 'vue';
 import { sleep } from 'src/api/services/sleep-service';
 import { getElementOffset } from 'src/api/services/ui-utils';
+import { useQuasar } from 'quasar';
 
 const height = window.innerHeight - 75;
 const scrollHeight = ref(height);
 window.addEventListener('resize',function() {
   scrollHeight.value = window.innerHeight - 75;
 });
+const $q = useQuasar();
 
 const barStyle = ref({
   borderRadius: '0px',
   backgroundColor: '#5B5B5B',
-  width: '5px',
+  width: $q.platform.is.mobile ? '2px': '5px',
   opacity: 0.2
 });
 
 const thumbStyle = ref({
   borderRadius: '0px',
   backgroundColor: '#5B5B5B',
-  width: '5px',
+  width: $q.platform.is.mobile ? '2px': '5px',
   opacity: 0.75
 });
 

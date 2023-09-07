@@ -62,11 +62,23 @@
                 <q-timeline-entry
                   subtitle="5. Executed - transfers executed on-chain"
                   style="height:40px"
+                  v-if="transactionStatus !== BlockchainProposalStatus.REJECTED_ONCHAIN"
                   :class="transactionStatus === BlockchainProposalStatus.EXECUTED ? 'noisegreen' : ''"
                   :icon="transactionStatus === BlockchainProposalStatus.EXECUTED ? 'fa-solid fa-cube' : undefined"
                   :color=" transactionStatus === BlockchainProposalStatus.EXECUTED? 'green-9' : ''"
                   side="left">
                 </q-timeline-entry>
+
+                <q-timeline-entry
+                    v-if="transactionStatus === BlockchainProposalStatus.REJECTED_ONCHAIN"
+                    subtitle="5. Rejected - on-chain proposal rejected"
+                    style="height:40px"
+                    :class="transactionStatus === BlockchainProposalStatus.REJECTED_ONCHAIN ? 'noisered' : ''"
+                    :icon="transactionStatus === BlockchainProposalStatus.REJECTED_ONCHAIN ? 'fa-solid fa-xmark' : undefined"
+                    :color=" transactionStatus === BlockchainProposalStatus.REJECTED_ONCHAIN? 'red' : ''"
+                    side="left">
+                </q-timeline-entry>
+
               </q-timeline>
             </div>
           </div>
@@ -246,9 +258,9 @@ const getNftDetails = async (tokenAddress: string, tokenId: number): Promise<Ipf
 const fillTable = async () => {
   let i = 1;
   rows.value = [];
-  chainId.value = props.proposal.clientProposal.transactions![0].data.token.chainId;
+  chainId.value = (<any>props.proposal.clientProposal.transactions![0].data).token.chainId;
   for (const _ of props.proposal.clientProposal.transactions!) {
-    const data = _.data;
+    const data: any = _.data;
     i++;
     let ipfsNftInfo: IpfsNftInfo | undefined;
     if (_.transactionType === ProposalTransactionType.TRANSFER_NFT_TOKEN) {
@@ -282,7 +294,6 @@ const calculateTransactionStatus = async () => {
       proposalMerkleRoot.value = proposalReport.merkleRootHex;
       transactionStatus.value = BlockchainProposalStatus.READY_TO_DEPLOY_ONCHAIN;
       onChainProposalDetails.value = await getOnChainProposalDetails(props.proposal.ipfsHash, props.dao.clientDao.contractAddress!);
-      console.log('mam obiekt', onChainProposalDetails.value);
       if (onChainProposalDetails.value !== undefined) {
         transactionStatus.value = BlockchainProposalStatus.CREATED_ON_CHAIN;
         if (onChainProposalDetails.value.ended) {
@@ -303,7 +314,6 @@ const calculateTransactionStatus = async () => {
       transactionStatus.value = BlockchainProposalStatus.PROPOSAL_REJECTED;
     }
   }
-  console.log('mam status', transactionStatus.value);
 }
 
 watch(() => [props.proposal, ethConnectionStore.isConnected], () => {

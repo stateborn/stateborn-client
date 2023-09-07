@@ -42,14 +42,14 @@
              v-if="!isProposalEnded && connectedNetworkMatchesTokenNetwork"
              :style="$q.platform.is.mobile ? 'height:50px': `height: 100%`">
           <div class="col-lg-12 col-xs-grow justify-center">
-            <div class="row justify-center" v-if="!$q.platform.is.mobile">
+            <div class="row justify-center">
               <div class="col-lg-grow col-xs-12 justify-center">
                 <q-banner class="text-black text-subtitle2 text-center noisered">
-                  <span class="text-bold text-red">Please connect to vote</span>
+                  <span class="text-bold text-red" v-if="$q.platform.is.mobile">Currently available on WEB only</span>
+                  <span class="text-bold text-red" v-else>Please connect to vote</span>
                 </q-banner>
               </div>
             </div>
-            <div class="text-center text-subtitle2 text-red" v-else>Please connect to vote</div>
           </div>
         </div>
       </div>

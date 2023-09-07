@@ -1,13 +1,13 @@
 <template>
   <q-timeline-entry subtitle="1. Created off-chain - transfers added to proposal"
-                    :style="transactionStatus === BlockchainProposalStatus.CREATED_OFFCHAIN ? '': 'height:40px'"
                     :icon="[
                         BlockchainProposalStatus.CREATED_OFFCHAIN,
                         BlockchainProposalStatus.PROPOSAL_REJECTED,
                         BlockchainProposalStatus.READY_TO_DEPLOY_ONCHAIN,
                         BlockchainProposalStatus.CREATED_ON_CHAIN,
                         BlockchainProposalStatus.READY_TO_EXECUTE,
-                        BlockchainProposalStatus.EXECUTED].includes(transactionStatus) ? 'fa-solid fa-check' : undefined"
+                        BlockchainProposalStatus.EXECUTED,
+                        BlockchainProposalStatus.REJECTED_ONCHAIN].includes(transactionStatus) ? 'fa-solid fa-check' : undefined"
                     color="green-9"
                     :class="transactionStatus === BlockchainProposalStatus.CREATED_OFFCHAIN ? 'noisegreen' : ''"
                     side="left">
@@ -19,7 +19,15 @@
           <br> Proposal is now under voting.
         </div>
       </div>
-      <span class="text-primary"></span>
+    </div>
+
+    <div v-else>
+      <div class="row text-subtitle2" >
+          <div class="col-12 text-left ">Transaction added to off-chain proposal description
+            <q-btn flat round color="primary" size="xs" icon="fa-solid fa-arrow-up-right-from-square"
+                   @click="goToIpfs(proposalIpfsHash)"/>
+          </div>
+        </div>
     </div>
   </q-timeline-entry>
 </template>

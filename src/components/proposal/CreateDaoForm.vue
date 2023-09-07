@@ -1,14 +1,14 @@
 <template>
-  <div>
+  <div style="margin:0;padding:0;">
     <q-banner class="text-primary text-subtitle2 text-center noisegreen q-ma-xs" v-if="props.onchain">
       <div class="row items-center">
-        <div class="col-4">
+        <div class="col-lg-4 col-xs-grow">
           <q-img class="onchain-icon" src="/cube2.svg" style="height:42px; width: 42px"></q-img>
         </div>
-        <div class="col-8 text-left">
-          <q-item-label class="text-overline q-mb-xs" style="font-size: 1rem">OFF-CHAIN + ON-CHAIN</q-item-label>
-          <q-item-label class="text-overline text-bold q-pt-xs" style="font-size: 0.9rem">Features:</q-item-label>
-          <q-item-label class="text-overline q-mb-md " style="font-size: 0.9rem">All included in off-chain DAO:</q-item-label>
+        <div class="col-lg-8 col-xs-grow text-left">
+          <q-item-label class="text-overline q-mb-xs" :class="$q.platform.is.mobile ? 'text-center' : ''" style="font-size: 1rem">OFF-CHAIN + ON-CHAIN</q-item-label>
+          <q-item-label class="text-overline text-bold q-pt-xs" :class="$q.platform.is.mobile ? 'text-center' : ''" style="font-size: 0.9rem">Features:</q-item-label>
+          <q-item-label class="text-overline q-mb-md " :class="$q.platform.is.mobile ? 'text-center' : ''" style="font-size: 0.9rem">All included in off-chain DAO:</q-item-label>
           • NFT/ERC-20 blockchain based token governance
           <q-icon color="primary" name="fa-solid fa-circle-info" style="margin-bottom: 3px;">
             <q-tooltip class="stateborn-tooltip">
@@ -37,7 +37,7 @@
               Votes are transparent, immutable, cryptographically secured and can be verified by anyone.<br>
             </q-tooltip>
           </q-icon><br>
-          <q-item-label class="text-overline q-mb-md q-mt-md " style="font-size: 0.9rem">on-chain only features:</q-item-label>
+          <q-item-label class="text-overline q-mb-md q-mt-md " :class="$q.platform.is.mobile ? 'text-center' : ''" style="font-size: 0.9rem">on-chain only features:</q-item-label>
           • on-chain (smart-contracts based) DAO with treasury  <q-icon color="primary" name="fa-solid fa-circle-info" style="margin-bottom: 3px;">
           <q-tooltip class="stateborn-tooltip">
             Smart contracts based DAO will be created in blockchain. <br>
@@ -62,12 +62,12 @@
     </q-banner>
     <q-banner class="text-primary text-subtitle2 text-center noisegreen q-ma-xs" v-else>
       <div class="row items-center">
-        <div class="col-4">
+        <div class="col-lg-4 col-xs-grow">
           <q-icon class="offchain-icon" name="fa-solid fa-square" color="primary"  size="lg"/>
         </div>
-        <div class="col-8 text-left ">
-          <q-item-label class="text-overline " style="font-size: 1.1rem">OFF-CHAIN DAO</q-item-label>
-          <q-item-label class="text-overline text-bold q-mb-md q-pt-xs" style="font-size: 0.9rem">Features:</q-item-label>
+        <div class="col-lg-8 col-xs-grow text-left ">
+          <q-item-label class="text-overline " :class="$q.platform.is.mobile ? 'text-center' : ''" style="font-size: 1.1rem">OFF-CHAIN DAO</q-item-label>
+          <q-item-label class="text-overline text-bold q-mb-md q-pt-xs" :class="$q.platform.is.mobile ? 'text-center' : ''" style="font-size: 0.9rem">Features:</q-item-label>
           • NFT/ERC-20 blockchain based token governance
           <q-icon color="primary" name="fa-solid fa-circle-info" style="margin-bottom: 3px;">
             <q-tooltip class="stateborn-tooltip">
@@ -103,7 +103,8 @@
       </div>
     </q-banner>
     <q-banner class="text-black text-subtitle2 text-center noisered q-ma-xs" v-if="!ethConnectionStore.isConnected">
-      <span class="text-bold text-red">Please connect first</span>
+      <span class="text-bold text-red" v-if="$q.platform.is.mobile">Currently available on WEB only</span>
+      <span class="text-bold text-red" v-else>Please connect first</span>
     </q-banner>
     <q-input square outlined filled label="DAO name" v-model="name" class="q-pa-xs" maxlength="60" counter :disable="!ethConnectionStore.isConnected"
              :class="(ethConnectionStore.isConnected && flashNameBorder) ? 'flashingBorder' : ''" :error="name.trim() === ''">

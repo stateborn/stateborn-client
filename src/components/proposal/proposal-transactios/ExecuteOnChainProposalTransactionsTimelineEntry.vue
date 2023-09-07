@@ -1,12 +1,14 @@
 <template>
   <q-timeline-entry
-      :style="transactionStatus === BlockchainProposalStatus.READY_TO_EXECUTE ? '': 'height:40px'"
+      :style="transactionStatus === BlockchainProposalStatus.READY_TO_EXECUTE ? '': `${$q.platform.is.mobile  ? 'height:60px' : 'height:40px'}`"
       :icon="[
             BlockchainProposalStatus.READY_TO_EXECUTE,
-            BlockchainProposalStatus.EXECUTED].includes(transactionStatus) ? 'fa-solid fa-check' : undefined"
+            BlockchainProposalStatus.EXECUTED,
+            BlockchainProposalStatus.REJECTED_ONCHAIN].includes(transactionStatus) ? 'fa-solid fa-check' : undefined"
       :color="[
             BlockchainProposalStatus.READY_TO_EXECUTE,
-            BlockchainProposalStatus.EXECUTED].includes(transactionStatus) ? 'green-9' : undefined"
+            BlockchainProposalStatus.EXECUTED,
+            BlockchainProposalStatus.REJECTED_ONCHAIN].includes(transactionStatus) ? 'green-9' : undefined"
       :class="transactionStatus === BlockchainProposalStatus.READY_TO_EXECUTE ? 'noisegreen' : ''"
       subtitle="4. Ready to execute on-chain"
       side="left">
@@ -15,22 +17,22 @@
         On-chain proposal passed. Transfers are ready to be executed.
         <q-icon color="primary" name="fa-solid fa-circle-info" class="q-pl-xs" style="margin-bottom: 3px">
           <q-tooltip class="stateborn-tooltip">
-            Proposal transfers proposal is ready to be created on-chain.<br>
-            Creation can be done by anyone. <br>
+            Proposal transfers proposal is ready to be executed on-chain.<br>
+            Execution can be invoked by anyone. <br>
           </q-tooltip>
         </q-icon>
 
         <div class="row items-center justify-center" v-if="!connectedToMatchingNetwork"
              :style="$q.platform.is.mobile ? 'height:50px': ``">
           <div class="col-12">
-            <div class="row justify-center" v-if="!$q.platform.is.mobile">
+            <div class="row justify-center">
               <div class="col-12">
                 <q-banner class="text-black text-subtitle2 text-center noisered">
-                  <span class="text-bold text-red">Please connect</span>
+                  <span class="text-bold text-red" v-if="$q.platform.is.mobile">Currently available on WEB only</span>
+                  <span class="text-bold text-red" v-else>Please connect</span>
                 </q-banner>
               </div>
             </div>
-            <div class="text-center text-subtitle2 text-red" v-else>Please connect</div>
           </div>
         </div>
 
@@ -63,6 +65,7 @@ const buttonClicked = ref(false);
 const emit = defineEmits(['onExecuteTransfersOnChain']);
 const $q = useQuasar();
 const executeTransfersOnChain = async () => {
+  buttonClicked.value = true;
   $q.loading.show({
     delay: 100, // ms
     message: 'Executing proposal on-chain transfers...',
@@ -74,6 +77,7 @@ const executeTransfersOnChain = async () => {
   Notify.create({message: 'Successfully executed on-chain proposal transfers!', position: 'top-right', color: 'green'});
   await sleep(500);
   $q.loading.hide();
+  await sleep(2000);
   emit('onExecuteTransfersOnChain', true);
 };
 

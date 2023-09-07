@@ -1,18 +1,18 @@
 <template>
   <q-page>
-    <div class="row justify-center " :class="$q.platform.is.mobile ? '' : 'q-pa-md'" >
-      <div class="col-lg-8 col-xs-grow justify-center q-pa-xs">
+    <div class="row justify-center" :class="$q.platform.is.mobile ? '' : 'q-pa-md'" >
+      <div class="col-lg-8 col-xs-grow justify-center">
         <picture-parallax
           image-src="/proposalbody2noise.webp"
           alt="proposal image"
           :text-class="$q.platform.is.mobile ? 'text-h5': undefined"
           title="Create proposal"
           :style="$q.platform.is.mobile ? 'height: 100px !important;' :''"
-          :height="$q.platform.is.mobile ? '323': '300'"
+          :height="$q.platform.is.mobile ? '406': '300'"
         ></picture-parallax>
-        <div class="row q-mt-xs">
+        <div class="row q-pa-xs" >
           <div class="col-12">
-            <q-breadcrumbs class="text-subtitle2 stateborn-card q-pa-xs q-ma-xs text-primary">
+            <q-breadcrumbs class="text-subtitle2 stateborn-card q-pa-xs  text-primary">
               <q-breadcrumbs-el icon="home" to="/">
                 <span class="text-underline">Home</span>
               </q-breadcrumbs-el>
@@ -25,11 +25,11 @@
             </q-breadcrumbs>
           </div>
         </div>
-        <div class="row">
-          <div class="col-lg-3 col-md-5 col-xs-grow">
+        <div class="row" >
+          <div class="col-lg-3 col-md-5 col-xs-grow q-pa-xs" >
             <dao-card :is-full="true" :dao="dao"  v-if="dao !== undefined" :full-width="true" :show-required-token-quantity="true" :is-create-proposal-mode="true"></dao-card>
           </div>
-          <div class="col-lg-9 col-md-7 col-xs-grow ">
+          <div class="col-lg-9 col-md-7 col-xs-grow q-pa-xs">
             <CreateProposalCard></CreateProposalCard>
           </div>
         </div>

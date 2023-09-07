@@ -1,16 +1,16 @@
 <template>
   <q-page>
     <div class="row justify-center " :class="$q.platform.is.mobile ? '': 'q-pa-lg'" >
-      <div class="col-lg-8 col-xs-grow justify-center q-pa-xs" >
+      <div class="col-lg-8 col-xs-grow justify-center" >
         <picture-parallax image-src="statebornnoise.webp" alt="stateborn image" title="Create a DAO"
                           :style="$q.platform.is.mobile ? 'height: 100px': ''"
                           :text-class="$q.platform.is.mobile ? 'text-h5': 'text-h3 q-pa-md'"
                           :height="$q.platform.is.mobile ? '979' : '600'">
         </picture-parallax>
 
-        <div class="row justify-center q-mt-xs q-mb-xs stateborn-card q-pa-xs">
+        <div class="row justify-center q-mt-xs q-mb-xs stateborn-card q-ma-xs">
           <div class="col-12">
-            <div class="row justify-center items-center">
+            <div class="row justify-center items-center q-pa-xs">
               <div class="col-8 items-center">
                 <q-breadcrumbs class="text-subtitle2 ">
                   <q-breadcrumbs-el icon="home" to="/">
@@ -21,22 +21,22 @@
             </div>
           </div>
         </div>
-        <q-card class="stateborn-card" square>
-          <q-card-section class="text-center">
+        <q-card class="stateborn-card q-ma-xs" square>
+          <q-card-section class="text-center" :style="$q.platform.is.mobile ? 'margin:0 !important;padding:0 !important;' :''">
             <div class="row justify-center">
-              <div class="col-lg-8 col-md-12 col-xs-grow justify-center">
-                <q-tabs v-model="tab" align="justify" dense>
-                  <q-tab name="offchain" icon="fa-solid fa-square" label="OFF-CHAIN ONLY" />
+              <div class="col-lg-8 col-md-12 col-xs-12 justify-center">
+                <q-tabs v-model="tab" align="justify" dense :style="$q.platform.is.mobile ? 'font-size:12px': ''">
+                  <q-tab name="offchain" icon="fa-solid fa-square"  >OFF-CHAIN ONLY</q-tab>
                   <q-tab name="onchain"  >
                     <q-img src="/cube2.svg" style="height:29px; width: 29px"></q-img>
                     OFF-CHAIN + ON-CHAIN
                   </q-tab>
                 </q-tabs>
                 <q-tab-panels v-model="tab" animated class="stateborn-card" style="border: 0px;">
-                  <q-tab-panel name="offchain">
+                  <q-tab-panel name="offchain" :style="$q.platform.is.mobile ? 'margin:0;padding:0;': ''">
                     <create-dao-form :onchain="false"></create-dao-form>
                   </q-tab-panel>
-                  <q-tab-panel name="onchain">
+                  <q-tab-panel name="onchain" :style="$q.platform.is.mobile ? 'margin:0;padding:0;': ''">
                     <create-dao-form :onchain="true"></create-dao-form>
                   </q-tab-panel>
                 </q-tab-panels>

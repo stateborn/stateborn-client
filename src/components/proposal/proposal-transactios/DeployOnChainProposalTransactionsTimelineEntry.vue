@@ -1,12 +1,18 @@
 <template>
   <q-timeline-entry
-      :style="transactionStatus === BlockchainProposalStatus.READY_TO_DEPLOY_ONCHAIN ? '': 'height:40px'"
+      :style="transactionStatus === BlockchainProposalStatus.READY_TO_DEPLOY_ONCHAIN ? '': `${$q.platform.is.mobile  ? 'height:60px' : 'height:40px'}`"
       :icon="[
           BlockchainProposalStatus.READY_TO_DEPLOY_ONCHAIN,
           BlockchainProposalStatus.CREATED_ON_CHAIN,
           BlockchainProposalStatus.READY_TO_EXECUTE,
-          BlockchainProposalStatus.EXECUTED].includes(transactionStatus) ? 'fa-solid fa-check' : undefined"
-      color="green-9"
+          BlockchainProposalStatus.EXECUTED,
+          BlockchainProposalStatus.REJECTED_ONCHAIN].includes(transactionStatus) ? 'fa-solid fa-check' : undefined"
+      :color="[
+          BlockchainProposalStatus.READY_TO_DEPLOY_ONCHAIN,
+          BlockchainProposalStatus.CREATED_ON_CHAIN,
+          BlockchainProposalStatus.READY_TO_EXECUTE,
+          BlockchainProposalStatus.EXECUTED,
+          BlockchainProposalStatus.REJECTED_ONCHAIN].includes(transactionStatus) ? 'green-9': ''"
       :class="transactionStatus === BlockchainProposalStatus.READY_TO_DEPLOY_ONCHAIN ? 'noisegreen' : ''"
       subtitle="2. Ready to create on-chain"
       side="left">
@@ -32,14 +38,14 @@
         <div class="row items-center justify-center" v-if="!connectedToMatchingNetwork"
              :style="$q.platform.is.mobile ? 'height:50px': ``">
           <div class="col-12">
-            <div class="row justify-center" v-if="!$q.platform.is.mobile">
+            <div class="row justify-center">
               <div class="col-12">
                 <q-banner class="text-black text-subtitle2 text-center noisered">
-                  <span class="text-bold text-red">Please connect</span>
+                  <span class="text-bold text-red" v-if="$q.platform.is.mobile">Currently available on WEB only</span>
+                  <span class="text-bold text-red" v-else>Please connect</span>
                 </q-banner>
               </div>
             </div>
-            <div class="text-center text-subtitle2 text-red" v-else>Please connect</div>
           </div>
         </div>
         <div class="row">

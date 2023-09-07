@@ -223,18 +223,9 @@ const props = defineProps<{
 }>();
 
 const thereIsAlreadyTransactionWithThisToken = computed(() => {
-  if (transactionType.value.value === TokenType.ERC20) {
-    return props.previousTransactions.filter(_ => (<TransferErc20TransactionData>_.data).token.address === tokenAddress.value).length > 0
+  return props.previousTransactions.filter(_ => (<any>_.data).token.address === tokenAddress.value).length > 0
     //show only to next txs, not first
     && props.txIndex !== 0;
-  } else if (transactionType.value.value === TokenType.NFT) {
-    console.log('ength', props.previousTransactions.filter(_ => (<TransferNftTransactionData>_.data).token.address === tokenAddress.value).length);
-    return props.previousTransactions.filter(_ => (<TransferNftTransactionData>_.data).token.address === tokenAddress.value).length > 0
-      //show only to next txs, not first
-      && props.txIndex !== 0;
-  } else {
-    return false;
-  }
 });
 
 const isEverythingFilled = computed(() => {
@@ -325,7 +316,7 @@ const readErc20 = async () => {
   $q.loading.hide();
   Notify.create({message: 'Successfully fetched ERC-20 token data!', position: 'top-right', color: 'green'});
   daoFunds.value = Number(await ERC_20_SERVICE.readTokenBalance(props.daoAddress, tokenAddress.value, decimals.value)).toFixed(0);
-  await emitProposalTransaction();
+  emitProposalTransaction();
 };
 const readNft = async () => {
   const { nameRes, symbolRes, decimalsRes } = await ERC_721_SERVICE.readTokenData(tokenAddress.value);
@@ -336,7 +327,7 @@ const readNft = async () => {
   $q.loading.hide();
   Notify.create({ message: 'Successfully fetched NFT token data!', position: 'top-right', color: 'green' });
   daoFunds.value = await ERC_20_SERVICE.readTokenBalance(props.daoAddress, tokenAddress.value, decimals.value);
-  await emitProposalTransaction();
+  emitProposalTransaction();
 };
 watch(() => [tokenAddress.value, transactionType.value], async () => {
   $q.loading.show({

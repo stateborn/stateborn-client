@@ -1,11 +1,7 @@
 import { api } from 'boot/axios';
 import { ProposalReport } from 'src/api/model/proposal-report';
-import { BackendProposal } from 'src/api/model/backend-proposal';
-import {
-    getProposalFromStorage,
-    getProposalReportFromStorage,
-    setProposalInStorage, setProposalReportInStorage
-} from 'src/api/services/indexdb-service';
+import { getProposalReportFromStorage, setProposalReportInStorage } from 'src/api/services/indexdb-service';
+import cloneDeep from 'lodash/cloneDeep';
 
 export const getProposalReport = async (proposalIpfsHash: string): Promise<ProposalReport | undefined> => {
     const proposalReport: ProposalReport | undefined = await getProposalReportFromStorage(proposalIpfsHash);
@@ -18,7 +14,7 @@ export const getProposalReport = async (proposalIpfsHash: string): Promise<Propo
                 res.data.proposalResult,
             );
             await setProposalReportInStorage(proposalIpfsHash, newProposalReport);
-            return newProposalReport
+            return cloneDeep(newProposalReport)
         } catch (err) {
             if ((<any>err).response.status === 404) {
                 console.log('Fetch failed - proposal report not yet generated');
@@ -28,6 +24,6 @@ export const getProposalReport = async (proposalIpfsHash: string): Promise<Propo
             }
         }
     } else {
-        return proposalReport;
+        return cloneDeep(proposalReport);
     }
 }

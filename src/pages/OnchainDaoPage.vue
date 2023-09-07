@@ -1,9 +1,8 @@
 <template>
   <div style="background-image: url('/senate.webp'); background-size: cover; background-attachment: fixed ">
-    <QPage class="text-grey-5" :class="$q.platform.is.mobile ? 'q-pa-xs text-subtitle2' : 'text-subtitle1'" style="line-height: 30px">
-
-      <div class="row items-center justify-center q-pt-lg" style="background: rgb(0, 0, 0, 0.86) !important;">
-        <div class="col-lg-3 col-xs-auto items-center">
+    <QPage class="text-grey-5" :class="$q.platform.is.mobile ? ' text-subtitle2' : 'text-subtitle1'" :style="$q.platform.is.mobile ? 'line-height: 25px' : ''">
+      <div class="row items-center justify-center q-pt-lg q-pa-xs" :style="$q.platform.is.mobile ? 'background: rgb(0, 0, 0, 0.76) !important;' : 'background: rgb(0, 0, 0, 0.86) !important;'">
+        <div class="col-lg-3 col-xs-auto items-center" v-if="!$q.platform.is.mobile">
           <q-list separator class="q-ma-lg text-grey-6">
             <div v-for="item in items">
               <q-item-label header v-if="item.isLabelOnly">{{ item.label }}</q-item-label>
@@ -29,10 +28,10 @@
                   <div class="row" >
                     <div class="col-12">
                       <div class="q-pa-lg">
-                        <div class="text-center" :class="$q.platform.is.mobile ? 'text-h2' : 'text-h1'" id="statebornProtocol">
+                        <div class="text-center text-h1" id="statebornProtocol">
                           Stateborn protocol
                         </div>
-                        <div class="text-overline text-center q-pb-md" style="font-size: 1.7rem">in 60 seconds</div>
+                        <div class="text-overline text-center q-pb-md text-sub" >in 60 seconds</div>
                       </div>
                       Stateborn on-chain DAO is a EVM compatible, smart contracts based, DAO treasury wallet. DAO can own
                       assets like native blockchain cryptocurrency (e.g. ETH), ERC-20 or NFT tokens.
@@ -72,14 +71,14 @@
                     <div class="col-12 ">
                       <div class="row justify-center ">
                         <div class="col-12 justify-center text-center">
-                          <q-img src="/mechanics2.png" style="width: 120px"/>
+                          <q-img src="/mechanics2.png" :style="$q.platform.is.mobile ? 'width: 80px' : 'width: 120px'"/>
                         </div>
                       </div>
                       <div class="q-pa-lg">
-                        <div class="text-center " :class="$q.platform.is.mobile ? 'text-h2' : 'text-h1'" id="mechanics">
+                        <div class="text-center text-h1" id="mechanics">
                           Mechanics
                         </div>
-                        <div class="text-overline text-center q-pb-md" style="font-size: 1.7rem">of stateborn protocol</div>
+                        <div class="text-overline text-center q-pb-md text-sub" >of stateborn protocol</div>
                       </div>
                       Stateborn protocol defines off-chain + on-chain stateborn DAOs working principles and dependencies.
                       It is set of rules and techniques which aims to allow manage non-permissioned on-chain DAOs treasury
@@ -117,17 +116,17 @@
 
                       <div class="q-pa-lg">
                         <div class="text-h1 text-center q-pt-lg">DAO</div>
-                        <div class="text-overline text-center q-pb-md" style="font-size: 1.7rem">lifecycle</div>
+                        <div class="text-overline text-center q-pb-md text-sub" >lifecycle</div>
                       </div>
 
                       The lifecycle of stateborn DAO from DAO creation to proposal execution, described below, illustrates
                       the mechanics of stateborn protocol, its features, challenges, risks and solutions.
                       <div class="row items-center q-pt-lg">
-                        <div class="col-2 text-center">
-                          <q-icon name="fa-solid fa-1" size="xl"></q-icon>
+                        <div class="col-lg-2 col-xs-grow text-center">
+                          <q-icon name="fa-solid fa-1" :size="$q.platform.is.mobile ? 'md' : 'xl'"></q-icon>
                         </div>
-                        <div class="col-10 justify-center">
-                          <div class="q-pb-md" :class="$q.platform.is.mobile ? 'text-h5' : 'text-h2'" id="creation">
+                        <div class="col-lg-10 col-xs-grow justify-center">
+                          <div class="q-pb-md" :class="$q.platform.is.mobile ? 'text-h2 text-center' : 'text-h2'" id="creation">
                             off-chain + on-chain DAO creation
                           </div>
                           Stateborn off-chain DAO is a basic component of stateborn protocol. It can be created by anyone using
@@ -156,11 +155,11 @@
                       </div>
                       <q-separator color="grey-9" class="q-mt-md q-mb-md"></q-separator>
                       <div class="row items-center ">
-                        <div class="col-2 text-center">
-                          <q-icon name="fa-solid fa-2" size="xl"></q-icon>
+                        <div class="col-lg-2 col-xs-grow text-center">
+                          <q-icon name="fa-solid fa-2" :size="$q.platform.is.mobile ? 'md' : 'xl'"></q-icon>
                         </div>
-                        <div class="col-10 justify-center">
-                          <div class="q-pb-md" :class="$q.platform.is.mobile ? 'text-h5' : 'text-h2'" id="proposalCreation">
+                        <div class="col-lg-10 col-xs-grow justify-center">
+                          <div class="q-pb-md" :class="$q.platform.is.mobile ? 'text-h2 text-center' : 'text-h2'" id="proposalCreation">
                             off-chain DAO proposal creation
                           </div>
                           on-chain DAO treasury should be governed by off-chain proposals.
@@ -186,11 +185,11 @@
                       <q-separator color="grey-9" class="q-mt-md q-mb-md"></q-separator>
 
                       <div class="row items-center">
-                        <div class="col-2 text-center">
-                          <q-icon name="fa-solid fa-3" size="xl"></q-icon>
+                        <div class="col-lg-2 col-xs-grow text-center">
+                          <q-icon name="fa-solid fa-3" :size="$q.platform.is.mobile ? 'md' : 'xl'"></q-icon>
                         </div>
-                        <div class="col-10 justify-center">
-                          <div class="q-pb-md" :class="$q.platform.is.mobile ? 'text-h5' : 'text-h2'" id="onchainProposalCreation">
+                        <div class="col-lg-10 col-xs-grow justify-center">
+                          <div class="q-pb-md" :class="$q.platform.is.mobile ? 'text-h2 text-center' : 'text-h2'" id="onchainProposalCreation">
                             on-chain DAO proposal creation
                           </div>
                           on-chain DAO proposal is a smart-contract which describes assets transfer from DAO treasury to any address.
@@ -208,12 +207,12 @@
                           <q-banner dense class="q-mt-md q-mb-xs state "
                                     style="background: rgb(255, 65, 54, 0.08) !important;">
                             <div class="row">
-                              <div class="col-12 text-h6 text-bold ">
+                              <div class="col-12 text-bold " :class="$q.platform.is.mobile ? 'text-h2' : 'text-h5'">
                                 Is off-chain proposal required to create on-chain proposal of transferring DAO assets?
                               </div>
                             </div>
                             <div class="row q-pt-xs">
-                              <div class="col-12 text-subtitle1">
+                              <div class="col-12" :class="$q.platform.is.mobile ? 'text-subtitle2' : 'text-subtitle1'">
                                 No.
                                 Anyone can submit on-chain DAO proposal of transferring DAO assets.
                                 It can be done by honest or any kind of malicious actor like hacker, scammer, DAO
@@ -230,11 +229,11 @@
                       <q-separator color="grey-9" class="q-mt-md q-mb-md"></q-separator>
 
                       <div class="row items-center ">
-                        <div class="col-2 text-center">
-                          <q-icon name="fa-solid fa-4" size="xl"></q-icon>
+                        <div class="col-lg-2 col-xs-grow text-center">
+                          <q-icon name="fa-solid fa-4" :size="$q.platform.is.mobile ? 'md' : 'xl'"></q-icon>
                         </div>
-                        <div class="col-10 justify-center">
-                          <div class="q-pb-md" :class="$q.platform.is.mobile ? 'text-h5' : 'text-h2'" id="challengePeriod">
+                        <div class="col-lg-10 col-xs-grow justify-center">
+                          <div class="q-pb-md" :class="$q.platform.is.mobile ? 'text-h2 text-center' : 'text-h2'" id="challengePeriod">
                             on-chain proposal challenge period
                           </div>
                           on-chain proposal challenge period is a time when various, DAO non-related actors can involve in order to determine
@@ -259,7 +258,7 @@
                           be executed or not.
                           The result of on-chain proposal challenge is based on quantity of voteFor and voteAgainst votes.
 
-                          <div class="q-pt-lg q-pb-md text-green text-center" :class="$q.platform.is.mobile ? 'text-h5' : 'text-h5'">
+                          <div class="q-pt-lg q-pb-md text-green text-center" :class="$q.platform.is.mobile ? 'text-h2 text-center' : 'text-h5'">
                             on-chain proposal not challenged
                           </div>
                           Unchallenged proposal is the proposal without any voteAgainst submitted during challenge period.
@@ -272,7 +271,7 @@
                           After execution, on-chain proposal collateral is transferred back to proposal creator, proposal
                           is marked as executed and its lifecycle ends.
 
-                          <div class="q-pt-lg q-pb-md text-red text-center" :class="$q.platform.is.mobile ? 'text-h5' : 'text-h5'">
+                          <div class="q-pt-lg q-pb-md text-red text-center" :class="$q.platform.is.mobile ? 'text-h2 text-center' : 'text-h5'">
                             on-chain proposal challenged
                           </div>
                           Challenged proposal is the proposal with at least one voteAgainst submitted during challenge period.<br><br>
@@ -296,11 +295,11 @@
                       <q-separator color="grey-9" class="q-mt-md q-mb-md"></q-separator>
 
                       <div class="row items-center ">
-                        <div class="col-2 text-center">
-                          <q-icon name="fa-solid fa-5" size="xl"></q-icon>
+                        <div class="col-lg-2 col-xs-grow text-center">
+                          <q-icon name="fa-solid fa-5" :size="$q.platform.is.mobile ? 'md' : 'xl'"></q-icon>
                         </div>
-                        <div class="col-10 justify-center">
-                          <div class="q-pb-md" :class="$q.platform.is.mobile ? 'text-h5' : 'text-h2'" id="disputeProcess">
+                        <div class="col-lg-10 col-xs-grow justify-center">
+                          <div class="q-pb-md" :class="$q.platform.is.mobile ? 'text-h2 text-center' : 'text-h2'" id="disputeProcess">
                             Dispute process
                           </div>
                           Proposal dispute process is when there are proposal challengers (voteAgainst) and
@@ -317,19 +316,20 @@
 
 
                           <div class="row items-center q-pt-md">
-                            <div class="col-10 justify-center">
+                            <div class="col-lg-2 col-xs-grow text-center" v-if="$q.platform.is.mobile">
+                              <q-img src="/incentive3.png" style="width: 80px"/>
+                            </div>
+                            <div class="col-lg-10 col-xs-grow justify-center">
                               Voting in stateborn DAOs proposals has <span class="text-green text-bold">economic incentive</span> -
                               when proposal ends, its collateral becomes a reward for part of the voters.
                               More voteFor votes will result in voteAgainst voters collateral to be distributed to voteFor voters.
                               More or equal voteAgainst votes (to voteFor) will result in voteFor collateral being distributed to voteAgainst voters.
                               Voting on proposal is available for everyone using blockchain, the only requirement is providing a collateral.
                             </div>
-                            <div class="col-2 text-center">
+                            <div class="col-2 text-center" v-if="!$q.platform.is.mobile">
                               <q-img src="/incentive3.png" style="width: 80px"/>
                             </div>
                           </div>
-
-
 
                           <br><br>
 
@@ -342,7 +342,7 @@
 
                       <div class="q-pa-lg">
                         <div class="text-h1 text-center q-pt-lg">Challenges</div>
-                        <div class="text-overline text-center q-pb-md" style="font-size: 1.7rem">related to dispute process</div>
+                        <div class="text-overline text-center q-pb-md text-sub" >related to dispute process</div>
                       </div>
 
                       The non-permissioned nature of stateborn DAOs and the fact that anyone can create on-chain proposals
@@ -350,11 +350,11 @@
                       can be based on various motivations, interests and goals of voters.
 
                       <div class="row items-center q-pt-lg">
-                        <div class="col-2 text-center">
+                        <div class="col-lg-2 col-xs-grow text-center">
                           <q-img src="/balance2.png" style="height: 60px; width:60px"></q-img>
                         </div>
-                        <div class="col-10 justify-center q-pt-md">
-                          <div class="q-pb-md" :class="$q.platform.is.mobile ? 'text-h5' : 'text-h2'" id="howToAsses">
+                        <div class="col-lg-10 col-xs-grow justify-center q-pt-md">
+                          <div class="q-pb-md" :class="$q.platform.is.mobile ? 'text-h2 text-center' : 'text-h2'" id="howToAsses">
                             How to assess validity of proposal?
                           </div>
                           "Valid" proposal should be defined as proposal which received majority of votes of DAO member
@@ -381,11 +381,11 @@
                       <q-separator color="grey-9" class="q-mt-md q-mb-md"></q-separator>
 
                       <div class="row items-center">
-                        <div class="col-2 text-center">
+                        <div class="col-lg-2 col-xs-grow text-center">
                           <q-img src="/valid2.png" style="height: 60px; width:60px"></q-img>
                         </div>
-                        <div class="col-10 justify-center">
-                          <div class="q-pb-md" :class="$q.platform.is.mobile ? 'text-h5' : 'text-h2'" id="howToAssure">
+                        <div class="col-lg-10 col-xs-grow justify-center">
+                          <div class="q-pb-md" :class="$q.platform.is.mobile ? 'text-h2 text-center' : 'text-h2'" id="howToAssure">
                             How to technically assure only valid on-chain proposals pass?
                           </div>
                           Stateborn on-chain DAO treasury proposals are not built to technically solve that problem.
@@ -411,11 +411,11 @@
                       </div>
                       <q-separator color="grey-9" class="q-mt-md q-mb-md"></q-separator>
                       <div class="row items-center ">
-                        <div class="col-2 text-center">
+                        <div class="col-lg-2 col-xs-grow text-center">
                           <q-img src="/motivate2.png" style="height: 60px; width:60px"></q-img>
                         </div>
-                        <div class="col-10 justify-center">
-                          <div class="q-pb-md" :class="$q.platform.is.mobile ? 'text-h5' : 'text-h2'" id="howToMotivate">
+                        <div class="col-lg-10 col-xs-grow justify-center">
+                          <div class="q-pb-md" :class="$q.platform.is.mobile ? 'text-h2 text-center' : 'text-h2'" id="howToMotivate">
                             How to motivate on-chain voters to vote on valid proposals?
                           </div>
                           on-chain voters can or not have an interest in on-chain proposals voting. <br><br>
@@ -436,7 +436,7 @@
 
                       <div class="q-pa-lg">
                         <div class="text-h1 text-center q-pt-lg">Scenarios</div>
-                        <div class="text-overline text-center q-pb-md" style="font-size: 1.7rem">Interest driven voters actions</div>
+                        <div class="text-overline text-center q-pb-md text-sub" >Interest driven voters actions</div>
                       </div>
 
                       on-chain DAO proposals voting is available to various actors having various motivations. on-chain proposal
@@ -444,11 +444,11 @@
                       on-chain voters actions who are motivated with their own interest.
 
                       <div class="row items-center q-pt-lg">
-                        <div class="col-2 text-center">
+                        <div class="col-lg-2 col-xs-grow text-center">
                           <q-img src="/cancel.png" style="height: 60px; width:60px"></q-img>
                         </div>
-                        <div class="col-10 justify-center">
-                          <div class="q-pb-md" :class="$q.platform.is.mobile ? 'text-h5' : 'text-h2'" id="singleVoteCancels">
+                        <div class="col-lg-10 col-xs-grow justify-center">
+                          <div class="q-pb-md" :class="$q.platform.is.mobile ? 'text-h2 text-center' : 'text-h2'" id="singleVoteCancels">
                             #1 (popular): single vote wants to cancel proposal
                           </div>
                           There is 1000 DAI transfer proposal from DAO treasury to some address. The proposal is legit and based on off-chain voting.
@@ -464,11 +464,11 @@
                       <q-separator color="grey-9" class="q-mt-md q-mb-md"></q-separator>
 
                       <div class="row items-center">
-                        <div class="col-2 text-center">
+                        <div class="col-lg-2 col-xs-grow text-center">
                           <q-img src="/imbalance.png" style="height: 60px; width:60px"></q-img>
                         </div>
-                        <div class="col-10 justify-center">
-                          <div class=" q-pb-md" :class="$q.platform.is.mobile ? 'text-h5' : 'text-h2'" id="disproportional">
+                        <div class="col-lg-10 col-xs-grow justify-center">
+                          <div class="q-pb-md" :class="$q.platform.is.mobile ? 'text-h2 text-center' : 'text-h2'" id="disproportional">
                             #2: disproportional majority of votes on contrary side
                           </div>
                           There is 100 000 DAI transfer proposal from DAO treasury to some address. The proposal is legit and based on off-chain voting.
@@ -486,11 +486,11 @@
                       <q-separator color="grey-9" class="q-mt-md q-mb-md"></q-separator>
 
                       <div class="row items-center">
-                        <div class="col-2 text-center">
+                        <div class="col-lg-2 col-xs-grow text-center">
                           <q-img src="/balance.png" style="height: 60px; width:60px"></q-img>
                         </div>
-                        <div class="col-10 justify-center">
-                          <div class="q-pb-md" :class="$q.platform.is.mobile ? 'text-h5' : 'text-h2'" id="equalNumber">
+                        <div class="col-lg-10 col-xs-grow justify-center">
+                          <div class="q-pb-md" :class="$q.platform.is.mobile ? 'text-h2 text-center' : 'text-h2'" id="equalNumber">
                             #3: equal number of votes on both sides
                           </div>
                           There is 1 000 000 DAI transfer proposal from DAO treasury to some address. The proposal is legit and based on off-chain voting.
@@ -507,11 +507,11 @@
                       <q-separator color="grey-9" class="q-mt-md q-mb-md"></q-separator>
 
                       <div class="row items-center ">
-                        <div class="col-2 text-center">
+                        <div class="col-lg-2 col-xs-grow text-center">
                           <q-img src="/thief.png" style="height: 60px; width:60px"></q-img>
                         </div>
-                        <div class="col-10 justify-center">
-                          <div class="text-red q-pb-md" :class="$q.platform.is.mobile ? 'text-h5' : 'text-h2'" id="theft">
+                        <div class="col-lg-10 col-xs-grow justify-center">
+                          <div class="text-red q-pb-md" :class="$q.platform.is.mobile ? 'text-h2 text-center' : 'text-h2'" id="theft">
                             #4: theft attempt (not legit proposal)
                           </div>
                           There is 500 000 DAI transfer proposal from DAO treasury to some address. The proposal is not legit but attempt of DAO theft.
@@ -529,7 +529,7 @@
 
                       <div class="q-pa-lg">
                         <div class="text-h1 text-center ">Strategies</div>
-                        <div class="text-overline text-center q-pb-md" style="font-size: 1.7rem">to secure on-chain DAO treasury</div>
+                        <div class="text-overline text-center q-pb-md text-sub" >to secure on-chain DAO treasury</div>
                       </div>
 
 
@@ -541,11 +541,11 @@
                       Fortunately, there are some strategies to mitigate these risks.
 
                       <div class="row items-center q-pt-lg">
-                        <div class="col-2 text-center">
+                        <div class="col-lg-2 col-xs-grow text-center">
                           <q-img src="/aquire.png" style="height: 60px; width:60px"></q-img>
                         </div>
-                        <div class="col-10 justify-center">
-                          <div class="q-pb-md" :class="$q.platform.is.mobile ? 'text-h5' : 'text-h2'" id="acquisition">
+                        <div class="col-lg-10 col-xs-grow justify-center">
+                          <div class="q-pb-md" :class="$q.platform.is.mobile ? 'text-h2 text-center' : 'text-h2'" id="acquisition">
                             DAO voting power acquisition
                           </div>
                           The DAO interest is to acquire on-chain voting power in order to vote for proposals accordingly
@@ -564,11 +564,11 @@
 
 
                       <div class="row items-center">
-                        <div class="col-2 text-center">
+                        <div class="col-lg-2 col-xs-grow text-center">
                           <q-img src="/token.png" style="height: 60px; width:60px"></q-img>
                         </div>
-                        <div class="col-10 justify-center">
-                          <div class="q-pb-md" :class="$q.platform.is.mobile ? 'text-h5' : 'text-h2'" id="daoToken">
+                        <div class="col-lg-10 col-xs-grow justify-center">
+                          <div class="q-pb-md" :class="$q.platform.is.mobile ? 'text-h2 text-center' : 'text-h2'" id="daoToken">
                             DAO token as collateral
                           </div>
                           on-chain DAO defines the collateral for on-chain proposals. It's a native blockchain cryptocurrency (e.g. 1 ETH)
@@ -625,7 +625,7 @@
 
                       <div class="q-pa-lg">
                         <div class="q-pt-md q-pb-xs text-center" :class="$q.platform.is.mobile ? 'text-h5' : 'text-h1'" id="summary">Summary</div>
-                        <div class="text-overline text-center q-pb-md" style="font-size: 1.7rem">Why stateborn DAO?</div>
+                        <div class="text-overline text-center q-pb-md text-sub" >Why stateborn DAO?</div>
                       </div>
 
                       Stateborn protocol can be an effective solution for truly decentralized autonomous organizations.
@@ -745,6 +745,7 @@ import { onMounted, ref } from 'vue';
 import { sleep } from 'src/api/services/sleep-service';
 import { goToGithub, goToTwitter } from 'src/api/services/utils-service';
 import { getElementOffset } from 'src/api/services/ui-utils';
+import { useQuasar } from 'quasar';
 
 
 const scrollAreaRef = ref(null);
@@ -758,18 +759,19 @@ const scrollToElement = (el: any) => {
   scrollAreaRef.value.setScrollPosition('vertical', offset, 500);
   position.value = Math.floor(Math.random() * 1001) * 20;
 };
+const $q = useQuasar();
 
 const barStyle = ref({
   borderRadius: '0px',
   backgroundColor: '#5B5B5B',
-  width: '5px',
+  width: $q.platform.is.mobile ? '2px': '5px',
   opacity: 0.2
 });
 
 const thumbStyle = ref({
   borderRadius: '0px',
   backgroundColor: '#5B5B5B',
-  width: '5px',
+  width: $q.platform.is.mobile ? '2px': '5px',
   opacity: 0.75
 });
 

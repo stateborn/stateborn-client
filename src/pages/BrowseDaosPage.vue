@@ -47,7 +47,7 @@
                     :dao="props.row"
                     :is-full="false"
                     :proposals-number="getProposalNumbers(props.row.ipfsHash)"
-                    :width="$q.platform.is.mobile ? daoCardWidth : daoEntryWidth"
+                    :width="$q.platform.is.mobile ? '100%' : `${daoEntryWidth}px`"
                   ></dao-card-min>
                 </template>
                 <template v-slot:no-data="{ icon, message, filter }">

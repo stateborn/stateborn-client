@@ -1,5 +1,5 @@
 <template>
-  <q-card class="stateborn-card q-ma-xs" >
+  <q-card class="stateborn-card " >
     <q-card-section style="padding: 5px !important; margin:5px !important;">
       <q-item-label class=" text-primary text-center text-overline" style="font-size: 1rem">DAO</q-item-label>
 

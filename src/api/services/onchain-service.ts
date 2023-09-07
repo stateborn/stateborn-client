@@ -59,7 +59,6 @@ export const getOnChainProposalDetails = async (proposalId: string, daoAddress: 
         const contractCreationTime = proposal.contractCreationTime();
         const challengePeriodSeconds = proposal.challengePeriodSeconds();
         const values = await Promise.all([forVotes, againstVotes, isPassed, isEnded, executed, contractCreationTime, challengePeriodSeconds]);
-        console.log('against votes', values);
         const endsDate = new Date((Number(values[5]) + Number(values[6])) * 1000);
         return new OnChainProposalDetails(
             proposalAddress,
@@ -81,7 +80,7 @@ export const createProposalOnChain = async (daoAddress: string, proposalId: stri
         // @ts-ignore
         dao.on('ProposalCreated', (proposalId: string, proposalAddress: string) => {
             console.log(`Proposal ${proposalId} created on-chain:`, proposalAddress);
-            resolve(daoAddress);
+            resolve(proposalAddress);
         });
     });
     const onChainTransfers = <string[]>transactions.map(_ => {
@@ -117,13 +116,8 @@ export const createProposalOnChain = async (daoAddress: string, proposalId: stri
 }
 
 export const executeOnChainProposal = async (proposalAddress: string) => {
-    try {
-        console.log('wykonuje na ', proposalAddress);
-        const proposal = Proposal__factory.connect(proposalAddress, ETH_CONNECTION_SERVICE.getSigner());
-        await proposal.executeProposal();
-    } catch (err) {
-        console.log('blad', err);
-    }
+    const proposal = Proposal__factory.connect(proposalAddress, ETH_CONNECTION_SERVICE.getSigner());
+    await proposal.executeProposal();
 }
 
 const getErc20DaoFactoryAddress = (chainId: string): string => {

@@ -1,5 +1,5 @@
 <template>
-  <q-card class="stateborn-card grow " :style="props.fullWidth ? '' : `width: ${props.width}px;`">
+  <q-card class="stateborn-card grow " :style="props.fullWidth ? '' : `width: ${props.width}`">
     <div class="row justify-center text-center items-center q-pt-xs" style="height:80px" >
       <div class="col-grow  items-center">
         <div class="text-subtitle2 q-pa-md">

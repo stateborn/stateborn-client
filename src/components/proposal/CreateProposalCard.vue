@@ -1,10 +1,10 @@
 <template>
-  <q-card class="stateborn-card q-ma-xs" square>
+  <q-card class="stateborn-card " square>
     <q-card-section style="padding: 2px !important; margin:2px !important;">
       <div class="text-h5 text-center">New proposal</div>
     </q-card-section>
       <q-separator class="q-mt-xs q-mb-xs"></q-separator>
-    <q-card-section>
+    <q-card-section :style="$q.platform.is.mobile ? 'margin:0;padding:0;' : ''">
      <create-proposal-form class="text-center q-pt-md" :dao="dao" v-if="dao !== undefined"></create-proposal-form>
     </q-card-section>
   </q-card>

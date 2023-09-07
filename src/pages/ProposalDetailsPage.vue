@@ -22,7 +22,7 @@
               :proposal="proposal"
               v-if="proposal !== undefined">
             </ProposalDetailsCard>
-            <q-card class="stateborn-card q-mt-md " square v-if="!$q.platform.is.mobile">
+            <q-card class="stateborn-card q-mt-md " square>
               <q-card-section style="padding-bottom:0;">
                 <div class="row text-subtitle2 text-bold">
                   <div class="col-grow text-bold sectionName">Description</div>
@@ -33,23 +33,24 @@
                 :style="`height: ${proposalScrollHeight}px; max-width: 100%; min-width:100px;margin-top:10px`"
               >
                 <q-card-section style="padding-top:0;">
-                  <proposal-description-markdown class="q-pt-md"
-                                                 :description="proposalDescription"></proposal-description-markdown>
+                  <proposal-description-markdown
+                      class="q-pt-md"
+                      :description="proposalDescription"></proposal-description-markdown>
                 </q-card-section>
               </q-scroll-area>
             </q-card>
-            <ProposalDetailsCard
-              v-else
-              class="q-mt-md"
-              :dao-token-chain-id="dao?.clientDao?.token?.chainId"
-              :proposal-verification="proposal.proposalVerification"
-              :proposal="proposal"
-              v-if="proposal !== undefined">
-            </ProposalDetailsCard>
+<!--            <ProposalDetailsCard-->
+<!--              v-else-->
+<!--              class="q-mt-md"-->
+<!--              :dao-token-chain-id="dao?.clientDao?.token?.chainId"-->
+<!--              :proposal-verification="proposal.proposalVerification"-->
+<!--              :proposal="proposal"-->
+<!--              v-if="proposal !== undefined">-->
+<!--            </ProposalDetailsCard>-->
           </div>
           <div class="col-lg-4 col-xs-grow">
             <div id="other-info-row">
-              <DaoCardMin :full-width="true" class="" :dao="dao" v-if="dao !== undefined" :show-token-address="true"></DaoCardMin>
+              <DaoCardMin :full-width="true" class="" :dao="dao" v-if="dao !== undefined" :show-token-address="true" :class="$q.platform.is.mobile ? 'q-mt-md' : ''"></DaoCardMin>
               <VoteCard
                 class="q-mt-md"
                 :trigger-voting-after-different-voting-power-acceptance="triggerVotingAfterDifferentVotingPowerAcceptance"

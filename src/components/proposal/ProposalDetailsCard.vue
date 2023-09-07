@@ -2,12 +2,12 @@
   <q-card class="stateborn-card " square>
     <q-card-section>
       <div class="row justify-center items-center">
-        <div class="col-1">
-          <q-img src="/propa.svg" style="height:50px; width: 50px; "></q-img>
+        <div class="col-lg-1 col-xs-2">
+          <q-img src="/propa.svg" :style="$q.platform.is.mobile ? 'height:25px; width: 25px;' :'height:50px; width: 50px;' "></q-img>
         </div>
-        <div class="col-11">
+        <div class="col-lg-11 col-xs-10">
           <div class="row text-subtitle2"><div class="col-grow text-bold sectionName q-pb-xs">Title</div></div>
-          <div class=" text-primary text-h5">{{props.proposal.clientProposal.title}}</div>
+          <div class=" text-primary text-h2">{{props.proposal.clientProposal.title}}</div>
         </div>
       </div>
     </q-card-section>

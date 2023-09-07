@@ -5,6 +5,7 @@ import { getIpfsJsonFile } from 'src/api/services/ipfs-service';
 import { ProposalVerification } from 'src/api/model/proposal-verification';
 import { abiEncodeProposal, isProposalValid } from 'src/api/services/signature-service';
 import { ClientProposal } from 'src/api/model/ipfs/client-proposal';
+import cloneDeep from 'lodash/cloneDeep';
 
 export const getProposal = async (proposalIpfsHash: string, onValidationDoneCallback?: (backendProposal: BackendProposal) => void): Promise<BackendProposal> => {
   const backendProposal: BackendProposal = await getProposalFromStorageOrFetch(proposalIpfsHash);
@@ -17,7 +18,7 @@ export const getProposal = async (proposalIpfsHash: string, onValidationDoneCall
       }
     });
   }
-  return backendProposal;
+  return cloneDeep(backendProposal);
 }
 
 const getProposalFromStorageOrFetch = async (proposalIpfsHash: string): Promise<BackendProposal> => {
@@ -29,9 +30,9 @@ const getProposalFromStorageOrFetch = async (proposalIpfsHash: string): Promise<
       proposalIpfsHash,
     );
     await setProposalInStorage(proposalIpfsHash, newProposal);
-    return newProposal;
+    return cloneDeep(newProposal);
   } else {
-    return proposal;
+    return cloneDeep(proposal);
   }
 }
 

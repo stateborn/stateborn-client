@@ -1,14 +1,13 @@
 <template>
   <div>
-    <q-banner class="text-primary text-subtitle2 text-center noisegreen">
+    <q-banner class="text-primary text-subtitle2 text-center noisegreen" >
       <div class="row items-center">
-        <div class="col-4">
+        <div class="col-lg-4 col-xs-grow">
           <q-img src="/propa.svg" class="maker" style="height:50px; width: 50px; "></q-img>
         </div>
-        <div class="col-8 text-left">
-          NFT 0x742ed94AbB4e556F22b21B1aBEdcd0cB4099c11d
-          <q-item-label class="text-overline q-mb-xs" style="font-size: 1rem">CREATE PROPOSAL</q-item-label>
-          <q-item-label class="text-overline text-bold q-pt-xs q-mb-md" style="font-size: 0.9rem">Features:</q-item-label>
+        <div class="col-lg-8 col-xs-grow text-left">
+          <q-item-label class="text-overline q-mb-xs" :class="$q.platform.is.mobile ? 'text-center' : ''" style="font-size: 1rem">CREATE PROPOSAL</q-item-label>
+          <q-item-label class="text-overline text-bold q-pt-xs q-mb-md" :class="$q.platform.is.mobile ? 'text-center' : ''" style="font-size: 0.9rem">Features:</q-item-label>
           • describe proposals in markdown (easy formatting)
           <q-icon color="primary" name="fa-solid fa-circle-info" style="margin-bottom: 3px;">
             <q-tooltip class="stateborn-tooltip">
@@ -62,7 +61,9 @@
       </div>
     </q-banner>
     <q-banner class="text-black text-subtitle2 text-center noisered q-mt-md" v-if="!ethConnectionStore.isConnected">
-      <span class="text-bold text-red">Please connect first</span>
+      <span class="text-bold text-red" v-if="$q.platform.is.mobile">Currently available on WEB only</span>
+      <span class="text-bold text-red" v-else>Please connect first</span>
+
     </q-banner>
 <!--    <q-banner class="text-primary text-subtitle2 text-center bodynoise q-mt-md" v-if="description.length > 0 && ethConnectionStore.isConnected && hasRequiredAmountOfTokens && connectedNetworkMatchesTokenNetwork">-->
 <!--      <div>-->
@@ -172,8 +173,9 @@
           v-if="createDaoOnChainTransaction && dao.clientDao.contractAddress"
           :dao-address="dao.clientDao.contractAddress!"
           :tx-index="txIndex.index"
-          :previous-transactions="transactions.slice(0, txIndex.index + 1)"
-          @proposal-transaction="onProposalTransactionAdded">
+          :previous-transactions="transactions.slice(0, txIndex.index )"
+          @proposal-transaction="onProposalTransactionAdded"
+          >
         </create-proposal-transaction-row>
         <q-btn color="red-9 q-ma-xs" square @click="removeTransaction(txIndex.index)">REMOVE</q-btn>
         <q-separator class="q-mt-xs q-pa-xs bodynoise"></q-separator>
@@ -268,8 +270,8 @@ const props = defineProps<{
 const isFormValid = computed(() => {
   return ethConnectionStore.isConnected && hasRequiredAmountOfTokens.value === true && title.value.trim() !== ''
   && description.value.trim() !== '' && durationHours.value >= 1 &&
-    // if chosen to add transaction, then it must be set (is correct)
-    ((props.dao.clientDao.contractAddress && createDaoOnChainTransaction.value === true) ? (transactions.value.length > 0) : true)
+    // if chosen to add transaction, then it must be set (is correct) + txIndexes.value.length === transactions.value.length (all editing txes are correct)
+    ((props.dao.clientDao.contractAddress && createDaoOnChainTransaction.value === true) ? (transactions.value.length > 0 && (txIndexes.value.length === transactions.value.length)) : true)
 });
 
 const proposalOptionAdded = (currentProposalOptions: string[]) => {
@@ -437,6 +439,7 @@ const onProposalTransactionAdded = async (index: number, proposalTransaction?: C
       transactions.value.push(proposalTransaction!);
     }
   }
+  console.log('moja tablica to', transactions.value);
 }
 
 watch(() => createDaoOnChainTransaction.value, () => {
