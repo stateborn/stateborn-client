@@ -6,7 +6,7 @@
         <q-toolbar-title style="width:50px !important;">
           <router-link to="/" style="text-decoration: none">
             <span :style="$q.platform.is.mobile ? 'font-size:12px': ''">stateborn - minimum trust democracy</span>
-            <q-badge class="q-ma-md" label="beta"></q-badge>
+            <q-badge class="q-ma-md" label="alpha"></q-badge>
           </router-link>
         </q-toolbar-title>
 <!--        <q-tabs v-model="tab" shrink align="right" class="text-bold" active-bg-color="">-->

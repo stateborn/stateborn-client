@@ -197,12 +197,12 @@
                           on-chain proposal smart-contract includes all data required to execute the transfer from DAO treasury.
                           Off-chain proposal result IPFS hash and result merkle root hash saved in smart-contracts are a reference to off-chain proposal voting result.
                           It should be used for anyone who wants to verify if on-chain proposal is legit and reflects the will of DAO community.<br><br>
-                          Creating on-chain proposal requires collateral (e.g. 1 ETH) - its requirements are specified in DAO smart contract.
+                          Creating on-chain proposal requires collateral (e.g. 0.1 ETH) - its requirements are specified in DAO smart contract (default 0.1 of native blockchain cryptocurrency, e.g. 0.1 ETH, 0.1 MATIC).
                           Creating proposal without collateral is not possible.
                           Collateral is provided by proposal on-chain submitter.
                           The collateral is controlled by on-chain proposal smart contract rules.<br><br>
 
-                          Once on-chain proposal is created, it's in challenge period which lasts for predefined amount of time (default 7 days).
+                          Once on-chain proposal is created, it's in challenge period which lasts for predefined amount of time (default 3 days).
 
                           <q-banner dense class="q-mt-md q-mb-xs state "
                                     style="background: rgb(255, 65, 54, 0.08) !important;">
@@ -306,7 +306,7 @@
                           proposal supporters (voteFor).
                           Initially, when on-chain proposal is created there is only single proposal supporter - proposal creator.
                           However, during challenge period, anyone can become proposal supporter by submitting voteFor
-                          transaction. Voting is possible for predefined amount of time (default 7 days).
+                          transaction. Voting is possible for predefined amount of time (default 3 days).
 
                           The fundamental mechanics of stateborn DAO on-chain proposals is that its execution depends on
                           majority of supporter votes (voteFor).

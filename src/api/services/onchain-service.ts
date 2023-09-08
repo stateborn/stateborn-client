@@ -125,7 +125,7 @@ const getErc20DaoFactoryAddress = (chainId: string): string => {
         case '42161':
             return '0x0';
         case '137':
-            return '0x0';
+            return process.env.POLYGON_ERC_20_DAO_FACTORY_ADDRESS!;
         case process.env.DEVELOPMENT_NETWORK_CHAIN_ID:
             return process.env.DEVELOPMENT_NETWORK_ERC_20_DAO_FACTORY_ADDRESS!;
         default:
@@ -140,7 +140,7 @@ const getNftDaoFactoryAddress = (chainId: string): string => {
         case '42161':
             return '0x0';
         case '137':
-            return '0x0';
+            return process.env.POLYGON_NFT_DAO_FACTORY_ADDRESS!;
         case process.env.DEVELOPMENT_NETWORK_CHAIN_ID:
             return process.env.DEVELOPMENT_NETWORK_NFT_DAO_FACTORY_ADDRESS!;
         default:
