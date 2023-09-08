@@ -125,7 +125,7 @@
 
           <q-item-section>
             <q-item-label>{{ props.dao.clientDao.proposalTokenRequiredQuantity }}</q-item-label>
-            <q-item-label caption class="text-primary ">Required tokens for creating proposal</q-item-label>
+            <q-item-label caption class="text-primary ">Tokens required for creating proposal</q-item-label>
           </q-item-section>
         </q-item>
 
