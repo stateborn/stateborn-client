@@ -179,7 +179,7 @@
                           reflect it on-chain.
 
                           Once off-chain proposal which contains assets transfer transaction passes, on-chain proposal
-                          describing assets transfer is created.
+                          describing assets transfer is ready to be created.
                         </div>
                       </div>
                       <q-separator color="grey-9" class="q-mt-md q-mb-md"></q-separator>
@@ -237,7 +237,7 @@
                             on-chain proposal challenge period
                           </div>
                           on-chain proposal challenge period is a time when various, DAO non-related actors can involve in order to determine
-                          if proposal should be executed or not.
+                          if on-chain proposal of DAO treasury assets transfer should be executed or not.
                           The duration of challenge period is specified in DAO smart contract and is immutable after
                           on-chain proposal creation.<br><br>
                           on-chain proposal smart-contract challengers/supporters can vote with 2 options: voteFor and voteAgainst.
