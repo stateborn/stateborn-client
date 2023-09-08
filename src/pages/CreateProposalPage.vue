@@ -1,6 +1,6 @@
 <template>
   <q-page>
-    <div class="row justify-center" :class="$q.platform.is.mobile ? '' : 'q-pa-md'" >
+    <div class="row justify-center" :class="$q.platform.is.mobile ? '' : 'q-pa-xs'" >
       <div class="col-lg-8 col-xs-grow justify-center">
         <picture-parallax
           image-src="/proposalbody2noise.webp"

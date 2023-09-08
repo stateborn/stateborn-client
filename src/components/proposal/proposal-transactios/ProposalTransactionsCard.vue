@@ -11,7 +11,7 @@
             <q-icon color="primary" name="fa-solid fa-circle-info" style="margin-bottom: 3px;">
               <q-tooltip class="stateborn-tooltip">
                 Transfers to be executed if proposal passes.<br>
-                These transfers will be <b class="text-red">executed only all together</b> if proposal passes.<br>
+                These transfers will be <b class="text-red-8">executed only all together</b> if proposal passes.<br>
               </q-tooltip>
             </q-icon></q-item-label>
         </div>
@@ -65,7 +65,7 @@
                   v-if="transactionStatus !== BlockchainProposalStatus.REJECTED_ONCHAIN"
                   :class="transactionStatus === BlockchainProposalStatus.EXECUTED ? 'noisegreen' : ''"
                   :icon="transactionStatus === BlockchainProposalStatus.EXECUTED ? 'fa-solid fa-cube' : undefined"
-                  :color=" transactionStatus === BlockchainProposalStatus.EXECUTED? 'green-9' : ''"
+                  :color=" transactionStatus === BlockchainProposalStatus.EXECUTED? 'green-8' : ''"
                   side="left">
                 </q-timeline-entry>
 
@@ -194,6 +194,7 @@ import { OnChainProposalDetails } from 'src/api/model/on-chain-proposal-details'
 import ExecuteOnChainProposalTransactionsTimelineEntry
   from 'components/proposal/proposal-transactios/ExecuteOnChainProposalTransactionsTimelineEntry.vue';
 import { sleep } from 'src/api/services/sleep-service';
+import { onBeforeUnmount } from 'vue';
 
 class TransactionRow {
   description: string;
@@ -343,17 +344,28 @@ onMounted(() => {
   });
 });
 
-window.addEventListener('resize',function() {
-  adjustScrollAreaHeight();
-});
-
 watch(() => ethConnectionStore.account, async () => {
   adjustScrollAreaHeight();
 });
+watch(() => ethConnectionStore.chainId, async () => {
+  await calculateTransactionStatus();
+  adjustScrollAreaHeight();
+});
+
 const onOnchainTx = () => {
   adjustScrollAreaHeight();
   calculateTransactionStatus();
 };
+
+const resizeListener = () => {
+  adjustScrollAreaHeight();
+}
+
+window.addEventListener('resize', resizeListener, true);
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', resizeListener, true)
+});
 
 
 </script>

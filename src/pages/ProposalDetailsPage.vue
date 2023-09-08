@@ -2,7 +2,7 @@
   <q-page>
     <div class="row justify-center" >
       <div class="col-lg-8 col-xs-grow justify-center">
-        <q-breadcrumbs class="text-subtitle2 stateborn-card q-pa-xs text-primary q-mt-md">
+        <q-breadcrumbs class="text-subtitle2 stateborn-card q-pa-xs text-primary q-mt-xs">
           <q-breadcrumbs-el icon="home" to="/">
             <span class="text-underline">Home</span>
           </q-breadcrumbs-el>
@@ -74,6 +74,7 @@
                                     @voting-time-ended="onVotingTimeEnded">
               </ProposalCountdownCard>
               <ResultCard class="q-mt-md"
+                          :is-proposal-ended="isProposalEnded"
                           :token-symbol="dao !== undefined ? dao.clientDao.token.symbol : ''"
                           :proposal-result-dto="proposalResultDto"
                           :proposal-options="proposal.clientProposal.data?.options"
@@ -223,13 +224,11 @@ $q.loading.show({
   messageColor: 'white',
 });
 const fetchProposalData = async () => {
-  console.log('1');
   dao.value = await getDao(daoIpfsHash);
   if (ethConnectionStore.isConnected) {
     getTokenBalance(dao.value.clientDao.token.address, dao.value.clientDao.token.type, dao.value.clientDao.token.decimals);
     fetchUserVotes();
   }
-  console.log('2');
   // 5 comes from VotesTable.vue
   fetchTableVotes(5, 0);
   api.get(`/api/rest/v1/proposal/${proposalIpfsHash}/result`).then((res) => {

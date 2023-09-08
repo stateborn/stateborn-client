@@ -61,8 +61,8 @@
       </div>
     </q-banner>
     <q-banner class="text-black text-subtitle2 text-center noisered q-mt-md" v-if="!ethConnectionStore.isConnected">
-      <span class="text-bold text-red" v-if="$q.platform.is.mobile">Currently available on WEB only</span>
-      <span class="text-bold text-red" v-else>Please connect first</span>
+      <span class="text-bold text-red-8" v-if="$q.platform.is.mobile">Currently available on WEB only</span>
+      <span class="text-bold text-red-8" v-else>Please connect first</span>
 
     </q-banner>
 <!--    <q-banner class="text-primary text-subtitle2 text-center bodynoise q-mt-md" v-if="description.length > 0 && ethConnectionStore.isConnected && hasRequiredAmountOfTokens && connectedNetworkMatchesTokenNetwork">-->
@@ -87,20 +87,9 @@
       </div>
 
     </q-banner>
-    <q-banner class="text-black text-bold text-subtitle2 text-center noisered items-center q-mt-md" v-if="ethConnectionStore.isConnected && !connectedNetworkMatchesTokenNetwork">
-      <div class="row items-center">
-        <div class="col-4">
-          <q-icon name="fa-solid fa-triangle-exclamation" color="primary"  size="lg"/>
-        </div>
-        <div class="col-8 text-left">
-          You are connected to: {{TOKEN_SERVICE.getNetworkName(ethConnectionStore.chainId)}}<q-img style="width: 25px; height: 25px;" :src="TOKEN_SERVICE.getNetworkIcon(ethConnectionStore.chainId)"/> <br>
-          DAO token network: {{TOKEN_SERVICE.getNetworkName(props.dao.clientDao.token.chainId) }}<q-img style="width: 25px; height: 25px;" :src="TOKEN_SERVICE.getNetworkIcon(props.dao.clientDao.token.chainId)"/><br>
-          Please switch your wallet to {{TOKEN_SERVICE.getNetworkName(props.dao.clientDao.token.chainId) }} to create proposal.<br>
-          <q-btn color="primary"  class="q-mt-xs" icon="fa-solid fa-shuffle" @click="switchNetwork" :label="`Switch to ${TOKEN_SERVICE.getNetworkName(props.dao.clientDao.token.chainId)}`"></q-btn>
 
-        </div>
-      </div>
-    </q-banner>
+    <different-network-banner :expected-chain-id="props.dao.clientDao.token.chainId"></different-network-banner>
+
     <q-input square filled label="Title" v-model="title" maxlength="120" counter :error="title.trim() === ''" class="q-mt-md">
       <template v-slot:error>
         Proposal title is required.
@@ -133,7 +122,7 @@
           :error="durationHours < 1"
         >
           <template v-slot:error>
-            Proposal duration must be at least 1 hour.
+            Proposal duration must be positive.
           </template>
           <template v-slot:prepend>
            <q-icon name="fa-solid fa-clock" color="primary"  size="xs"/>
@@ -160,7 +149,7 @@
           size="xl"
           icon="fa-solid fa-cube"
           icon-color="yellow"
-          :disable="!ethConnectionStore.isConnected"
+          :disable="!ethConnectionStore.isConnected || !connectedNetworkMatchesTokenNetwork"
           v-model="createDaoOnChainTransaction"
         >
           <span class="text-subtitle2">Create DAO treasury assets <span class="text-bold">on-chain</span> transfer</span>
@@ -228,8 +217,8 @@ import { DaoBackend } from 'src/api/model/dao-backend';
 import CreateProposalTransactionRow from 'components/proposal/CreateProposalTransactionRow.vue';
 import { ClientProposalTransaction } from 'src/api/model/ipfs/proposal-transaction/client-proposal-transaction';
 import { generateRandomString } from 'src/api/services/utils-service';
-import { TokenType } from 'src/api/model/ipfs/token-type';
 import anime from 'animejs/lib/anime';
+import DifferentNetworkBanner from 'components/DifferentNetworkBanner.vue';
 
 dayjs.extend(dayjsPluginUTC);
 const title = ref('New proposal');
@@ -268,7 +257,7 @@ const props = defineProps<{
 }>();
 
 const isFormValid = computed(() => {
-  return ethConnectionStore.isConnected && hasRequiredAmountOfTokens.value === true && title.value.trim() !== ''
+  return ethConnectionStore.isConnected && connectedNetworkMatchesTokenNetwork.value && hasRequiredAmountOfTokens.value === true && title.value.trim() !== ''
   && description.value.trim() !== '' && durationHours.value >= 1 &&
     // if chosen to add transaction, then it must be set (is correct) + txIndexes.value.length === transactions.value.length (all editing txes are correct)
     ((props.dao.clientDao.contractAddress && createDaoOnChainTransaction.value === true) ? (transactions.value.length > 0 && (txIndexes.value.length === transactions.value.length)) : true)
@@ -439,7 +428,6 @@ const onProposalTransactionAdded = async (index: number, proposalTransaction?: C
       transactions.value.push(proposalTransaction!);
     }
   }
-  console.log('moja tablica to', transactions.value);
 }
 
 watch(() => createDaoOnChainTransaction.value, () => {

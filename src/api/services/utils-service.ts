@@ -6,7 +6,7 @@ export const getTimeCounterColorDependingOTimeLeft = (days: number, hours: numbe
     return '';
   } else {
     if (hours < 1) {
-      return 'text-red';
+      return 'text-red-8';
     } else  {
       return 'text-orange-10';
     }

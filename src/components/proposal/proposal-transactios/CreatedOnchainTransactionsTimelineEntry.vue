@@ -15,7 +15,7 @@
         BlockchainProposalStatus.CREATED_ON_CHAIN,
         BlockchainProposalStatus.READY_TO_EXECUTE,
         BlockchainProposalStatus.EXECUTED,
-        BlockchainProposalStatus.REJECTED_ONCHAIN].includes(transactionStatus) ? 'green-9': ''"
+        BlockchainProposalStatus.REJECTED_ONCHAIN].includes(transactionStatus) ? 'green-8': ''"
     subtitle="3. Created on-chain - transfers proposal created on-chain"
     side="left"
   >

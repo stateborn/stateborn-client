@@ -12,7 +12,7 @@
           BlockchainProposalStatus.CREATED_ON_CHAIN,
           BlockchainProposalStatus.READY_TO_EXECUTE,
           BlockchainProposalStatus.EXECUTED,
-          BlockchainProposalStatus.REJECTED_ONCHAIN].includes(transactionStatus) ? 'green-9': ''"
+          BlockchainProposalStatus.REJECTED_ONCHAIN].includes(transactionStatus) ? 'green-8': ''"
       :class="transactionStatus === BlockchainProposalStatus.READY_TO_DEPLOY_ONCHAIN ? 'noisegreen' : ''"
       subtitle="2. Ready to create on-chain"
       side="left">
@@ -28,25 +28,29 @@
           </q-tooltip>
         </q-icon>
 
-        <div class="row text-subtitle2 q-mt-md">
+        <div class="row text-subtitle2 q-mt-md" v-if="connectedToMatchingNetwork">
           <div class="col-auto text-bold sectionName">Collateral required</div>
           <div class="col-grow text-right">{{ requiredCollateral }}
             {{ TOKEN_SERVICE.getNetworkCurrency(props.chainId) }}
           </div>
         </div>
 
-        <div class="row items-center justify-center" v-if="!connectedToMatchingNetwork"
+        <div class="row items-center justify-center" v-if="!ethConnectionStore.isConnected"
              :style="$q.platform.is.mobile ? 'height:50px': ``">
           <div class="col-12">
             <div class="row justify-center">
               <div class="col-12">
                 <q-banner class="text-black text-subtitle2 text-center noisered">
-                  <span class="text-bold text-red" v-if="$q.platform.is.mobile">Currently available on WEB only</span>
-                  <span class="text-bold text-red" v-else>Please connect</span>
+                  <span class="text-bold text-red-8" v-if="$q.platform.is.mobile">Currently available on WEB only</span>
+                  <span class="text-bold text-red-8" v-else>Please connect</span>
                 </q-banner>
               </div>
             </div>
           </div>
+        </div>
+        <div v-if="ethConnectionStore.isConnected && !connectedToMatchingNetwork && !$q.platform.is.mobile" class="q-pt-xs q-pb-xs">
+          <different-network-banner :expected-chain-id="props.chainId"></different-network-banner>
+
         </div>
         <div class="row">
           <div class="col-12">
@@ -65,12 +69,14 @@
 
 import { createProposalOnChain, getCreateProposalRequiredCollateral } from 'src/api/services/onchain-service';
 import { useEthConnectionStore } from 'stores/eth-connection-store';
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { TOKEN_SERVICE } from 'src/api/services/token-service';
 import { ClientProposalTransaction } from 'src/api/model/ipfs/proposal-transaction/client-proposal-transaction';
 import { BlockchainProposalStatus } from 'src/api/model/blockchain-proposal-status';
 import { Notify, useQuasar } from 'quasar';
 import { sleep } from 'src/api/services/sleep-service';
+import { changeNetwork } from 'src/api/services/change-network-service';
+import DifferentNetworkBanner from 'components/DifferentNetworkBanner.vue';
 
 const ethConnectionStore = useEthConnectionStore();
 const $q = useQuasar();
@@ -135,4 +141,7 @@ const connectedToMatchingNetwork = computed(() => {
   }
 });
 
+watch(() => ethConnectionStore.chainId, async () => {
+  requiredCollateral.value = await getCreateProposalRequiredCollateral(props.daoAddress);
+});
 </script>

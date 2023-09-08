@@ -271,7 +271,7 @@
                           After execution, on-chain proposal collateral is transferred back to proposal creator, proposal
                           is marked as executed and its lifecycle ends.
 
-                          <div class="q-pt-lg q-pb-md text-red text-center" :class="$q.platform.is.mobile ? 'text-h2 text-center' : 'text-h5'">
+                          <div class="q-pt-lg q-pb-md text-red-8 text-center" :class="$q.platform.is.mobile ? 'text-h2 text-center' : 'text-h5'">
                             on-chain proposal challenged
                           </div>
                           Challenged proposal is the proposal with at least one voteAgainst submitted during challenge period.<br><br>
@@ -511,7 +511,7 @@
                           <q-img src="/thief.png" style="height: 60px; width:60px"></q-img>
                         </div>
                         <div class="col-lg-10 col-xs-grow justify-center">
-                          <div class="text-red q-pb-md" :class="$q.platform.is.mobile ? 'text-h2 text-center' : 'text-h2'" id="theft">
+                          <div class="text-red-8 q-pb-md" :class="$q.platform.is.mobile ? 'text-h2 text-center' : 'text-h2'" id="theft">
                             #4: theft attempt (not legit proposal)
                           </div>
                           There is 500 000 DAI transfer proposal from DAO treasury to some address. The proposal is not legit but attempt of DAO theft.
@@ -741,7 +741,7 @@
 
 </template>
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { onBeforeUnmount, onMounted, ref } from 'vue';
 import { sleep } from 'src/api/services/sleep-service';
 import { goToGithub, goToTwitter } from 'src/api/services/utils-service';
 import { getElementOffset } from 'src/api/services/ui-utils';
@@ -777,9 +777,6 @@ const thumbStyle = ref({
 
 const height = window.innerHeight - 75;
 const scrollHeight = ref(height);
-window.addEventListener('resize',function(){
-  scrollHeight.value = window.innerHeight - 75;
-});
 
 const items = ref(<any[]>[]);
 const setItems = () => {
@@ -1038,4 +1035,14 @@ const onScroll = (val: any) => {
     console.log('vertical position', verticalPosition);
   }
 }
+
+const resizeListener = () => {
+  scrollHeight.value = window.innerHeight - 75;
+}
+
+window.addEventListener('resize', resizeListener, true);
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', resizeListener, true)
+});
 </script>

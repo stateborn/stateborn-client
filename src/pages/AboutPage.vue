@@ -466,16 +466,14 @@
 <script setup lang="ts">
 import PictureParallax from 'components/PictureParallax.vue';
 import { goToGithub, goToTwitter } from 'src/api/services/utils-service';
-import { onMounted, ref } from 'vue';
+import { onBeforeUnmount, onMounted, ref } from 'vue';
 import { sleep } from 'src/api/services/sleep-service';
 import { getElementOffset } from 'src/api/services/ui-utils';
 import { useQuasar } from 'quasar';
 
 const height = window.innerHeight - 75;
 const scrollHeight = ref(height);
-window.addEventListener('resize',function() {
-  scrollHeight.value = window.innerHeight - 75;
-});
+
 const $q = useQuasar();
 
 const barStyle = ref({
@@ -672,4 +670,15 @@ const onScroll = (val: any) => {
     }
   }
 }
+
+
+const resizeListener = () => {
+  scrollHeight.value = window.innerHeight - 75;
+}
+
+window.addEventListener('resize', resizeListener, true);
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', resizeListener, true)
+});
 </script>

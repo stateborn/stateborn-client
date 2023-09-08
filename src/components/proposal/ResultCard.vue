@@ -11,7 +11,14 @@
           </div>
         </div>
       </div>
-      <q-linear-progress stripe size="40px" class="q-mb-xs" :color="result.option === highestResultOption ? 'green-5' : 'grey-8'" :value="result.value"
+      <div class="row q-pb-md" v-if="isProposalEnded && ['YES', 'NO'].includes(highestResultOption)">
+        <div class="col-auto text-bold sectionName">Voting result</div>
+        <div class="col-grow text-right ">
+          <q-badge label="PASSED" style="padding:5px" color="green"  v-if="highestResultOption === 'YES'"></q-badge>
+          <q-badge label="REJECTED" style="padding:5px" color="red-8" v-else></q-badge>
+        </div>
+      </div>
+      <q-linear-progress stripe size="40px" class="q-mb-xs" :color="result.option === highestResultOption ? `${result.option === 'NO' ? 'red-8' : 'green-8'}` : 'grey-8'" :value="result.value"
                          v-for="result of results" v-bind:key="result.label">
         <div class="absolute-full flex flex-center text-subtitle2">
           <q-chip square color="white" text-color="black" :label="result.label"/>
@@ -58,6 +65,7 @@ const props = defineProps<{
   proposalResultDto: ProposalResultDto,
   proposalOptions: string,
   tokenSymbol: string,
+  isProposalEnded: boolean,
 }>();
 const setHighestResultValue = () => {
   const highestResult = results.value.reduce((prev, current) => ((prev.value > current.value) ? prev : current));

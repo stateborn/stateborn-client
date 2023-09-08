@@ -38,13 +38,13 @@
             </q-tooltip>
           </q-icon><br>
           <q-item-label class="text-overline q-mb-md q-mt-md " :class="$q.platform.is.mobile ? 'text-center' : ''" style="font-size: 0.9rem">on-chain only features:</q-item-label>
-          • on-chain (smart-contracts based) DAO with treasury  <q-icon color="primary" name="fa-solid fa-circle-info" style="margin-bottom: 3px;">
+          • on-chain (smart-contracts based) DAO treasury  <q-icon color="primary" name="fa-solid fa-circle-info" style="margin-bottom: 3px;">
           <q-tooltip class="stateborn-tooltip">
-            Smart contracts based DAO will be created in blockchain. <br>
-            DAO will have a treasury (smart contract based wallet) where funds can be stored. <br>
-            Stateborn DAOs are non-permissioned. <br>
-            DAO treasury transfers can be proposed and executed by anyone. <br>
-            DAO should be managed by DAO community and proposals decisions.
+            Smart contracts based DAO treasury will be created in blockchain. <br>
+            It is on-chain wallet which can control assets like ERC-20, NFT tokens or cryptocurrency (e.g. Ether). <br>
+            Stateborn DAO treasury is non-permissioned. <br>
+            DAO treasury assets transfers can be proposed and executed (if passed on-chain) by anyone. <br>
+            DAO treasury should be managed by DAO community and proposals decisions.
           </q-tooltip>
         </q-icon><br>
           • proposals can include on-chain DAO treasury transfers  <q-icon color="primary" name="fa-solid fa-circle-info" style="margin-bottom: 3px;">
@@ -103,8 +103,8 @@
       </div>
     </q-banner>
     <q-banner class="text-black text-subtitle2 text-center noisered q-ma-xs" v-if="!ethConnectionStore.isConnected">
-      <span class="text-bold text-red" v-if="$q.platform.is.mobile">Currently available on WEB only</span>
-      <span class="text-bold text-red" v-else>Please connect first</span>
+      <span class="text-bold text-red-8" v-if="$q.platform.is.mobile">Currently available on WEB only</span>
+      <span class="text-bold text-red-8" v-else>Please connect first</span>
     </q-banner>
     <q-input square outlined filled label="DAO name" v-model="name" class="q-pa-xs" maxlength="60" counter :disable="!ethConnectionStore.isConnected"
              :class="(ethConnectionStore.isConnected && flashNameBorder) ? 'flashingBorder' : ''" :error="name.trim() === ''">
@@ -119,7 +119,7 @@
       </template>
 
     </q-input>
-    <q-banner class="noisegreen text-primary text-center text-subtitle2 q-pa-xs q-mt-lg" v-if="ethConnectionStore.isConnected" dense>
+    <q-banner class="noisegreen text-primary text-center text-subtitle2 q-pa-xs q-mt-lg" v-if="ethConnectionStore.isConnected && !onchain" dense >
       <div class="row items-center">
         <div class="col-4">
           <q-img :src="ethConnectionStore.networkIcon" style="height: 25px; width:25px"/>
@@ -128,6 +128,25 @@
           You are connected to {{ethConnectionStore.networkName}} network. <br>Please provide {{ethConnectionStore.networkName}} token address. <br>
           <b>Important:</b> your DAO will use a governance token on {{ethConnectionStore.networkName}}.<br>
           Please reconnect wallet if you want to change the blockchain network.
+        </div>
+      </div>
+    </q-banner>
+    <q-banner class="noisered text-primary text-center text-subtitle2 q-pa-xs q-mt-lg"
+              v-if="!isLocalhost && ethConnectionStore.isConnected && onchain && ethConnectionStore.chainId !== '137'" dense >
+      <div class="row items-center">
+        <div class="col-4">
+          <q-img :src="TOKEN_SERVICE.getNetworkIcon('137')" style="height: 25px; width:25px"/>
+        </div>
+        <div class="col-8 text-left">
+          <q-item-label class="text-overline q-mb-md" :class="$q.platform.is.mobile ? 'text-center' : ''" style="font-size: 1rem">Unsupported network</q-item-label>
+          Currently off-chain + on-chain DAOs are supported only on <b>Polygon</b>.<br>
+          Please switch to Polygon and create your DAO based on this network.
+          <div class="row justify-center">
+            <div class="col-grow justify-center text-center">
+              <q-btn color="primary"  class="q-mt-xs full-width" dense icon="fa-solid fa-shuffle" @click="switchNetwork"
+                     :label="`Switch to Polygon`"></q-btn>
+            </div>
+          </div>
         </div>
       </div>
     </q-banner>
@@ -211,7 +230,7 @@
       </div>
       <div class="col-6">
         <div class="text-subtitle2 text-bold" v-if="image !== ''">Image preview</div>
-        <div class="text-subtitle2 text-bold text-red" v-else>No image</div>
+        <div class="text-subtitle2 text-bold text-red-8" v-else>No image</div>
         <q-img
           :src="image"
           spinner-color="white"
@@ -243,6 +262,7 @@
       </q-card-section>
       <q-card-section style="padding-top: 0; margin-top:0;">
           Your browser wallet just requested you to digitally sign a data.
+          This is step of off-chain DAO creation process.
           The data contains all the information you just provided in the form.
           This operation is free and doesn't interact with blockchain.
       </q-card-section>
@@ -270,6 +290,8 @@ import TokenInfoCard from 'components/TokenInfoCard.vue';
 import NftTokenInfoCard from 'components/NftTokenInfoCard.vue';
 import { animeIcons } from 'src/api/services/anime-service';
 import { ethers } from 'ethers';
+import { TOKEN_SERVICE } from 'src/api/services/token-service';
+import { changeNetwork } from 'src/api/services/change-network-service';
 
 dayjs.extend(dayjsPluginUTC);
 const ethConnectionStore = useEthConnectionStore();
@@ -397,7 +419,7 @@ const onFileUploaded = (res: any) => {
 const onFileRemoved = () => {
   image.value = '';
 };
-
+const isLocalhost = process.env.IS_LOCALHOST;
 const callCreateDao = async () => {
   let daoContractAddress = '';
   if (props.onchain === true) {
@@ -460,4 +482,14 @@ const callCreateDao = async () => {
     console.log(error);
   });
 };
+
+const switchNetwork = async () => {
+  try {
+    await changeNetwork('137');
+    Notify.create({ message: `Successfully changed network to Polygon!`, position: 'top-right', color: 'green' });
+  } catch (err) {
+    Notify.create({ message: 'Changing network failed. Please change network directly in wallet (e.g. Metamask)', position: 'top-right', color: 'red' });
+  }
+}
+
 </script>

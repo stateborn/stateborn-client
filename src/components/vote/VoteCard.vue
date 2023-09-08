@@ -24,7 +24,7 @@
             </q-icon>
           </div>
           <q-banner :class="userVote === 'NO' ? 'noisered': 'noisegreen'" class="text-black text-bold text-subtitle2 text-center" v-if="props.userVotes.length > 0 && !changeMyVote">
-            <span class="text-bold">You already voted: </span><q-chip square color="white" class="text-bold" :text-color="userVote === 'NO' ? 'red': 'green'"> {{ userVote }}</q-chip>
+            <span class="text-bold">You already voted: </span><q-chip square color="white" class="text-bold" :text-color="userVote === 'NO' ? 'red-8': 'green-8'"> {{ userVote }}</q-chip>
           </q-banner>
           <div class="row justify-center" v-if="props.userVotes.length > 0 && !isProposalEnded">
             <div class="col-auto justify-center">
@@ -45,8 +45,8 @@
             <div class="row justify-center">
               <div class="col-lg-grow col-xs-12 justify-center">
                 <q-banner class="text-black text-subtitle2 text-center noisered">
-                  <span class="text-bold text-red" v-if="$q.platform.is.mobile">Currently available on WEB only</span>
-                  <span class="text-bold text-red" v-else>Please connect to vote</span>
+                  <span class="text-bold text-red-8" v-if="$q.platform.is.mobile">Currently available on WEB only</span>
+                  <span class="text-bold text-red-8" v-else>Please connect to vote</span>
                 </q-banner>
               </div>
             </div>
@@ -72,20 +72,7 @@
       </q-card-actions>
     </div>
     <div v-else>
-      <q-banner class="text-black text-bold text-subtitle2 text-center noisered items-center" >
-        <div class="row">
-          <div class="col-grow">
-            You are connected to: {{TOKEN_SERVICE.getNetworkName(ethConnectionStore.chainId)}}<q-img style="width: 25px; height: 25px;" :src="TOKEN_SERVICE.getNetworkIcon(ethConnectionStore.chainId)"/> <br>
-            DAO token network: {{TOKEN_SERVICE.getNetworkName(props.tokenChainId) }}<q-img style="width: 25px; height: 25px;" :src="TOKEN_SERVICE.getNetworkIcon(props.tokenChainId)"/><br>
-            Please switch your wallet to {{TOKEN_SERVICE.getNetworkName(props.tokenChainId) }} to vote.
-          </div>
-        </div>
-        <div class="row justify-center">
-          <div class="col-grow justify-center text-center">
-            <q-btn color="primary" class="q-mt-md" icon="fa-solid fa-shuffle" @click="switchNetwork" :label="`Switch to ${TOKEN_SERVICE.getNetworkName(props.tokenChainId)}`"></q-btn>
-          </div>
-        </div>
-      </q-banner>
+      <different-network-banner :expected-chain-id="props.tokenChainId" v-if="!isProposalEnded"></different-network-banner>
     </div>
   </q-card>
 </template>
@@ -96,10 +83,10 @@ import { api } from 'boot/axios';
 import { signVote } from 'src/api/services/signature-service';
 import { computed, ref, watch } from 'vue';
 import { Notify } from 'quasar';
-import { TOKEN_SERVICE } from '../../api/services/token-service';
 import dayjsPluginUTC from 'dayjs-plugin-utc';
-import { changeNetwork } from 'src/api/services/change-network-service';
 import dayjs from 'dayjs';
+import DifferentNetworkBanner from 'components/DifferentNetworkBanner.vue';
+
 dayjs.extend(dayjsPluginUTC);
 
 const props = defineProps<{
@@ -184,13 +171,4 @@ const callVote = async (decision: string) => {
     }
   });
 };
-
-const switchNetwork = async () => {
-  try {
-    await changeNetwork(props.tokenChainId);
-    Notify.create({ message: `Successfuly changed network to ${TOKEN_SERVICE.getNetworkName(props.tokenChainId)}!`, position: 'top-right', color: 'green' });
-  } catch (err) {
-    Notify.create({ message: 'Changing network failed. Please change network directly in wallet (e.g. Metamask)', position: 'top-right', color: 'red' });
-  }
-}
 </script>

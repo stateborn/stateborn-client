@@ -36,8 +36,8 @@
       </div></div>
       <div class="row text-subtitle2"><div class="col-auto text-bold sectionName">Validity</div>
         <div class="col-grow text-right" v-if="proposalVerification?.isVerified">
-          <span class="text-bold text-green-9 text-subtitle2" v-if="proposalVerification?.isValid">Validated</span>
-          <span class="text-bold text-red" v-else>Invalid</span>
+          <span class="text-bold text-green-8 text-subtitle2" v-if="proposalVerification?.isValid">Validated</span>
+          <span class="text-bold text-red-8" v-else>Invalid</span>
           <q-icon color="primary" name="fa-solid fa-circle-info" class="q-pl-xs" style="margin-bottom: 3px">
             <q-tooltip v-if="proposalVerification?.isValid" class="stateborn-tooltip">
               Proposal is client-side validated based on IPFS document data.<br>

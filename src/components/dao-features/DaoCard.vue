@@ -147,7 +147,7 @@
             </q-tooltip>
           </q-item-section>
           <q-item-section>
-            <q-item-label v-if="dao.daoVerification && dao.daoVerification.isVerified && dao.daoVerification.isValid" class="text-green-9 text-bold">Validated</q-item-label>
+            <q-item-label v-if="dao.daoVerification && dao.daoVerification.isVerified && dao.daoVerification.isValid" class="text-green-8 text-bold">Validated</q-item-label>
             <q-item-label v-if="dao.daoVerification === undefined || !dao.daoVerification.isVerified" class="text-orange-10 text-bold">Not yet validated</q-item-label>
             <q-item-label v-if="dao.daoVerification && dao.daoVerification.isVerified && !dao.daoVerification.isValid" class="text-red text-bold">Invalid</q-item-label>
             <q-item-label caption class="text-primary ">Validity status</q-item-label>

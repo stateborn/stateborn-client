@@ -9,6 +9,7 @@ import { TransferErc20TransactionData } from 'src/api/model/ipfs/proposal-transa
 import { ProposalTransactionType } from 'src/api/model/ipfs/proposal-transaction-type';
 import { TransferNftTransactionData } from 'src/api/model/ipfs/proposal-transaction/transfer-nft-transaction-data';
 import { TokenType } from 'src/api/model/ipfs/token-type';
+import { changeNetwork } from 'src/api/services/change-network-service';
 
 export const createDaoOnChain = async (tokenAddress: string, tokenCollateral: bigint, chainId: string, tokenType: TokenType): Promise<string> => {
     if (tokenType === TokenType.ERC20) {
@@ -34,10 +35,6 @@ export const createDaoOnChain = async (tokenAddress: string, tokenCollateral: bi
         await daoFactory.createDao(tokenAddress, tokenCollateral);
         return promise;
     }
-}
-export const getIsProposalPassed = async (proposalAddress: string): Promise<boolean> => {
-    const contract = Proposal__factory.connect(proposalAddress, ETH_CONNECTION_SERVICE.getProviderQuickProvider());
-    return await contract.isPassed();
 }
 
 export const getCreateProposalRequiredCollateral = async (daoAddress: string): Promise<string> => {
@@ -117,7 +114,8 @@ export const createProposalOnChain = async (daoAddress: string, proposalId: stri
 
 export const executeOnChainProposal = async (proposalAddress: string) => {
     const proposal = Proposal__factory.connect(proposalAddress, ETH_CONNECTION_SERVICE.getSigner());
-    await proposal.executeProposal();
+    const res = await proposal.executeProposal();
+    await res.wait();
 }
 
 const getErc20DaoFactoryAddress = (chainId: string): string => {

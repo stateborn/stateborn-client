@@ -8,7 +8,7 @@
                         BlockchainProposalStatus.READY_TO_EXECUTE,
                         BlockchainProposalStatus.EXECUTED,
                         BlockchainProposalStatus.REJECTED_ONCHAIN].includes(transactionStatus) ? 'fa-solid fa-check' : undefined"
-                    color="green-9"
+                    color="green-8"
                     :class="transactionStatus === BlockchainProposalStatus.CREATED_OFFCHAIN ? 'noisegreen' : ''"
                     side="left">
     <div v-if="transactionStatus === BlockchainProposalStatus.CREATED_OFFCHAIN">

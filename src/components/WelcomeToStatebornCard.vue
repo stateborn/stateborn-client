@@ -16,9 +16,10 @@
               <q-item class="text-center q-pa-md " style="padding:2px; margin:2px; ">
                 <q-item-section>
                   <q-item-label class="text-overline" style="font-size: 1rem">
-                    Stateborn is a governance platform dedicated to <b>truly autonomous</b> DAOs.
+                    Stateborn is a governance platform dedicated to <b>truly</b> <br>
+                    <b>non-permissioned</b> DAOs
                   </q-item-label>
-                  <q-item-label  class="text-primary text-subtitle2" style="font-size: 0.9rem;;">
+                  <q-item-label  class="text-primary text-subtitle2 q-pt-xs" style="font-size: 0.9rem;;">
                     It is a hybrid off-chain + on-chain voting and smart-contracts DAO treasury management
                     protocol.
                   </q-item-label>
@@ -114,7 +115,7 @@
     </q-card-section>
     <div class="row justify-center">
       <div class="col-auto">
-        <span class="text-subtitle2">Supported networks</span>
+        <span class="text-subtitle2">Supported DAO networks</span>
         <q-img src="/ethereum.svg" style="height: 25px; width:25px">
           <q-tooltip class="stateborn-tooltip">
             Ethereum Mainnet

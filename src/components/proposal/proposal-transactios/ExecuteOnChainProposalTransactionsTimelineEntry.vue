@@ -8,7 +8,7 @@
       :color="[
             BlockchainProposalStatus.READY_TO_EXECUTE,
             BlockchainProposalStatus.EXECUTED,
-            BlockchainProposalStatus.REJECTED_ONCHAIN].includes(transactionStatus) ? 'green-9' : undefined"
+            BlockchainProposalStatus.REJECTED_ONCHAIN].includes(transactionStatus) ? 'green-8' : undefined"
       :class="transactionStatus === BlockchainProposalStatus.READY_TO_EXECUTE ? 'noisegreen' : ''"
       subtitle="4. Ready to execute on-chain"
       side="left">
@@ -28,8 +28,8 @@
             <div class="row justify-center">
               <div class="col-12">
                 <q-banner class="text-black text-subtitle2 text-center noisered">
-                  <span class="text-bold text-red" v-if="$q.platform.is.mobile">Currently available on WEB only</span>
-                  <span class="text-bold text-red" v-else>Please connect</span>
+                  <span class="text-bold text-red-8" v-if="$q.platform.is.mobile">Currently available on WEB only</span>
+                  <span class="text-bold text-red-8" v-else>Please connect</span>
                 </q-banner>
               </div>
             </div>

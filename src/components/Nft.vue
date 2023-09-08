@@ -49,8 +49,6 @@ const ethConnectionStore = useEthConnectionStore();
 
 watch(() => ethConnectionStore.account, async () => {
   // Sign the message
-  // const signature = await ethConnectionStore.signer!.signMessage("siemka");
-  // console.log('pdopisane', signature);
   console.log('NFT read successfully');
   const nft = await getNft(0);
   imageSrc.value = `data:image/png;base64,${nft!.thumbnail}`;

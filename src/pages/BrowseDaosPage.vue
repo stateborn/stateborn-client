@@ -1,7 +1,7 @@
 <template>
   <q-page>
     <div class="row justify-center">
-      <div class="col-12 text-center">
+      <div class="col-12 text-center" >
         <picture-parallax
           image-src="browsepropsnoise.webp"
           alt="proposal image"
@@ -15,7 +15,7 @@
     <div class="row justify-center">
       <div class="col-lg-8 col-md-12 col-xs-grow">
         <div class="row">
-          <div class="col-lg-3 col-md-4 col-xs-grow">
+          <div class="col-lg-3 col-md-4 col-xs-grow" id="welcomeToStatebornRow">
             <welcome-to-stateborn-card :is-full="true"></welcome-to-stateborn-card>
           </div>
           <div class="col-lg-9 col-md-8 col-xs-grow">
@@ -43,7 +43,7 @@
                 </template>
                 <template v-slot:item="props">
                   <dao-card-min
-                    class="q-ma-md"
+                    :class="$q.platform.is.mobile ? 'q-ma-xs' : 'q-ma-md'"
                     :dao="props.row"
                     :is-full="false"
                     :proposals-number="getProposalNumbers(props.row.ipfsHash)"
@@ -67,7 +67,7 @@
   </q-page>
 </template>
 <script lang="ts" setup>
-import { onMounted, ref, watch } from 'vue';
+import { onMounted, ref, onBeforeUnmount } from 'vue';
 import { api } from 'boot/axios';
 import PictureParallax from 'components/PictureParallax.vue';
 import DaoCardMin from 'components/dao-features/DaoCardMin.vue';
@@ -79,7 +79,6 @@ import width = dom.width;
 
 // 200 picture height, 50 toolbar height, 20 some spaces
 const proposalScrollHeight = ref(window.innerHeight - 50  - 200 - 20);
-const daoCardWidth = ref(window.innerWidth - 10 );
 const proposalScrollArea = ref(null);
 const filter = ref('');
 const daoEntryWidth = ref(300);
@@ -100,12 +99,18 @@ const adjustDaoEntriesHeight = () => {
   }
 }
 
+const calculateScrollHeight = () => {
+  const ele = document.getElementById('welcomeToStatebornRow')!;
+  proposalScrollHeight.value = ele.offsetHeight;
+}
+
 onMounted(async () => {
   adjustDaoEntriesHeight();
   daos.value = await loadDaos(initialPagination.value.rowsPerPage, (initialPagination.value.page - 1) * initialPagination.value.rowsPerPage);
   if (daos.value.length > 0) {
     hasData.value = true;
   }
+  calculateScrollHeight();
 });
 api.get(`/api/rest/v1/dao/all/count`).then(async (response) => {
   initialPagination.value.rowsNumber = Number(response.data.count);
@@ -160,8 +165,15 @@ const columns = [
   { name: 'tokenAddress', label: 'Fat (g)', field: 'fat', sortable: true },
   { name: 'tokenType', label: 'Fat (g)', field: 'fat', sortable: true },
 ];
-window.addEventListener('resize',function() {
+
+const resizeListener = () => {
   adjustDaoEntriesHeight();
+}
+
+window.addEventListener('resize', resizeListener, true);
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', resizeListener, true)
 });
 
 

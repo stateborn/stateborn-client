@@ -15,9 +15,6 @@ export class Erc20Service {
     'function totalSupply() view returns (uint256)',
   ];
   async readTokenBalance(userAddress: string, tokenAddress: string, decimals: string): Promise<string> {
-    // Define the ABI for the ERC20 contract
-    console.log('user address', userAddress, tokenAddress);
-
     // Create a new ethers contract with the ERC20 contract address and ABI
     const contract = new ethers.Contract(tokenAddress, this.abi, ETH_CONNECTION_SERVICE.getProvider());
 

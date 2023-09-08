@@ -28,7 +28,7 @@
             </q-item-section>
 
             <q-item-section>
-              <q-item-label :class="reportIsValid ? 'text-green-9 text-bold' : 'text-bold text-red'">
+              <q-item-label :class="reportIsValid ? 'text-green-8 text-bold' : 'text-bold text-red-8'">
                 {{reportIsValid ? 'Valid' : 'Invalid' }}
                 <q-icon v-if="reportIsValid"  name="fa-solid fa-circle-info" color="primary"  style="margin-bottom: 3px;padding-right:5px">
                 <q-tooltip class="stateborn-tooltip">

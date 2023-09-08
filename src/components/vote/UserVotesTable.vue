@@ -19,9 +19,9 @@
       row-key="name"
     >
       <template v-slot:top-right v-if="!isLoading && ethConnectionStore.isConnected">
-        <span class="text-bold text-green-9 text-subtitle2" v-if="thereAreNoInvalidVotes && !someVotesAreNotVerified && userVotes.length > 0">Validated</span>
+        <span class="text-bold text-green-8 text-subtitle2" v-if="thereAreNoInvalidVotes && !someVotesAreNotVerified && userVotes.length > 0">Validated</span>
         <span class="text-bold text-orange-10 text-subtitle2" v-if="thereAreNoInvalidVotes && someVotesAreNotVerified && userVotes.length > 0">Not yet verified</span>
-        <span class="text-bold text-red" v-if="!thereAreNoInvalidVotes && userVotes.length > 0">Votes invalid</span>
+        <span class="text-bold text-red-8" v-if="!thereAreNoInvalidVotes && userVotes.length > 0">Votes invalid</span>
         <q-icon color="primary" name="fa-solid fa-circle-info" class="q-pl-xs" v-if="userVotes.length > 0">
           <q-tooltip v-if="thereAreNoInvalidVotes && !someVotesAreNotVerified" class="stateborn-tooltip">
             All votes were client-side validated based on IPFS vote document data
@@ -50,7 +50,7 @@
       </template>
       <template v-slot:body="props">
         <q-tr :props="props" class="text-subtitle1" :class="(props.row.vote === 'YES' || props.row.vote === 'NO') ? (props.row.vote === 'YES' ? 'noisegreen' : 'noisered') : 'bg-white'">
-          <q-td key="vote" :props="props"  :class="(props.row.vote === 'YES' || props.row.vote === 'NO') ? (props.row.vote === 'YES' ? 'text-green-9' : 'text-red ') : 'text-black text-bold'">
+          <q-td key="vote" :props="props"  :class="(props.row.vote === 'YES' || props.row.vote === 'NO') ? (props.row.vote === 'YES' ? 'text-green-8' : 'text-red-8 ') : 'text-black text-bold'">
             {{ props.row.vote }}
           </q-td>
           <q-td key="votingPower" :props="props">
@@ -64,7 +64,7 @@
             {{ props.row.createdAt }}
           </q-td>
           <q-td key="validity" :props="props">
-            <q-icon :color="!props.row.isVerified ? 'orange-10' : (props.row.isValid ? 'green-9' : 'red')" :name="props.row.isValid ? 'fa-solid fa-square-check' : 'fa-solid fa-square-xmark'">
+            <q-icon :color="!props.row.isVerified ? 'orange-10' : (props.row.isValid ? 'green-8' : 'red-8')" :name="props.row.isValid ? 'fa-solid fa-square-check' : 'fa-solid fa-square-xmark'">
             </q-icon>
             <q-icon
               color="primary"
