@@ -103,7 +103,7 @@
       </div>
     </q-banner>
     <q-banner class="text-black text-subtitle2 text-center noisered q-ma-xs" v-if="!ethConnectionStore.isConnected">
-      <span class="text-bold text-red-8" v-if="$q.platform.is.mobile">Currently available on WEB only</span>
+      <span class="text-bold text-red-8" v-if="$q.platform.is.mobile">Currently available on DESKTOP only</span>
       <span class="text-bold text-red-8" v-else>Please connect first</span>
     </q-banner>
     <q-input square outlined filled label="DAO name" v-model="name" class="q-pa-xs" maxlength="60" counter :disable="!ethConnectionStore.isConnected"

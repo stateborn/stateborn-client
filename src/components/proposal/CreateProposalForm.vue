@@ -61,7 +61,7 @@
       </div>
     </q-banner>
     <q-banner class="text-black text-subtitle2 text-center noisered q-mt-md" v-if="!ethConnectionStore.isConnected">
-      <span class="text-bold text-red-8" v-if="$q.platform.is.mobile">Currently available on WEB only</span>
+      <span class="text-bold text-red-8" v-if="$q.platform.is.mobile">Currently available on DESKTOP only</span>
       <span class="text-bold text-red-8" v-else>Please connect first</span>
 
     </q-banner>
@@ -81,8 +81,21 @@
           <q-icon name="fa-solid fa-triangle-exclamation" color="primary"  size="lg"/>
         </div>
         <div class="col-8 text-left">
-          You need at least <span class="text-bold">{{props.dao.clientDao.proposalTokenRequiredQuantity}} {{props.dao.clientDao.token.symbol}}</span> to create a proposal <br>
-          You have: <span class="text-bold">{{tokenBalance}} {{props.dao.clientDao.token.symbol}}</span>
+          <q-item-label class="text-overline q-mb-md" :class="($q.platform.is.mobile) ? 'text-center' : ''" style="font-size: 1rem">Requirements</q-item-label>
+          Proposal creation requires you to have some amount of DAO governance tokens. <br>
+          The quantity is specified in DAO configuration. <br>
+          <div class="row text-subtitle2 q-mt-md">
+            <div class="col-auto text-bold sectionName">Required</div>
+            <div class="col-grow text-right">
+              {{props.dao.clientDao.proposalTokenRequiredQuantity}} {{props.dao.clientDao.token.symbol}}
+            </div>
+          </div>
+          <div class="row text-subtitle2">
+            <div class="col-auto text-bold sectionName">Your balance</div>
+            <div class="col-grow text-right">
+              {{tokenBalance}} {{props.dao.clientDao.token.symbol}}
+            </div>
+          </div>
         </div>
       </div>
 
@@ -143,7 +156,7 @@
             <span class="text-bold">Duration:</span> {{durationString}}
       </div>
     </div>
-    <div class="row justify-left">
+    <div class="row justify-left" v-if="dao.clientDao.contractAddress !== undefined">
       <div class="col-auto">
         <q-toggle
           size="xl"

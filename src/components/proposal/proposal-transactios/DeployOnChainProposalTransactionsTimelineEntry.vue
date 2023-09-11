@@ -41,7 +41,7 @@
             <div class="row justify-center">
               <div class="col-12">
                 <q-banner class="text-black text-subtitle2 text-center noisered">
-                  <span class="text-bold text-red-8" v-if="$q.platform.is.mobile">Currently available on WEB only</span>
+                  <span class="text-bold text-red-8" v-if="$q.platform.is.mobile">Currently available on DESKTOP only</span>
                   <span class="text-bold text-red-8" v-else>Please connect</span>
                 </q-banner>
               </div>
