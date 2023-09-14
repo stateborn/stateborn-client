@@ -9,7 +9,7 @@
 
     <div class="text-grey-9" :class="textClass === undefined ? 'text-h3 q-pa-md': textClass"
          style="white-space: pre-wrap; word-wrap: break-word; "
-         :style="`background-color: rgba(245, 245, 245, ${opacity !== undefined ? opacity : '0.55'}); ${lineHeight !== undefined ? `line-height: ${lineHeight}` :''}`">
+         :style="`background-color: rgba(245, 245, 245, ${opacity !== undefined ? opacity : '0.65'}); ${lineHeight !== undefined ? `line-height: ${lineHeight}` :''}`">
       {{title}}
     </div>
   </q-parallax>

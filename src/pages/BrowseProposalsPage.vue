@@ -1,14 +1,13 @@
 <template>
   <q-page>
     <div class="row justify-center">
-      <div class="col-12 text-center" style="background: rgb(0, 0, 0, 0.4) !important;">
+      <div class="col-12 text-center" style="background: rgb(0, 0, 0, 0.6) !important;">
         <picture-parallax
           image-src="/proposalsnoise.webp"
           alt="proposal image"
           :text-class="$q.platform.is.mobile ? 'text-h5': 'text-h3 text-center q-pa-md'"
           :scroll-target-value="scrollTarget"
           :title="dao !== null ? `${dao.clientDao.name}` :''"
-          line-height="1.5rem"
           :style="$q.platform.is.mobile ? 'height: 100px !important;' :''"
           :height="$q.platform.is.mobile ? '325': '200'">
         </picture-parallax>
