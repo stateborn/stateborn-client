@@ -14,7 +14,13 @@ body {
   background-color: white;
   background-image: url('/noise4.webp');
   background-repeat: repeat;
-  font-size: 0.9rem !important;
+  //font-size: 0.9rem !important;
+}
+
+@media only screen and (max-width: $medium) {
+  body {
+    font-size: 0.9rem !important;
+  }
 }
 
 .headernoise {
@@ -241,4 +247,8 @@ a {text-decoration: none;color: inherit;}
 
 a {
   text-decoration: underline;
+}
+
+.dialog-border {
+  border: 1px solid #464646 !important;
 }

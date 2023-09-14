@@ -1,9 +1,9 @@
 <template>
   <div>
-    <q-banner class="text-primary text-subtitle2 text-center noisegreen" >
+    <q-banner class="text-primary text-subtitle2 text-center noisegreen" :style="$q.platform.is.mobile ? 'padding:5px !important;' :''">
       <div class="row items-center">
-        <div class="col-lg-4 col-xs-grow">
-          <q-img src="/propa.svg" class="maker" style="height:50px; width: 50px; "></q-img>
+        <div class="col-lg-4 col-xs-grow" :class="$q.platform.is.mobile ? 'q-pb-md' : ''">
+          <q-img src="/propa.svg" class="maker" :style="$q.platform.is.mobile ? 'height:30px; width: 30px; ' :'height:50px; width: 50px; '"></q-img>
         </div>
         <div class="col-lg-8 col-xs-grow text-left">
           <q-item-label class="text-overline q-mb-xs" :class="$q.platform.is.mobile ? 'text-center' : ''" style="font-size: 1rem">CREATE PROPOSAL</q-item-label>
@@ -61,8 +61,7 @@
       </div>
     </q-banner>
     <q-banner class="text-black text-subtitle2 text-center noisered q-mt-md" v-if="!ethConnectionStore.isConnected">
-      <span class="text-bold text-red-8" v-if="$q.platform.is.mobile">Currently available on DESKTOP only</span>
-      <span class="text-bold text-red-8" v-else>Please connect first</span>
+      <span class="text-bold text-red-8">Please connect first</span>
 
     </q-banner>
 <!--    <q-banner class="text-primary text-subtitle2 text-center bodynoise q-mt-md" v-if="description.length > 0 && ethConnectionStore.isConnected && hasRequiredAmountOfTokens && connectedNetworkMatchesTokenNetwork">-->
@@ -194,7 +193,7 @@
            :disable="!isFormValid"
            @click="callCreateProposal"></q-btn>
     <q-dialog v-model="showSignProposalDialog">
-      <q-card class="noisegreen text-subtitle2">
+      <q-card class="noisegreen text-subtitle2 q-pa-lg dialog-border" square>
         <q-card-section class="row items-center">
           <q-avatar icon="fa-solid fa-key" size='md' color="primary" text-color="white" square/>
           <span class="q-ml-lg text-h5" >Sign proposal data</span>
@@ -203,8 +202,9 @@
         </q-card-section>
         <q-card-section style="padding-top: 0; margin-top:0;">
             Your browser wallet just requested you to digitally sign a data.
+            This is a step of the proposal creation process.
             The data contains all the information you just provided in the form.
-            This operation is free and doesn't interact with blockchain.
+            This operation is free, secure and doesn't interact with blockchain.
         </q-card-section>
       </q-card>
     </q-dialog>
@@ -410,23 +410,14 @@ const callCreateProposal = async () => {
     clientProposal,
     creatorSignature: signature,
   }).then((response) => {
-    Notify.create({ message: 'Successfuly created proposal!', position: 'top-right', color: 'green' });
+    Notify.create({ message: 'Successfuly created proposal!', position: 'top-right', color: 'green-8' });
     router.push(`/${props.dao.ipfsHash}`);
     console.log('BackendProposal created!', response);
   }, (error) => {
-    Notify.create({ message: 'Creating proposal failed - server problem!', position: 'top-right', color: 'red' });
+    Notify.create({ message: 'Creating proposal failed - server problem!', position: 'top-right', color: 'red-8' });
     console.log(error);
   });
 };
-
-const switchNetwork = async () => {
-  try {
-    await changeNetwork(props.dao.clientDao.token.chainId);
-    Notify.create({ message: `Successfuly changed network to ${TOKEN_SERVICE.getNetworkName(props.dao.clientDao.token.chainId)}!`, position: 'top-right', color: 'green' });
-  } catch (err) {
-    Notify.create({ message: 'Changing network failed. Please change network directly in wallet (e.g. Metamask)', position: 'top-right', color: 'red' });
-  }
-}
 
 const onProposalTransactionAdded = async (index: number, proposalTransaction?: ClientProposalTransaction | undefined) => {
   const currentTransaction = transactions.value[index];

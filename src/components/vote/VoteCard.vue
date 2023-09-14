@@ -14,10 +14,11 @@
       </q-banner>
       <div v-if="ethConnectionStore.isConnected && !isProposalEnded && connectedNetworkMatchesTokenNetwork">
           <div class="row text-subtitle2 items-center" v-if="(props.userVotes.length === 0 || changeMyVote)">
-            <div class="col-auto text-bold sectionName">Your voting power</div><div class="col text-right">~{{ props.tokenBalance }} {{tokenSymbol}}</div>
+            <div class="col-auto text-bold sectionName" :class="`${tokenBalanceIsPositive ? '' : 'text-red-8'}`">Your voting power</div><div class="col text-right" :class="`${tokenBalanceIsPositive ? '' : 'text-red-8'}`">~{{ props.tokenBalance }} {{tokenSymbol}}</div>
             <q-icon color="primary" name="fa-solid fa-circle-info" class="q-pl-xs">
               <q-tooltip  class="stateborn-tooltip">
                 This is your voting power based on latest block balance. <br>
+                For voting possibility you need to own at least 1 {{tokenSymbol}} token. <br>
                 Voting power available for this proposal will be validated <br>
                 by backend based on proposal creation block {{props.proposalBlockNumber}}.
               </q-tooltip>
@@ -45,8 +46,7 @@
             <div class="row justify-center">
               <div class="col-lg-grow col-xs-12 justify-center">
                 <q-banner class="text-black text-subtitle2 text-center noisered">
-                  <span class="text-bold text-red-8" v-if="$q.platform.is.mobile">Currently available on DESKTOP only</span>
-                  <span class="text-bold text-red-8" v-else>Please connect to vote</span>
+                  <span class="text-bold text-red-8">Please connect to vote</span>
                 </q-banner>
               </div>
             </div>
@@ -58,8 +58,8 @@
     <div v-if="connectedNetworkMatchesTokenNetwork">
       <q-card-actions vertical style="padding:0px;"
                       v-if="ethConnectionStore.isConnected && !isProposalEnded && (options.length === 0 && (props.userVotes.length === 0 || changeMyVote))">
-            <q-btn square color="green" label="YES" @click="callVote('YES')"></q-btn>
-            <q-btn square color="red" label="NO" @click="callVote('NO')"></q-btn>
+            <q-btn square color="green-8" label="YES" @click="callVote('YES')" :disable="!tokenBalanceIsPositive"></q-btn>
+            <q-btn square color="red-8" label="NO" @click="callVote('NO')" :disable="!tokenBalanceIsPositive"></q-btn>
       </q-card-actions>
       <q-card-actions vertical style="padding:5px;" v-if="ethConnectionStore.isConnected && !isProposalEnded && (options.length > 0 && (props.userVotes.length === 0 || changeMyVote))">
         <div class="text-h6 text-center">Options</div>
@@ -68,7 +68,7 @@
           type="radio"
           v-model="option"
         />
-        <q-btn square color="green" label="Vote" @click="callVote(option)"></q-btn>
+        <q-btn square color="green" label="Vote" @click="callVote(option)" :disable="!tokenBalanceIsPositive"></q-btn>
       </q-card-actions>
     </div>
     <div v-else>
@@ -111,6 +111,9 @@ const userVote = computed(() => {
     return props.userVotes[0].clientVote.vote;
   }
   return '';
+});
+const tokenBalanceIsPositive = computed(() => {
+  return Number(props.tokenBalance).toFixed(2) !== '0.00' && props.tokenBalance.trim() !== '';
 });
 watch(() => props.userVotes, () => {
   changeMyVote.value = false;
@@ -156,7 +159,7 @@ const callVote = async (decision: string) => {
   };
   api.post(`/api/rest/v1/proposal/${props.proposalIpfsHash}/vote`, vote).then(() => {
     emit('voted', vote);
-    Notify.create({ message: 'Successfully voted on proposal!', position: 'top-right', color: 'green' });
+    Notify.create({ message: 'Successfully voted on proposal!', position: 'top-right', color: 'green-8' });
   }, (error) => {
     if (error.response.status === 400 && error.response.data?.errorCode === '1') {
       emit('differentVotingPower', {
@@ -166,7 +169,7 @@ const callVote = async (decision: string) => {
       });
       return;
     } else {
-      Notify.create({ message: 'Voting failed - server problem.', position: 'top-right', color: 'red' });
+      Notify.create({ message: 'Voting failed - server problem.', position: 'top-right', color: 'red-8' });
       console.log(error);
     }
   });

@@ -143,13 +143,13 @@ export default {
       let wasError = false;
       let res = files;
       if (res.length > 1) {
-        Notify.create({ message: 'Adding file failed. Please add only single file', position: 'top-right', color: 'red' });
+        Notify.create({ message: 'Adding file failed. Please add only single file', position: 'top-right', color: 'red-8' });
         wasError = true;
       }
       if (this.sizeKbLimit !== '') {
         res = files.filter((file) => file.size < (Number(this.sizeKbLimit) * 1000));
         if (!res || res.length === 0) {
-          Notify.create({ message: `Adding file failed. File size limit is ${this.sizeKbLimit} kb`, position: 'top-right', color: 'red' });
+          Notify.create({ message: `Adding file failed. File size limit is ${this.sizeKbLimit} kb`, position: 'top-right', color: 'red-8' });
           wasError = true;
         }
       }
@@ -163,7 +163,7 @@ export default {
       if (this.fileTypeFilter !== '' && !wasError) {
         res = files.filter((file) => file.type === this.fileTypeFilter);
         if (!res || res.length === 0) {
-          Notify.create({ message: `Adding file failed. File size limit is ${this.sizeKbLimit} kb`, position: 'top-right', color: 'red' });
+          Notify.create({ message: `Adding file failed. File size limit is ${this.sizeKbLimit} kb`, position: 'top-right', color: 'red-8' });
           // showNotificationError('Adding file failed', 'Your file has not expected mime type');
         }
       }

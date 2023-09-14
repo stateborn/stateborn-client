@@ -200,9 +200,9 @@ const saveNewIpfsGatewayAddress = async () => {
     ipfsGateway.value = newIpfsGateway;
     editMode.value = false;
     dropdown.value.hide();
-    Notify.create({ message: 'Successfully saved new IPFS gateway address', position: 'top-right', color: 'green' });
+    Notify.create({ message: 'Successfully saved new IPFS gateway address', position: 'top-right', color: 'green-8' });
   } catch (err) {
-    Notify.create({ message: 'IPFS gateway address incorrect. Is it valid URL?', position: 'top-right', color: 'red' });
+    Notify.create({ message: 'IPFS gateway address incorrect. Is it valid URL?', position: 'top-right', color: 'red-8' });
   }
 };
 
@@ -217,7 +217,7 @@ const resetIpfsGatewayAddress = async () => {
   await reconnectToIpfs(ipfsGateway.value);
   editMode.value = false;
   dropdown.value.hide();
-  Notify.create({ message: 'Successfully reset IPFS gateway address to default', position: 'top-right', color: 'green' });
+  Notify.create({ message: 'Successfully reset IPFS gateway address to default', position: 'top-right', color: 'green-8' });
 };
 
 

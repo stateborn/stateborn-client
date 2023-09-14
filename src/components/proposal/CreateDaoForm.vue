@@ -1,7 +1,7 @@
 <template>
   <div style="margin:0;padding:0;">
-    <q-banner class="text-primary text-subtitle2 text-center noisegreen q-ma-xs" v-if="props.onchain">
-      <div class="row items-center">
+    <q-banner class="text-primary text-subtitle2 text-center noisegreen q-ma-xs" v-if="props.onchain" :style="$q.platform.is.mobile ? 'padding:5px !important;' :''">
+      <div class="row items-center" >
         <div class="col-lg-4 col-xs-grow">
           <q-img class="onchain-icon" src="/cube2.svg" style="height:42px; width: 42px"></q-img>
         </div>
@@ -60,7 +60,7 @@
         </div>
       </div>
     </q-banner>
-    <q-banner class="text-primary text-subtitle2 text-center noisegreen q-ma-xs" v-else>
+    <q-banner class="text-primary text-subtitle2 text-center noisegreen q-ma-xs" :style="$q.platform.is.mobile ? 'padding:5px !important;' :''" v-else>
       <div class="row items-center">
         <div class="col-lg-4 col-xs-grow">
           <q-icon class="offchain-icon" name="fa-solid fa-square" color="primary"  size="lg"/>
@@ -103,8 +103,7 @@
       </div>
     </q-banner>
     <q-banner class="text-black text-subtitle2 text-center noisered q-ma-xs" v-if="!ethConnectionStore.isConnected">
-      <span class="text-bold text-red-8" v-if="$q.platform.is.mobile">Currently available on DESKTOP only</span>
-      <span class="text-bold text-red-8" v-else>Please connect first</span>
+      <span class="text-bold text-red-8">Please connect first</span>
     </q-banner>
     <q-input square outlined filled label="DAO name" v-model="name" class="q-pa-xs" maxlength="60" counter :disable="!ethConnectionStore.isConnected"
              :class="(ethConnectionStore.isConnected && flashNameBorder) ? 'flashingBorder' : ''" :error="name.trim() === ''">
@@ -152,7 +151,6 @@
     </q-banner>
     <q-input square filled label="DAO governance token address" v-model="tokenAddress"
              :error="tokenAddress.trim() === '' && ethConnectionStore.isConnected"
-             :class="(ethConnectionStore.isConnected && flashTokenAddressBorder) ? 'flashingBorder' : ''"
              class="q-pa-xs q-pt-lg" :disable="!ethConnectionStore.isConnected">
       <template v-slot:error>
         Please provide address of your DAO governance token (ERC-20 or NFT).
@@ -253,7 +251,7 @@
 
   </div>
   <q-dialog v-model="showSignDaoDialog">
-    <q-card class="noisegreen text-subtitle2">
+    <q-card class="noisegreen text-subtitle2 q-pa-lg dialog-border" square>
       <q-card-section class="row items-center">
         <q-avatar icon="fa-solid fa-key" size='md' color="primary" text-color="white" square/>
         <span class="q-ml-lg text-h5" >Sign DAO definition data</span>
@@ -262,9 +260,9 @@
       </q-card-section>
       <q-card-section style="padding-top: 0; margin-top:0;">
           Your browser wallet just requested you to digitally sign a data.
-          This is step of off-chain DAO creation process.
+          This is a step of the off-chain DAO creation process.
           The data contains all the information you just provided in the form.
-          This operation is free and doesn't interact with blockchain.
+          This operation is free, secure and doesn't interact with blockchain.
       </q-card-section>
     </q-card>
   </q-dialog>
@@ -387,7 +385,7 @@ watch(() => tokenAddress.value, async () => {
     decimals.value = decimalsRes;
     minimalTokens.value = 1;
     $q.loading.hide();
-    Notify.create({ message: 'Successfully fetched NFT token data!', position: 'top-right', color: 'green' });
+    Notify.create({ message: 'Successfully fetched NFT token data!', position: 'top-right', color: 'green-8' });
   } catch (err2) {
     try {
       const { nameRes, symbolRes, decimalsRes } = await ERC_20_SERVICE.readTokenData(tokenAddress.value);
@@ -396,13 +394,13 @@ watch(() => tokenAddress.value, async () => {
       decimals.value = decimalsRes;
       tokenType.value = TokenType.ERC20;
       $q.loading.hide();
-      Notify.create({ message: 'Successfully fetched ERC-20 token data!', position: 'top-right', color: 'green' });
+      Notify.create({ message: 'Successfully fetched ERC-20 token data!', position: 'top-right', color: 'green-8' });
     } catch (err) {
       tokenName.value = '';
       tokenSymbol.value = '';
       decimals.value = '';
       $q.loading.hide();
-      Notify.create({ message: `Incorrect token address. Is it valid ERC-20/NFT token address on ${ethConnectionStore.networkName}?`, position: 'top-right', color: 'red' });
+      Notify.create({ message: `Incorrect token address. Is it valid ERC-20/NFT token address on ${ethConnectionStore.networkName}?`, position: 'top-right', color: 'red-8' });
     }
   }
 });
@@ -413,7 +411,7 @@ const onFileUploaded = (res: any) => {
   if (res.fileName.endsWith('.webp') || res.fileName.endsWith('.png') || res.fileName.endsWith('.jpg') || res.fileName.endsWith('.jpeg') || res.fileName.endsWith('.gif')) {
     image.value = `data:image/svg;base64, ${res.base64File}`;
   } else {
-    Notify.create({ message: 'Incorrect picture format. Try .png .jpg .jpeg .webp or .gif', position: 'top-right', color: 'red' });
+    Notify.create({ message: 'Incorrect picture format. Try .png .jpg .jpeg .webp or .gif', position: 'top-right', color: 'red-8' });
   }
 };
 const onFileRemoved = () => {
@@ -434,7 +432,7 @@ const callCreateDao = async () => {
       ethers.parseUnits(minimalTokens.value.toString(), Number(decimals.value)),
       ethConnectionStore.chainId,
       tokenType.value);
-    Notify.create({ message: `DAO created on-chain. Address: ${daoContractAddress}`, position: 'top-right', color: 'green' });
+    Notify.create({ message: `DAO created on-chain. Address: ${daoContractAddress}`, position: 'top-right', color: 'green-8' });
     $q.loading.hide();
   }
   showSignDaoDialog.value = true;
@@ -470,13 +468,13 @@ const callCreateDao = async () => {
     signature,
     creatorAddress: ethConnectionStore.account,
   }).then(async (response) => {
-    Notify.create({ message: 'Successfully created DAO!', position: 'top-right', color: 'green' });
+    Notify.create({ message: 'Successfully created DAO!', position: 'top-right', color: 'green-8' });
     $q.loading.hide();
     await sleep(100);
     router.push('/');
     console.log('BackendProposal created!', response);
   }, async (error) => {
-    Notify.create({ message: 'Creating DAO failed - server problem!', position: 'top-right', color: 'red' });
+    Notify.create({ message: 'Creating DAO failed - server problem!', position: 'top-right', color: 'red-8' });
     $q.loading.hide();
     await sleep(100);
     console.log(error);
@@ -484,12 +482,7 @@ const callCreateDao = async () => {
 };
 
 const switchNetwork = async () => {
-  try {
-    await changeNetwork('137');
-    Notify.create({ message: `Successfully changed network to Polygon!`, position: 'top-right', color: 'green' });
-  } catch (err) {
-    Notify.create({ message: 'Changing network failed. Please change network directly in wallet (e.g. Metamask)', position: 'top-right', color: 'red' });
-  }
+  await changeNetwork('137');
 }
 
 </script>

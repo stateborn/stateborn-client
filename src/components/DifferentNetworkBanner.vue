@@ -6,7 +6,7 @@
             </div>
             <div class="col-xs-grow text-left" :class="differentNetworkBannerTooSmall ? 'col-lg-grow' : 'col-lg-8'">
                 <q-item-label class="text-overline q-mb-md" :class="($q.platform.is.mobile || differentNetworkBannerTooSmall) ? 'text-center' : ''" style="font-size: 1rem">Different network</q-item-label>
-                You are currently connected to different blockchain network than DAO network.
+                Your wallet is currently connected to different blockchain network than DAO network.
                 <div class="row text-subtitle2 q-mt-md">
                     <div class="col-auto text-bold sectionName">CONNECTED TO</div>
                     <div class="col-grow text-right">
@@ -21,7 +21,10 @@
                 </div>
                 <br>
                 Please switch your wallet to <b>{{TOKEN_SERVICE.getNetworkName(props.expectedChainId) }}</b>.<br>
-                <q-btn color="primary"  class="q-mt-md full-width" icon="fa-solid fa-shuffle" dense @click="switchNetwork" :label="`Switch to ${TOKEN_SERVICE.getNetworkName(props.expectedChainId)}`"></q-btn>
+                <q-btn
+                    v-if="ethConnectionStore.isMetamask"
+                    color="primary"  class="q-mt-md full-width" icon="fa-solid fa-shuffle" dense
+                    @click="switchNetwork" :label="`Switch to ${TOKEN_SERVICE.getNetworkName(props.expectedChainId)}`"></q-btn>
 
             </div>
         </div>
@@ -38,12 +41,7 @@ const ethConnectionStore = useEthConnectionStore();
 
 const props = defineProps(['expectedChainId']);
 const switchNetwork = async () => {
-    try {
-        await changeNetwork(props.expectedChainId);
-        Notify.create({ message: `Successfuly changed network to ${TOKEN_SERVICE.getNetworkName(props.expectedChainId)}!`, position: 'top-right', color: 'green' });
-    } catch (err) {
-        Notify.create({ message: 'Changing network failed. Please change network directly in wallet (e.g. Metamask)', position: 'top-right', color: 'red' });
-    }
+  await changeNetwork(props.expectedChainId);
 }
 const differentNetworkBannerTooSmall = ref(false);
 onMounted(() => {

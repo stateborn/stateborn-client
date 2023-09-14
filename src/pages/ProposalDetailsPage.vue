@@ -119,7 +119,7 @@
       </div>
     </div>
     <q-dialog v-model="showDifferentVotingPowerDialog">
-      <q-card class="noisered text-subtitle2">
+      <q-card class="noisered text-subtitle2 q-pa-lg dialog-border" square>
         <q-card-section class="row items-center">
           <q-avatar icon="fa-solid fa-info" size='md' color="primary" text-color="white" square/>
           <span class="q-ml-lg text-h5" >Confirm vote</span>
@@ -170,6 +170,7 @@ import { getProposalReport } from 'src/api/services/proposal-report-service';
 import ProposalTransactionsCard from 'components/proposal/proposal-transactios/ProposalTransactionsCard.vue';
 import ProposalDescriptionMarkdown from 'components/proposal/ProposalDescriptionMarkdown.vue';
 import height = dom.height;
+import { useCurrentChainStore } from 'stores/current-chain-store';
 
 const route = useRoute();
 const proposal = ref(<BackendProposal | undefined> undefined);
@@ -181,6 +182,7 @@ const userVotes = ref([]);
 const proposalIpfsHash: string = <string>route.params.id;
 const daoIpfsHash: string = <string>route.params.daoIpfsHash;
 const ethConnectionStore = useEthConnectionStore();
+const currentChainStore = useCurrentChainStore();
 const isProposalEnded = ref(false);
 const canShowScrollArea = ref(false);
 const triggerFillUserVotesTable = ref(false);
@@ -225,6 +227,7 @@ $q.loading.show({
 });
 const fetchProposalData = async () => {
   dao.value = await getDao(daoIpfsHash);
+  currentChainStore.setChainId(dao.value.clientDao.token.chainId);
   if (ethConnectionStore.isConnected) {
     getTokenBalance(dao.value.clientDao.token.address, dao.value.clientDao.token.type, dao.value.clientDao.token.decimals);
     fetchUserVotes();
@@ -269,7 +272,9 @@ const fetchProposalData = async () => {
 fetchProposalData();
 
 const getTokenBalance = async (tokenAddress: string, tokenType: TokenType, decimals?: string) => {
+
   TOKEN_SERVICE.readTokenBalance(ethConnectionStore.account, tokenAddress, tokenType, decimals).then((res) => {
+    console.log('ale mam token balance ziomek', res);
     tokenBalance.value = res;
   }, (error) => {
     console.log(error);
@@ -291,10 +296,9 @@ const fetchUserVotes = async () => {
 
 watch(() => [ethConnectionStore.isConnected, ethConnectionStore.networkName], async () => {
   adjustDescriptionHeight();
+  console.log('trigger na watch', ethConnectionStore.isConnected, ethConnectionStore.networkName);
   if (ethConnectionStore.isConnected) {
-    if (tokenBalance.value === '') {
-      getTokenBalance(dao.value.clientDao.token.address,dao.value.clientDao.token.type, dao.value.clientDao.token.decimals);
-    }
+    getTokenBalance(dao.value.clientDao.token.address,dao.value.clientDao.token.type, dao.value.clientDao.token.decimals);
     fetchUserVotes();
   }
 });

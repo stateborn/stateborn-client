@@ -118,6 +118,7 @@ import width = dom.width;
 import { BackendProposal } from 'src/api/model/backend-proposal';
 import { filterImagesAndAttachmentsFromDescription } from 'src/api/services/description-service';
 import DaoCardMin from 'components/dao-features/DaoCardMin.vue';
+import { useCurrentChainStore } from 'stores/current-chain-store';
 
 // 200 picture height, 50 toolbar height, 20 some spaces
 const proposalScrollHeight = ref(window.innerHeight - 50  - 200 - 20);
@@ -176,8 +177,11 @@ api.get(`/api/rest/v1/dao/${daoIpfsHash}/proposals/count`).then(async (response)
 });
 
 const onValidationDoneCallback = (daoBackend: DaoBackend) => dao.value = daoBackend;
+
+const currentChainStore = useCurrentChainStore();
 getDao(daoIpfsHash, onValidationDoneCallback).then(_ => {
   dao.value = _;
+  currentChainStore.setChainId(_.clientDao.token.chainId);
 });
 const onTableDataRequest = async ({ pagination, filter }: any) => {
   proposals.value = await loadProposals(pagination.rowsPerPage, (pagination.page - 1) * pagination.rowsPerPage, filter);

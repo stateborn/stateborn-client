@@ -7,14 +7,16 @@ export const useEthConnectionStore = defineStore('ethConnectionStore', {
     chainId: '',
     networkName: '',
     networkIcon: '',
+    isMetamask: false,
   }),
   actions: {
-    async setConnected(account: string, chainId: string, networkName: string, networkIcon: string) {
-      this.isConnected = true;
+    async setConnected(account: string, chainId: string, networkName: string, networkIcon: string, isMetamask: boolean) {
+      this.isConnected = account !== '';
       this.account = account;
       this.chainId = chainId;
       this.networkName = networkName;
       this.networkIcon = networkIcon;
+      this.isMetamask = isMetamask;
     },
   },
 });

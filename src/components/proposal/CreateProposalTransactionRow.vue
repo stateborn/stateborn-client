@@ -314,7 +314,7 @@ const readErc20 = async () => {
   decimals.value = decimalsRes;
   tokenType.value = TokenType.ERC20;
   $q.loading.hide();
-  Notify.create({message: 'Successfully fetched ERC-20 token data!', position: 'top-right', color: 'green'});
+  Notify.create({message: 'Successfully fetched ERC-20 token data!', position: 'top-right', color: 'green-8'});
   daoFunds.value = Number(await ERC_20_SERVICE.readTokenBalance(props.daoAddress, tokenAddress.value, decimals.value)).toFixed(0);
   emitProposalTransaction();
 };
@@ -325,7 +325,7 @@ const readNft = async () => {
   tokenType.value = TokenType.NFT;
   decimals.value = decimalsRes;
   $q.loading.hide();
-  Notify.create({ message: 'Successfully fetched NFT token data!', position: 'top-right', color: 'green' });
+  Notify.create({ message: 'Successfully fetched NFT token data!', position: 'top-right', color: 'green-8' });
   daoFunds.value = await ERC_20_SERVICE.readTokenBalance(props.daoAddress, tokenAddress.value, decimals.value);
   emitProposalTransaction();
 };
@@ -344,7 +344,7 @@ watch(() => [tokenAddress.value, transactionType.value], async () => {
       tokenSymbol.value = '';
       decimals.value = '';
       $q.loading.hide();
-      Notify.create({ message: `Incorrect token address. Is it valid ERC-20 token address on ${ethConnectionStore.networkName}?`, position: 'top-right', color: 'red' });
+      Notify.create({ message: `Incorrect token address. Is it valid ERC-20 token address on ${ethConnectionStore.networkName}?`, position: 'top-right', color: 'red-8' });
     }
   } else {
     try {
@@ -354,7 +354,7 @@ watch(() => [tokenAddress.value, transactionType.value], async () => {
       tokenSymbol.value = '';
       decimals.value = '';
       $q.loading.hide();
-      Notify.create({ message: `Incorrect token address. Is it valid ERC-20/NFT token address on ${ethConnectionStore.networkName}?`, position: 'top-right', color: 'red' });
+      Notify.create({ message: `Incorrect token address. Is it valid ERC-20/NFT token address on ${ethConnectionStore.networkName}?`, position: 'top-right', color: 'red-8' });
     }
   }
 });

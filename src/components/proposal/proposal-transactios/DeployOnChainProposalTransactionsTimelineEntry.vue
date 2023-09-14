@@ -41,8 +41,7 @@
             <div class="row justify-center">
               <div class="col-12">
                 <q-banner class="text-black text-subtitle2 text-center noisered">
-                  <span class="text-bold text-red-8" v-if="$q.platform.is.mobile">Currently available on DESKTOP only</span>
-                  <span class="text-bold text-red-8" v-else>Please connect</span>
+                  <span class="text-bold text-red-8">Please connect first</span>
                 </q-banner>
               </div>
             </div>
@@ -92,7 +91,7 @@ const deployProposalOnChain = async () => {
   });
   const proposalAddress = await createProposalOnChain(props.daoAddress, props.proposalId, props.proposalMerkleRoot, props.transactions, requiredCollateral.value);
   await sleep(1000);
-  Notify.create({ message: `Successfully created on-chain proposal! Address: ${proposalAddress}`, position: 'top-right', color: 'green' });
+  Notify.create({ message: `Successfully created on-chain proposal! Address: ${proposalAddress}`, position: 'top-right', color: 'green-8' });
   await sleep(500);
   $q.loading.hide();
   emit('deployedOnChain', true);

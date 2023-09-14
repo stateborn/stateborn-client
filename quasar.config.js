@@ -32,8 +32,7 @@ module.exports = configure(function (ctx) {
     // --> boot files are part of "main.js"
     // https://v2.quasar.dev/quasar-cli-vite/boot-files
     boot: [
-
-
+      'axios',
     ],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#css
@@ -58,8 +57,8 @@ module.exports = configure(function (ctx) {
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#build
     build: {
       target: {
-        browser: [ 'es2019', 'edge88', 'firefox78', 'chrome87', 'safari13.1' ],
-        node: 'node16'
+        browser: [ 'es2020', 'edge88', 'firefox78', 'chrome87', 'safari13.1' ],
+        node: 'node18'
       },
 
       vueRouterMode: 'history', // available values: 'hash', 'history'
@@ -79,8 +78,8 @@ module.exports = configure(function (ctx) {
         DEVELOPMENT_NETWORK_NAME: 'Ganache local NEW',
         DEVELOPMENT_NETWORK_ICON_NAME: '/hardhat.png',
         DEVELOPMENT_NETWORK_ERC_20_TOKEN_ADDRESS: '0x3a7b679BA0F23F2B27B48608908f9248ea0a72f0',
-        DEVELOPMENT_NETWORK_ERC_20_DAO_FACTORY_ADDRESS: '0xEE5BDC9c6295c6d6e6E0e8bA82ea072C2a93ff37',
-        DEVELOPMENT_NETWORK_NFT_DAO_FACTORY_ADDRESS: '0x8E45309aD2b5bc53f8aEA42B7Dee121a3215B376',
+        DEVELOPMENT_NETWORK_ERC_20_DAO_FACTORY_ADDRESS: '0xF826c380c015b070B72B28665b94a24a6660AcF3',
+        DEVELOPMENT_NETWORK_NFT_DAO_FACTORY_ADDRESS: '0x18D0aa26156fB82396F89eb62aC0A178bc45b947',
         POLYGON_ERC_20_DAO_FACTORY_ADDRESS: '0xf95fE68E1D115D19759Bdd2179218c827b8d7Ff0',
         POLYGON_NFT_DAO_FACTORY_ADDRESS: '0x0C0E24F5579c01f2056239DeD15cEc2848F34aB1',
       },

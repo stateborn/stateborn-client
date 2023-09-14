@@ -5,7 +5,8 @@
 
         <q-toolbar-title style="width:50px !important;">
           <router-link to="/" style="text-decoration: none">
-            <span :style="$q.platform.is.mobile ? 'font-size:12px': ''">stateborn - minimum trust democracy</span>
+            <span v-if="!$q.platform.is.mobile">stateborn - minimum trust democracy</span>
+            <span v-else style="font-size:12px" class="text-bold">stateborn</span>
             <q-badge class="q-ma-md" label="alpha"></q-badge>
           </router-link>
         </q-toolbar-title>
@@ -15,7 +16,9 @@
 <!--          <q-tab name="tab3" label="ABOUT STATEBORN PROTOCOL" />-->
 <!--        </q-tabs>-->
 <!--        <q-space></q-space>-->
-        <ConnectWithWallet v-if="!$q.platform.is.mobile"></ConnectWithWallet>
+<!--        <ConnectWithWallet></ConnectWithWallet>-->
+        <wallet-connect></wallet-connect>
+<!--        <wallet></wallet>-->
       </q-toolbar>
     </q-header>
 
@@ -26,7 +29,9 @@
 </template>
 
 <script setup lang="ts">
-import ConnectWithWallet from 'components/ConnectWithWallet.vue';
 import { ref } from 'vue';
+import WalletConnect from 'src/WalletConnect.vue';
+
 const tab = ref('tab1');
+
 </script>

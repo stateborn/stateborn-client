@@ -10,7 +10,7 @@ interface SupportedNetwork {
 }
 export class TokenService {
 
-  private readonly supportedNetwork: SupportedNetwork[] = process.env.IS_LOCALHOST ?
+  public readonly supportedNetworks: SupportedNetwork[] = process.env.IS_LOCALHOST ?
     [
       {
         chainId: '1',
@@ -75,7 +75,7 @@ export class TokenService {
   }
 
   private getProperty(chainId: string, property: string) {
-    const network: any = this.supportedNetwork.filter(_ => _.chainId === chainId)[0];
+    const network: any = this.supportedNetworks.filter(_ => _.chainId === chainId)[0];
     if (network !== undefined) {
       return network[property];
     } else {
@@ -91,6 +91,11 @@ export class TokenService {
     return this.getProperty(chainId, 'chainIdHex');
   }
 
+  getChainId(chainIdHex: string): string {
+    return this.supportedNetworks.filter(_ => _.chainIdHex.toLowerCase() === chainIdHex.toLowerCase())[0].chainId;
+  }
+
+
 
   getNetworkIcon(chainId: string): string {
     return this.getProperty(chainId, 'icon');
@@ -101,12 +106,12 @@ export class TokenService {
   }
 
 
-  isSupportedNetwork(chainId: string): boolean {
-    return  this.supportedNetwork.filter(_ => _.chainId === chainId).length > 0
+  isSupportedNetwork(chainIdHex: string): boolean {
+    return  this.supportedNetworks.filter(_ => _.chainIdHex.toLowerCase() === chainIdHex.toLowerCase()).length > 0
   }
 
   getSupportedNetworksListAsString(): string {
-    return this.supportedNetwork.map(_ => _.name).join(', ');
+    return this.supportedNetworks.map(_ => _.name).join(', ');
   }
 
 }
