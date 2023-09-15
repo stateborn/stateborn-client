@@ -62,7 +62,7 @@
                         leave-active-class="animated fadeOut"
                       >
                         <picture-parallax image-src="browsepropsnoise.webp" alt="stateborn image"
-                                          title="stateborn - minimum trust democracy"
+                                          title="stateborn - where communities grow"
                                           :speed="$q.platform.is.mobile ? 0.1 : 0.6"
                                           :style="$q.platform.is.mobile ? 'height: 100px !important': 'height: 200px'"
                                           :text-class="$q.platform.is.mobile ? 'text-subtitle2 text-black': 'text-h2 q-pa-md'"

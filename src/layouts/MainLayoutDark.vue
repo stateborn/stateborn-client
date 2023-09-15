@@ -5,7 +5,7 @@
 
         <q-toolbar-title class="text-white">
           <router-link to="/" style="text-decoration: none">
-            <span :style="$q.platform.is.mobile ? 'font-size:12px': ''">stateborn - minimum trust democracy</span>
+            <span :style="$q.platform.is.mobile ? 'font-size:12px': ''">stateborn - where communities grow</span>
             <q-badge class="q-ma-md" label="alpha"></q-badge>
           </router-link>
         </q-toolbar-title>

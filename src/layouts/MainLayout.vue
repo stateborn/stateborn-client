@@ -5,7 +5,7 @@
 
         <q-toolbar-title style="width:50px !important;">
           <router-link to="/" style="text-decoration: none">
-            <span v-if="!$q.platform.is.mobile">stateborn - minimum trust democracy</span>
+            <span v-if="!$q.platform.is.mobile ">stateborn - where <b>communities</b> grow</span>
             <span v-else style="font-size:12px" class="text-bold">stateborn</span>
             <q-badge class="q-ma-md" label="alpha"></q-badge>
           </router-link>
