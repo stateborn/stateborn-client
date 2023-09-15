@@ -43,7 +43,7 @@
         Network: {{ networkName }}
       </q-tooltip>
     </q-chip>
-    <q-btn color="black" square flat
+    <q-btn color="black" square flat glossy
            dense icon="fa-solid fa-arrow-right-from-bracket" @click="disconnect()">
       <q-tooltip class="stateborn-tooltip text-subtitle2">
         Disconnect

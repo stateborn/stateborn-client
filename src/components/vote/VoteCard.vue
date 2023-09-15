@@ -58,8 +58,8 @@
     <div v-if="connectedNetworkMatchesTokenNetwork">
       <q-card-actions vertical style="padding:0px;"
                       v-if="ethConnectionStore.isConnected && !isProposalEnded && (options.length === 0 && (props.userVotes.length === 0 || changeMyVote))">
-            <q-btn square color="green-8" label="YES" @click="callVote('YES')" :disable="!tokenBalanceIsPositive"></q-btn>
-            <q-btn square color="red-8" label="NO" @click="callVote('NO')" :disable="!tokenBalanceIsPositive"></q-btn>
+            <q-btn square glossy color="green-8" label="YES" @click="callVote('YES')" :disable="!tokenBalanceIsPositive"></q-btn>
+            <q-btn square glossy color="red-8" label="NO" @click="callVote('NO')" :disable="!tokenBalanceIsPositive"></q-btn>
       </q-card-actions>
       <q-card-actions vertical style="padding:5px;" v-if="ethConnectionStore.isConnected && !isProposalEnded && (options.length > 0 && (props.userVotes.length === 0 || changeMyVote))">
         <div class="text-h6 text-center">Options</div>
@@ -68,7 +68,7 @@
           type="radio"
           v-model="option"
         />
-        <q-btn square color="green" label="Vote" @click="callVote(option)" :disable="!tokenBalanceIsPositive"></q-btn>
+        <q-btn glossy square color="green" label="Vote" @click="callVote(option)" :disable="!tokenBalanceIsPositive"></q-btn>
       </q-card-actions>
     </div>
     <div v-else>

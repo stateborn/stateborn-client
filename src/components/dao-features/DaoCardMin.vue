@@ -97,7 +97,7 @@
       </div>
     </div>
     <q-card-section horizontal style="padding:0; margin:0; " v-if="!fullWidth">
-      <q-btn align="center"  class="full-width" flat text-color="primary"
+      <q-btn square align="center"  class="full-width" flat text-color="primary"
              @click="$router.push(`/${props.dao.ipfsHash}`)" label="Proposals">
         <q-img src="/voting2.svg" style="height:20px; width: 20px"></q-img>
       </q-btn>

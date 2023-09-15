@@ -3,7 +3,7 @@
     <div class="row justify-center">
       <div class="col-12 text-center" >
         <picture-parallax
-          image-src="browsepropsnoise.webp"
+          image-src="logo.webp"
           alt="proposal image"
           :text-class="$q.platform.is.mobile ? 'text-h5': 'text-h3 q-pa-md'"
           title="stateborn"

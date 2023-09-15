@@ -54,6 +54,7 @@
         <div class="row">
           <div class="col-12">
             <q-btn color="primary"
+                   glossy
                    :disable="!connectedToMatchingNetwork || buttonClicked"
                    square class="full-width q-mt-xs" label="CREATE ON-CHAIN PROPOSAL"
                    @click="deployProposalOnChain"></q-btn>

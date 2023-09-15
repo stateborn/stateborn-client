@@ -3,13 +3,13 @@
     <div class="row justify-center">
       <div class="col-12 text-center" style="background: rgb(0, 0, 0, 0.6) !important;">
         <picture-parallax
-          image-src="/proposalsnoise.webp"
+          image-src="/2.webp"
           alt="proposal image"
           :text-class="$q.platform.is.mobile ? 'text-h5': 'text-h3 text-center q-pa-md'"
           :scroll-target-value="scrollTarget"
           :title="dao !== null ? `${dao.clientDao.name}` :''"
           :style="$q.platform.is.mobile ? 'height: 100px !important;' :''"
-          :height="$q.platform.is.mobile ? '325': '200'">
+          :height="$q.platform.is.mobile ? '458': '200'">
         </picture-parallax>
       </div>
     </div>

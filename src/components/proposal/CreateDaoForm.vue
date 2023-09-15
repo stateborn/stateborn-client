@@ -142,7 +142,7 @@
           Please switch to Polygon and create your DAO based on this network.
           <div class="row justify-center">
             <div class="col-grow justify-center text-center">
-              <q-btn color="primary"  class="q-mt-xs full-width" dense icon="fa-solid fa-shuffle" @click="switchNetwork"
+              <q-btn glossy color="primary"  class="q-mt-xs full-width" dense icon="fa-solid fa-shuffle" @click="switchNetwork"
                      :label="`Switch to Polygon`"></q-btn>
             </div>
           </div>
@@ -245,7 +245,7 @@
         />
       </div>
     </div>
-    <q-btn class="q-ma-xs old-button" square label="Create" color="primary"
+    <q-btn class="q-ma-xs old-button" glossy square label="Create" color="primary"
            :disable="!isFormValid"
            @click="callCreateDao"></q-btn>
 

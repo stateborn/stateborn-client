@@ -2,10 +2,10 @@
   <q-page>
     <div class="row justify-center " :class="$q.platform.is.mobile ? '': 'q-pa-xs'" >
       <div class="col-lg-8 col-xs-grow justify-center" >
-        <picture-parallax image-src="statebornnoise.webp" alt="stateborn image" title="Create a DAO"
+        <picture-parallax image-src="1.webp" alt="stateborn image" title="Create a DAO"
                           :style="$q.platform.is.mobile ? 'height: 250px': ''"
                           :text-class="$q.platform.is.mobile ? 'text-h5': 'text-h3 q-pa-md'"
-                          :height="$q.platform.is.mobile ? '800' : '600'">
+                          :height="$q.platform.is.mobile ? '850' : '600'">
         </picture-parallax>
 
         <div class="row justify-center q-mt-xs q-mb-xs stateborn-card q-ma-xs">

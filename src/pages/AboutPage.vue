@@ -61,7 +61,7 @@
                         enter-active-class="animated fadeIn"
                         leave-active-class="animated fadeOut"
                       >
-                        <picture-parallax image-src="browsepropsnoise.webp" alt="stateborn image"
+                        <picture-parallax image-src="logo.webp" alt="stateborn image"
                                           title="stateborn - where communities grow"
                                           :speed="$q.platform.is.mobile ? 0.1 : 0.6"
                                           :style="$q.platform.is.mobile ? 'height: 100px !important': 'height: 200px'"

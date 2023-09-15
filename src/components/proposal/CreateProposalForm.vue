@@ -189,7 +189,7 @@
       </div>
     </div>
 
-    <q-btn class="q-ma-xs q-mt-lg" square label="Create" color="primary"
+    <q-btn class="q-ma-xs q-mt-lg" square glossy label="Create" color="primary"
            :disable="!isFormValid"
            @click="callCreateProposal"></q-btn>
     <q-dialog v-model="showSignProposalDialog">

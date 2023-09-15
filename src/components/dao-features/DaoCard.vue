@@ -165,7 +165,7 @@
 
       </q-list>
       <q-card-section horizontal style="padding: 2px; margin:2px;" v-if="!props.isCreateProposalMode">
-        <q-btn square align="center" class="full-width" color="primary" icon-right="fa-solid fa-plus"
+        <q-btn square align="center" class="full-width" color="primary" glossy icon-right="fa-solid fa-plus"
                @click="$router.push(`/${props.dao.ipfsHash}/create-proposal`)" label="Create proposal"/>
       </q-card-section>
 

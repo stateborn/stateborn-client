@@ -65,15 +65,15 @@
     <q-card-section style="padding:0; margin:0; ">
 
       <q-card-section horizontal style="padding: 2px; margin:2px;">
-        <q-btn align="center" class="full-width" color="primary" icon-right="fa-regular fa-square-plus"
+        <q-btn align="center" class="full-width" color="primary" icon-right="fa-regular fa-square-plus" glossy
                @click="$router.push(`/create-dao`)" label="Create a DAO"/>
       </q-card-section>
       <q-card-section horizontal style="padding: 2px; margin:2px;">
-        <q-btn align="center" class="full-width" color="primary"
+        <q-btn align="center" class="full-width" color="primary" glossy
                @click="$router.push(`/about`)" label="About stateborn"/>
       </q-card-section>
       <q-card-section horizontal style="padding: 2px; margin:2px;">
-        <q-btn align="center" class="full-width" text-color="secondary" color="primary"
+        <q-btn align="center" class="full-width" text-color="secondary" color="primary" glossy
                @click="$router.push(`/onchain-dao`)" label="About Stateborn protocol">
         </q-btn>
       </q-card-section>
@@ -93,15 +93,16 @@
           <q-btn-dropdown
             ref="dropdown"
             dense
+            glossy
             dropdown-icon="fa-solid fa-caret-down"
             flat
           >
             <div class="row no-wrap q-pa-md bodynoise">
               <div class="column">
                 <div class="text-subtitle2 text-center">IPFS gateway</div>
-               <q-btn class="q-ma-xs" color="primary" label="EDIT MODE" @click="enterEditMode()" v-if="!editMode" ></q-btn>
-               <q-btn class="q-ma-xs" outline label="SAVE" @click="saveNewIpfsGatewayAddress()" v-else></q-btn>
-               <q-btn class="q-ma-xs" color="primary" @click="resetIpfsGatewayAddress()">Reset to default</q-btn>
+               <q-btn glossy class="q-ma-xs" color="primary" label="EDIT MODE" @click="enterEditMode()" v-if="!editMode" ></q-btn>
+               <q-btn glossy class="q-ma-xs" outline label="SAVE" @click="saveNewIpfsGatewayAddress()" v-else></q-btn>
+               <q-btn glossy class="q-ma-xs" color="primary" @click="resetIpfsGatewayAddress()">Reset to default</q-btn>
               </div>
 
             </div>
@@ -148,7 +149,7 @@
     <q-separator ></q-separator>
     <div class="row justify-center">
       <div class="col-auto">
-        <q-btn  round flat @click="goToGithub()">
+        <q-btn round flat @click="goToGithub()">
           <q-avatar size="25px">
             <img src="/brands/icons8-github-50.png">
           </q-avatar>

@@ -3,12 +3,12 @@
     <div class="row justify-center" :class="$q.platform.is.mobile ? '' : 'q-pa-xs'" >
       <div class="col-lg-8 col-xs-grow justify-center">
         <picture-parallax
-          image-src="/proposalbody2noise.webp"
+          image-src="/3.webp"
           alt="proposal image"
           :text-class="$q.platform.is.mobile ? 'text-h5': undefined"
           title="Create proposal"
           :style="$q.platform.is.mobile ? 'height: 100px !important;' :''"
-          :height="$q.platform.is.mobile ? '406': '300'"
+          :height="$q.platform.is.mobile ? '458': '300'"
         ></picture-parallax>
         <div class="row q-pa-xs" >
           <div class="col-12">

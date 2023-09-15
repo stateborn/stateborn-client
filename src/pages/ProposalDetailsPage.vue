@@ -133,8 +133,8 @@
           Please confirm the value and vote or cancel.
         </q-card-section>
         <q-card-actions align="right">
-          <q-btn label="Cancel" color="red" v-close-popup />
-          <q-btn label="Vote" color="primary" @click="triggerVotingAfterDifferentVotingPowerAcceptance = true" v-close-popup />
+          <q-btn glossy label="Cancel" color="red" v-close-popup />
+          <q-btn glossy label="Vote" color="primary" @click="triggerVotingAfterDifferentVotingPowerAcceptance = true" v-close-popup />
         </q-card-actions>
       </q-card>
     </q-dialog>
