@@ -60,7 +60,7 @@
           </q-icon>
         </div>
       </div>
-      <div class="row text-subtitle2" v-if="proposalVerification?.verificationError !== ''">
+      <div class="row text-subtitle2" v-if="proposalVerification?.verificationError?.trim()">
         <div class="col-auto text-bold sectionName">Validation error</div>
         <div class="col-grow text-right">{{ proposalVerification?.verificationError }}</div>
       </div>

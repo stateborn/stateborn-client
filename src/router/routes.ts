@@ -22,9 +22,9 @@ const routes: RouteRecordRaw[] = [
     children: [{ path: '', component: () => import('pages/AboutPage.vue') }],
   },
   {
-    path: '/onchain-dao',
+    path: '/protocol',
     component: () => import('layouts/MainLayoutDark.vue'),
-    children: [{ path: '', component: () => import('pages/OnchainDaoPage.vue') }],
+    children: [{ path: '', component: () => import('pages/ProtocolPage.vue') }],
   },
   {
     path: '/create-dao',

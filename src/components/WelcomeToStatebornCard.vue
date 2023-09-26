@@ -74,7 +74,7 @@
       </q-card-section>
       <q-card-section horizontal style="padding: 2px; margin:2px;">
         <q-btn align="center" class="full-width" text-color="secondary" color="primary" glossy
-               @click="$router.push(`/onchain-dao`)" label="About Stateborn protocol">
+               @click="$router.push(`/protocol`)" label="About Stateborn protocol">
         </q-btn>
       </q-card-section>
     </q-card-section>

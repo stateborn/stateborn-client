@@ -32,7 +32,15 @@
                         <div class="text-center text-h1" id="about">
                           About
                         </div>
-                        <div class="text-overline text-center q-pb-md text-sub">Stateborn</div>
+                        <div class="text-overline text-center text-sub">Stateborn</div>
+                      </div>
+                      <div class="row justify-center q-pb-md">
+                        <div class="col-auto">
+                          <q-video
+                            src="https://www.youtube.com/embed/t7lU71DpkKU/?rel=0"
+                            :style="$q.platform.is.mobile ? '': 'width: 853px; height: 480px'"
+                          />
+                        </div>
                       </div>
                       Stateborn is a DAO governance platform. It allows to create and manage Decentralized Autonomous Organizations (DAO) using
                       decentralized technology such as blockchain, IPFS and cryptography.<br><br>
@@ -49,6 +57,8 @@
 
                       <br><br>
                       DAO is about fairness. Our mission is to help building better DAOs.
+
+
                     </div>
                   </div>
 
@@ -112,7 +122,7 @@
                           to everyone and its validity can be verified by anyone.<br><br>
 
                           on-chain + off-chain DAO mechanics which additionally to off-chain features allows to manage on-chain DAO treasury is described in detail here:
-                          <router-link to="/onchain-dao" span class="text-underline text-bold">ABOUT STATEBRON PROTOCOL</router-link><br><br>
+                          <router-link to="/protocol" span class="text-underline text-bold">ABOUT STATEBRON PROTOCOL</router-link><br><br>
 
                           The description below references to off-chain DAO components - data processed by users and <a href="https://stateborn.org" target="_blank">stateborn.org</a>, saved in IPFS.
                           <div class="q-pa-md text-center" :class="$q.platform.is.mobile ? 'text-h2 text-center' : 'text-h2'" id="daoDefinitionDocument">DAO definition document</div>

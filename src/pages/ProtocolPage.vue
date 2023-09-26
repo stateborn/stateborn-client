@@ -55,15 +55,27 @@
                       on off-chain voting.
                       Execution of on-chain proposal transfers depends on on-chain voting. Everyone can vote on on-chain
                       proposal, but every
-                      vote requires collateral. When on-chain proposal ends, majority of voters get collateral of minority
+                      vote requires collateral. The collateral can be either a cryptocurrency (Ether) or DAO governance token.
+                      Single vote requirements and ratios are specified in DAO settings and become immutable when on-chain proposal is created.
+                      When on-chain proposal ends, majority of voters get collateral of minority
                       of voters. Economic incentive of collateral
-                      as reward involve various participants in on-chain voting process. If on-chain proposal gets no vote
-                      against,
+                      as a reward involves various participants in on-chain voting process. DAO governance token is DAO participants
+                      autonomy maintaining tool.
+                      If on-chain proposal gets no vote against,
                       or more votes for than against - can be executed by anyone. When on-chain proposal gets the same or more against
                       votes than for votes - is rejected.
                       on-chain proposal voting is not related to off-chain proposals but off-chain voting result is a
                       reference for
                       on-chain voting decision.
+                    </div>
+                  </div>
+
+                  <div class="row justify-center q-pt-md">
+                    <div class="col-auto">
+                      <q-video
+                        src="https://www.youtube.com/embed/M4jw6TtgYqg/?rel=0"
+                        :style="$q.platform.is.mobile ? '': 'width: 853px; height: 480px'"
+                      />
                     </div>
                   </div>
 
@@ -311,7 +323,7 @@
                           The fundamental mechanics of stateborn DAO on-chain proposals is that its execution depends on
                           majority of supporter votes (voteFor).
                           More voteFor than voteAgainst means proposal passes and can be executed after challenge period ends.
-                          More voteAgainst than voteFor means proposal is rejected and will not be possible to be executed after
+                          More or equal voteAgainst to voteFor means proposal is rejected and will not be possible to be executed after
                           challenge period ends.<br><br>
 
 
@@ -434,6 +446,25 @@
                         </div>
                       </div>
 
+                      <q-separator color="grey-9" class="q-mt-md q-mb-md"></q-separator>
+                      <div class="row items-center ">
+                        <div class="col-lg-2 col-xs-grow text-center">
+                          <q-img src="/sandglass.webp" style="height: 60px; width:60px"></q-img>
+                        </div>
+                        <div class="col-lg-10 col-xs-grow justify-center">
+                          <div class="q-pb-md" :class="$q.platform.is.mobile ? 'text-h2 text-center' : 'text-h2'" id="howToPreventRacing">
+                            How to prevent last second voting (racing) in dispute period?
+                          </div>
+                          Since voters compete for greater amount of votes, some of voters may try to "race" - vote in last
+                          possible moment of dispute period. Stateborn protocol prevents this by extending dispute period
+                          for predefined amount of time (default 1 day) if vote was done in last hour of dispute process.
+                          The drawback of this strategy is that it's possible to extend dispute period multiple times.
+                          However this tradeoff is a solution for racing problem and makes dispute process dependent of
+                          votes quantity, giving both voters sides fair amount of time to acquire more votes.
+                        </div>
+                      </div>
+
+
                       <div class="q-pa-lg">
                         <div class="text-h1 text-center q-pt-lg">Scenarios</div>
                         <div class="text-overline text-center q-pb-md text-sub" >Interest driven voters actions</div>
@@ -525,6 +556,26 @@
                           searching vote would vote.
                         </div>
                       </div>
+                      <q-separator color="grey-9" class="q-mt-md q-mb-md"></q-separator>
+
+                      <div class="row items-center q-pt-lg">
+                        <div class="col-lg-2 col-xs-grow text-center">
+                          <q-img src="/userglass.webp" style="height: 60px; width:60px"></q-img>
+                        </div>
+                        <div class="col-lg-10 col-xs-grow justify-center">
+                          <div class="q-pb-md" :class="$q.platform.is.mobile ? 'text-h2 text-center' : 'text-h2'" id="racing">
+                            #5: last second voting (racing)
+                          </div>
+                          There is 1000 DAI transfer proposal from DAO treasury to some address. The proposal is legit and based on off-chain voting.
+                          There are no voteAgainst votes and single voteFor - from proposal creator.
+                          Since single vote against is enough to reject voting and get proposal creator collateral,
+                          some voters can try to vote against in last possible moment of challenge period.
+                          Being last voter would assure there won't be more opposite side votes.
+                          Such strategy will not work because stateborn mechanics assure that if vote is put
+                          in last hour of challenge period, voting period is extended for predefined amount of time (default 1 day).
+                          This strategy doesn't make sense for voters.
+                        </div>
+                      </div>
                       <br><br>
 
                       <div class="q-pa-lg">
@@ -565,7 +616,7 @@
 
                       <div class="row items-center">
                         <div class="col-lg-2 col-xs-grow text-center">
-                          <q-img src="/token.png" style="height: 60px; width:60px"></q-img>
+                          <q-img src="/token2.webp" style="height: 60px; width:60px"></q-img>
                         </div>
                         <div class="col-lg-10 col-xs-grow justify-center">
                           <div class="q-pb-md" :class="$q.platform.is.mobile ? 'text-h2 text-center' : 'text-h2'" id="daoToken">
@@ -907,9 +958,19 @@ const setItems = () => {
       icon: '',
       img: '/motivate2.png',
       isLabelOnly: false,
-      separatorAfter: true,
+      separatorAfter: false,
       active: false,
       topOffset: getElementOffset('howToMotivate'),
+    },
+    {
+      scrollTo: 'howToPreventRacing',
+      label: 'How to prevent last second voting (racing) in dispute period?',
+      icon: '',
+      img: '/motivate2.png',
+      isLabelOnly: false,
+      separatorAfter: true,
+      active: false,
+      topOffset: getElementOffset('howToPreventRacing'),
     },
     {
       scrollTo: '',
@@ -957,9 +1018,19 @@ const setItems = () => {
       icon: '',
       img: '/thief.png',
       isLabelOnly: false,
-      separatorAfter: true,
+      separatorAfter: false,
       active: false,
       topOffset: getElementOffset('theft'),
+    },
+    {
+      scrollTo: 'racing',
+      label: 'last second voting (racing)',
+      icon: '',
+      img: '/userglass.webp',
+      isLabelOnly: false,
+      separatorAfter: true,
+      active: false,
+      topOffset: getElementOffset('racing'),
     },
     {
       scrollTo: '',
@@ -985,7 +1056,7 @@ const setItems = () => {
       scrollTo: 'daoToken',
       label: 'DAO token as collateral',
       icon: '',
-      img: '/token.png',
+      img: '/token2.webp',
       isLabelOnly: false,
       separatorAfter: true,
       active: false,
