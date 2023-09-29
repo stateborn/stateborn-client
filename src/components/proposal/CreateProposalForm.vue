@@ -174,6 +174,7 @@
           v-if="createDaoOnChainTransaction && dao.clientDao.contractAddress"
           :dao-address="dao.clientDao.contractAddress!"
           :tx-index="txIndex.index"
+          :dao-chain-id="dao.clientDao.token.chainId"
           :previous-transactions="transactions.slice(0, txIndex.index )"
           @proposal-transaction="onProposalTransactionAdded"
           >

@@ -80,8 +80,9 @@ module.exports = configure(function (ctx) {
         DEVELOPMENT_NETWORK_ERC_20_TOKEN_ADDRESS: '0x3a7b679BA0F23F2B27B48608908f9248ea0a72f0',
         DEVELOPMENT_NETWORK_ERC_20_DAO_FACTORY_ADDRESS: '0xF826c380c015b070B72B28665b94a24a6660AcF3',
         DEVELOPMENT_NETWORK_NFT_DAO_FACTORY_ADDRESS: '0x18D0aa26156fB82396F89eb62aC0A178bc45b947',
-        POLYGON_ERC_20_DAO_FACTORY_ADDRESS: '0xf95fE68E1D115D19759Bdd2179218c827b8d7Ff0',
-        POLYGON_NFT_DAO_FACTORY_ADDRESS: '0x0C0E24F5579c01f2056239DeD15cEc2848F34aB1',
+        POLYGON_ERC_20_DAO_FACTORY_ADDRESS: '0xBC4Be7cA45e84E5a30abF72Af4D40d5d5611F666',
+        POLYGON_NFT_DAO_FACTORY_ADDRESS: '0x93C2366436c80cb43548000D24263402673ba74A',
+        MINIMUM_ETH_TO_SEND_IN_TRANSFER: '0.00000001',
       },
       // rawDefine: {}
       // ignorePublicFolder: true,
@@ -89,7 +90,11 @@ module.exports = configure(function (ctx) {
       // polyfillModulePreload: true,
       // distDir
 
-      // extendViteConf (viteConf) {},
+      extendViteConf (viteConf) {
+        viteConf.build = {
+          target: 'es2020',
+        }
+      },
       // viteVuePluginOptions: {},
 
 
