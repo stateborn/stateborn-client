@@ -19,9 +19,15 @@
       row-key="name"
     >
       <template v-slot:top-right v-if="!isLoading && ethConnectionStore.isConnected">
-        <span class="text-bold text-green-8 text-subtitle2" v-if="thereAreNoInvalidVotes && !someVotesAreNotVerified && userVotes.length > 0">Validated</span>
-        <span class="text-bold text-orange-10 text-subtitle2" v-if="thereAreNoInvalidVotes && someVotesAreNotVerified && userVotes.length > 0">Not yet verified</span>
-        <span class="text-bold text-red-8" v-if="!thereAreNoInvalidVotes && userVotes.length > 0">Votes invalid</span>
+        <span class="text-bold text-green-8 text-subtitle2" v-if="thereAreNoInvalidVotes && !someVotesAreNotVerified && userVotes.length > 0">
+          <ValidatedBadge></ValidatedBadge>
+        </span>
+        <span class="text-bold text-orange-10 text-subtitle2" v-if="thereAreNoInvalidVotes && someVotesAreNotVerified && userVotes.length > 0">
+          <NotYetValidatedBadge></NotYetValidatedBadge>
+        </span>
+        <span class="text-bold text-red-8" v-if="!thereAreNoInvalidVotes && userVotes.length > 0">
+          <InvalidBadge></InvalidBadge>
+        </span>
         <q-icon color="primary" name="fa-solid fa-circle-info" class="q-pl-xs" v-if="userVotes.length > 0">
           <q-tooltip v-if="thereAreNoInvalidVotes && !someVotesAreNotVerified" class="stateborn-tooltip">
             All votes were client-side validated based on IPFS vote document data
@@ -149,6 +155,9 @@ import { goToIpfs } from 'src/api/services/utils-service';
 import { VoteDataSource } from 'src/api/model/vote-data-source';
 import { useEthConnectionStore } from 'stores/eth-connection-store';
 import { abiEncodeVote } from 'src/api/services/signature-service';
+import ValidatedBadge from 'components/utils/ValidatedBadge.vue';
+import NotYetValidatedBadge from 'components/utils/NotYetValidatedBadge.vue';
+import InvalidBadge from 'components/utils/InvalidBadge.vue';
 
 const columns = [
   {

@@ -11,7 +11,7 @@
         </div>
         <div class="col-lg-11 col-xs-10">
           <div class="row text-subtitle2"><div class="col-grow text-bold sectionName q-pb-xs">Title</div></div>
-          <div class=" text-primary text-h2">{{props.proposal.clientProposal.title}}</div>
+          <div class=" text-primary text-h2" :class="$q.platform.is.mobile ? 'break-line-text' :''">{{props.proposal.clientProposal.title}}</div>
         </div>
       </div>
     </q-card-section>

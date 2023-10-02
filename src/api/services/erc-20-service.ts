@@ -17,13 +17,9 @@ export class Erc20Service {
   ];
   async readTokenBalance(userAddress: string, tokenAddress: string, decimals: string): Promise<string> {
     // Create a new ethers contract with the ERC20 contract address and ABI
-    const block = await ETH_CONNECTION_SERVICE.getProvider().getBlockNumber();
-    console.log('czytam token balance', userAddress, tokenAddress, block);
     const contract = ERC20__factory.connect(tokenAddress, ETH_CONNECTION_SERVICE.getProvider());
-    console.log('kontrakt jest');
     // Call the balanceOf function for the user address
     const balance = await contract.balanceOf(userAddress);
-    console.log('odpowiedz nie');
     return Number(ethers.formatUnits(balance, Number(decimals))).toFixed(0);
   }
 

@@ -14,7 +14,7 @@
       <div class="row q-pb-md" v-if="isProposalEnded && ['YES', 'NO'].includes(highestResultOption)">
         <div class="col-auto text-bold sectionName">Voting result</div>
         <div class="col-grow text-right ">
-          <q-badge label="PASSED" style="padding:5px" color="green"  v-if="highestResultOption === 'YES'"></q-badge>
+          <q-badge label="PASSED" style="padding:5px" color="green-8"  v-if="highestResultOption === 'YES'"></q-badge>
           <q-badge label="REJECTED" style="padding:5px" color="red-8" v-else></q-badge>
         </div>
       </div>

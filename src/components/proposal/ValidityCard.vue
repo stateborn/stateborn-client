@@ -24,13 +24,14 @@
         <q-list>
           <q-item v-if="!userNotVoted">
             <q-item-section avatar>
-              <q-icon size="xs" :color="reportIsValid ? 'green' : 'red'" name="fa-solid fa-square-check"/>
+              <q-icon size="xs" :color="reportIsValid ? 'green-8' : 'red-8'" name="fa-solid fa-square-check"/>
             </q-item-section>
 
             <q-item-section>
-              <q-item-label :class="reportIsValid ? 'text-green-8 text-bold' : 'text-bold text-red-8'">
-                {{reportIsValid ? 'Valid' : 'Invalid' }}
-                <q-icon v-if="reportIsValid"  name="fa-solid fa-circle-info" color="primary"  style="margin-bottom: 3px;padding-right:5px">
+              <q-item-label>
+                <ValidatedBadge v-if="reportIsValid"></ValidatedBadge>
+                <InvalidBadge v-else></InvalidBadge>
+                <q-icon v-if="reportIsValid"  name="fa-solid fa-circle-info" color="primary"  style="margin-bottom: 3px;padding-right:5px;padding-left:2px">
                 <q-tooltip class="stateborn-tooltip">
                   Your vote is correctly included in the proposal result summary created by stateborn backend.<br>
                   Validation was done client side. <br>
@@ -85,6 +86,8 @@ import { calculateUserVotesAndGetProposalReportStorage } from 'src/api/services/
 import { useEthConnectionStore } from 'stores/eth-connection-store';
 import { ProposalReport } from 'src/api/model/proposal-report';
 import { goToIpfs } from 'src/api/services/utils-service';
+import ValidatedBadge from 'components/utils/ValidatedBadge.vue';
+import InvalidBadge from 'components/utils/InvalidBadge.vue';
 
 const props = defineProps<{
   proposalReport: ProposalReport,

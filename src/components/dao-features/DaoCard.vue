@@ -34,9 +34,13 @@
           </q-item-section>
 
           <q-item-section>
-            <q-item-label><q-badge style="padding:5px" :label="props.dao.clientDao.contractAddress ? 'OFF-CHAIN + ON-CHAIN' : 'OFF-CHAIN'"
-                                   color="primary"
-                                   :text-color="props.dao.clientDao.contractAddress ? 'yellow' : 'white'"></q-badge></q-item-label>
+            <q-item-label>
+              <BadgeText color="primary"
+                         :label="props.dao.clientDao.contractAddress ? 'OFF-CHAIN + ON-CHAIN' : 'OFF-CHAIN'"
+                         :text-color="props.dao.clientDao.contractAddress ? 'yellow' : 'white'">
+              </BadgeText>
+
+              </q-item-label>
             <q-item-label caption class="text-primary ">DAO type</q-item-label>
           </q-item-section>
         </q-item>
@@ -129,6 +133,16 @@
           </q-item-section>
         </q-item>
 
+        <q-item v-if="!props.isCreateProposalMode">
+          <q-item-section avatar class="text-bold" >
+            <div style="margin-left: 5px">{{proposalsCount}}</div>
+          </q-item-section>
+
+          <q-item-section>
+            <q-item-label class="text-subtitle2 ">proposals</q-item-label>
+          </q-item-section>
+        </q-item>
+
         <q-item>
           <q-item-section avatar>
             <q-icon color="primary" size="xs" name="fa-solid fa-circle-info"/>
@@ -147,22 +161,18 @@
             </q-tooltip>
           </q-item-section>
           <q-item-section>
-            <q-item-label v-if="dao.daoVerification && dao.daoVerification.isVerified && dao.daoVerification.isValid" class="text-green-8 text-bold">Validated</q-item-label>
-            <q-item-label v-if="dao.daoVerification === undefined || !dao.daoVerification.isVerified" class="text-orange-10 text-bold">Not yet validated</q-item-label>
-            <q-item-label v-if="dao.daoVerification && dao.daoVerification.isVerified && !dao.daoVerification.isValid" class="text-red text-bold">Invalid</q-item-label>
+            <q-item-label v-if="dao.daoVerification && dao.daoVerification.isVerified && dao.daoVerification.isValid">
+              <ValidatedBadge></ValidatedBadge>
+            </q-item-label>
+            <q-item-label v-if="dao.daoVerification === undefined || !dao.daoVerification.isVerified">
+              <NotYetValidatedBadge></NotYetValidatedBadge>
+            </q-item-label>
+            <q-item-label v-if="dao.daoVerification && dao.daoVerification.isVerified && !dao.daoVerification.isValid">
+              <InvalidBadge></InvalidBadge>
+            </q-item-label>
             <q-item-label caption class="text-primary ">Validity status</q-item-label>
           </q-item-section>
         </q-item>
-        <q-item v-if="!props.isCreateProposalMode">
-          <q-item-section avatar class="text-bold" >
-            <div style="margin-left: 5px">{{proposalsCount}}</div>
-          </q-item-section>
-
-          <q-item-section>
-            <q-item-label class="text-subtitle2 ">proposals</q-item-label>
-          </q-item-section>
-        </q-item>
-
       </q-list>
       <q-card-section horizontal style="padding: 2px; margin:2px;" v-if="!props.isCreateProposalMode">
         <q-btn square align="center" class="full-width" color="primary" glossy icon-right="fa-solid fa-plus"
@@ -178,6 +188,10 @@ import { goToEtherscan, goToIpfs } from 'src/api/services/utils-service';
 import { DaoBackend } from 'src/api/model/dao-backend';
 import { TOKEN_SERVICE } from 'src/api/services/token-service';
 import { TokenType } from 'src/api/model/ipfs/token-type';
+import BadgeText from 'components/BadgeText.vue';
+import ValidatedBadge from 'components/utils/ValidatedBadge.vue';
+import InvalidBadge from 'components/utils/InvalidBadge.vue';
+import NotYetValidatedBadge from 'components/utils/NotYetValidatedBadge.vue';
 
 const props = defineProps<{
   dao: DaoBackend,

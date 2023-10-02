@@ -36,8 +36,8 @@
       </div></div>
       <div class="row text-subtitle2"><div class="col-auto text-bold sectionName">Validity</div>
         <div class="col-grow text-right" v-if="proposalVerification?.isVerified">
-          <span class="text-bold text-green-8 text-subtitle2" v-if="proposalVerification?.isValid">Validated</span>
-          <span class="text-bold text-red-8" v-else>Invalid</span>
+          <ValidatedBadge v-if="proposalVerification?.isValid"></ValidatedBadge>
+          <InvalidBadge v-else></InvalidBadge>
           <q-icon color="primary" name="fa-solid fa-circle-info" class="q-pl-xs" style="margin-bottom: 3px">
             <q-tooltip v-if="proposalVerification?.isValid" class="stateborn-tooltip">
               Proposal is client-side validated based on IPFS document data.<br>
@@ -49,7 +49,7 @@
           </q-icon>
         </div>
         <div class="col-grow text-right" v-else>
-          <span class="text-subtitle2 text-orange-10 text-bold">Not yet validated</span>
+          <NotYetValidatedBadge></NotYetValidatedBadge>
           <q-icon color="primary" name="fa-solid fa-circle-info" class="q-pl-xs">
             <q-tooltip class="stateborn-tooltip">
               Due to some processing error, the proposal was not yet validated. <br>
@@ -76,6 +76,10 @@ import { goToEtherscan, goToIpfs } from 'src/api/services/utils-service';
 import { ProposalVerification } from 'src/api/model/proposal-verification';
 import { TOKEN_SERVICE } from 'src/api/services/token-service';
 import { formatDateNice } from 'src/api/services/date-service';
+import BadgeText from 'components/BadgeText.vue';
+import ValidatedBadge from 'components/utils/ValidatedBadge.vue';
+import InvalidBadge from 'components/utils/InvalidBadge.vue';
+import NotYetValidatedBadge from 'components/utils/NotYetValidatedBadge.vue';
 
 const props = defineProps<{
   proposal: BackendProposal,

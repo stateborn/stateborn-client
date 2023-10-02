@@ -13,11 +13,12 @@
                 :class="isEverythingFilled ? 'noisegreen' : 'noisered'">
         <div class="row items-center">
           <div class="col-4">
-            <q-icon :name="isEverythingFilled ? 'fa-solid fa-info' : 'fa-solid fa-triangle-exclamation'" color="primary" size="lg"/>
+            <q-icon :name="isEverythingFilled ? 'fa-solid fa-info' : 'fa-solid fa-triangle-exclamation'" color="primary"
+                    size="lg"/>
           </div>
           <div class="col-8 text-left text-subtitle2 text-black" v-if="transactionType.value !== TokenType.CRYPTO">
             <div v-if="thereIsAlreadyTransactionWithThisToken">
-              There is already transfer of {{tokenSymbol}} token. Please choose another token.
+              There is already transfer of {{ tokenSymbol }} token. Please choose another token.
             </div>
             <div v-if="tokenName === ''">
               Please provide correct token address which will be send from DAO.
@@ -34,25 +35,32 @@
             <div v-if="tokenName !== '' && Number(daoFunds).toFixed(0) !== '0' && transferToAddress.trim() === ''">
               Please provide address of {{ tokenSymbol }} tokens receiver.
             </div>
-            <div v-if="transactionType.value === TokenType.ERC20 && tokenName !== '' && Number(daoFunds).toFixed(0) !== '0' && transferToAddress.trim() !== '' && (Number(amountOfTokensToSend) <= 0 || Number(amountOfTokensToSend) > Number(daoFunds) || !Number.isInteger(amountOfTokensToSend))">
+            <div
+                v-if="transactionType.value === TokenType.ERC20 && tokenName !== '' && Number(daoFunds).toFixed(0) !== '0' && transferToAddress.trim() !== '' && (Number(amountOfTokensToSend) <= 0 || Number(amountOfTokensToSend) > Number(daoFunds) || !Number.isInteger(amountOfTokensToSend))">
               Please provide correct amount of tokens to send.
             </div>
-            <div v-if="transactionType.value === TokenType.NFT && tokenName !== '' && Number(daoFunds).toFixed(0) !== '0' && transferToAddress.trim() !== '' && !daoOwnsNft">
+            <div
+                v-if="transactionType.value === TokenType.NFT && tokenName !== '' && Number(daoFunds).toFixed(0) !== '0' && transferToAddress.trim() !== '' && !daoOwnsNft">
               Please provide correct NFT id to send.
             </div>
             <div v-if="isEverythingFilled && transactionType.value === TokenType.ERC20">
-              Transfer: <b>send {{ amountOfTokensToSend }} {{ tokenSymbol }} tokens owned by DAO to {{ transferToAddress }}.</b><br>
-              After the transaction DAO will own {{ (Number(daoFunds) - Number(amountOfTokensToSend)).toFixed(0) }} {{ tokenSymbol }} tokens.
+              Transfer: <b>send {{ amountOfTokensToSend }} {{ tokenSymbol }} tokens owned by DAO to {{
+                transferToAddress
+              }}.</b><br>
+              After the transaction DAO will own {{ (Number(daoFunds) - Number(amountOfTokensToSend)).toFixed(0) }}
+              {{ tokenSymbol }} tokens.
             </div>
             <div v-if="isEverythingFilled && transactionType.value === TokenType.NFT">
-              Transaction: <b>send NFT {{ tokenSymbol }} - ID {{nftId}} owned by DAO to {{ transferToAddress }}.</b><br>
-              After the transaction DAO will own {{ (Number(daoFunds) - 1).toFixed(0) }} {{tokenSymbol}} NFTs.
+              Transaction: <b>send NFT {{ tokenSymbol }} - ID {{ nftId }} owned by DAO to {{
+                transferToAddress
+              }}.</b><br>
+              After the transaction DAO will own {{ (Number(daoFunds) - 1).toFixed(0) }} {{ tokenSymbol }} NFTs.
             </div>
           </div>
 
           <div class="col-8 text-left text-subtitle2 text-black" v-else>
-            <div v-if="thereIsAlreadyTransactionWithThisToken">
-              There is already transfer of {{tokenSymbol}} token. Please choose another token.
+            <div v-if="thereIsAlreadySendCryptoTransaction">
+              There is already cryptocurrency transaction in this proposal. Please choose another transaction type.
             </div>
             <div v-if="transferToAddress.trim() === daoAddress.trim()">
               DAO cannot be receiver, because DAO is the sender.
@@ -63,18 +71,17 @@
             <div v-if="Number(daoFunds).toFixed(0) !== '0' && transferToAddress.trim() === ''">
               Please provide address of {{ tokenSymbol }} tokens receiver.
             </div>
-            <div v-if="Number(daoFunds).toFixed(0) !== '0' && transferToAddress.trim() !== '' && (Number(amountOfTokensToSend) <= 0 || Number(amountOfTokensToSend) > Number(daoFunds) || !Number.isInteger(amountOfTokensToSend))">
-              Please provide correct amount of tokens to send.
-            </div>
             <div v-if="!cryptoTransferAboveMinimumWeiToSend">
-              Minimum amount to send in transfer is {{MINIMUM_ETH_TO_SEND}} {{nativeCurrencyName}}.
+              Minimum amount to send in transfer is {{ toEth(MINIMUM_WEI_TO_SEND) }} {{ nativeCurrencyName }}.
             </div>
             <div v-if="!isDaoHavingEnoughCryptoBalance">
-              Minimum amount to send in transfer is {{MINIMUM_ETH_TO_SEND}} {{nativeCurrencyName}}.
+              DAO has not enough balance.
             </div>
             <div v-if="isEverythingFilled">
-              Transfer: <b>send {{ toEth(toWeiNumber(amountOfCryptoToSend)) }} {{ nativeCurrencyName }} from DAO to {{ transferToAddress }}.</b><br>
-              After the transaction DAO will own {{ toEth(daoFundsWei - toWeiNumber(amountOfCryptoToSend)) }} {{ nativeCurrencyName }}.
+              Transfer: <b>send {{ toEth(toWeiNumber(amountOfCryptoToSend)) }} {{ nativeCurrencyName }} from DAO to
+              {{ transferToAddress }}.</b><br>
+              After the transaction DAO will own {{ toEth(daoFundsWei - toWeiNumber(amountOfCryptoToSend)) }}
+              {{ nativeCurrencyName }}.
             </div>
           </div>
 
@@ -85,11 +92,12 @@
   </div>
   <div class="row justify-left">
     <div :class="getSelectClass">
-      <q-select filled :options="transactionTypes" square v-model="transactionType" label="Transfer type" class="q-mt-md">
+      <q-select filled :options="transactionTypes" square v-model="transactionType" label="Transfer type"
+                class="q-mt-md">
         <template v-slot:prepend>
           <q-badge style="padding:5px" :label="transactionType.value"
-                            :color="badgeColor"
-                            :text-color="badgeTextColor">
+                   :color="badgeColor"
+                   :text-color="badgeTextColor">
 
           </q-badge>
         </template>
@@ -107,7 +115,7 @@
       </q-input>
     </div>
   </div>
-  <div class="row justify-left" >
+  <div class="row justify-left">
     <div class="col-6 q-pa-xs">
       <q-input square filled label="Transfer to address" v-model="transferToAddress"
                :error="(transferToAddress.trim() === '') || (!isTransferToCorrectEthAddress)"
@@ -120,14 +128,14 @@
     </div>
     <div class="col-6 q-pa-xs" v-if="transactionType.value === TokenType.ERC20">
       <q-input
-        filled
-        square
-        :disable="tokenName === ''"
-        v-model.number="amountOfTokensToSend"
-        type="number"
-        label="Amount of tokens to transfer"
-        :suffix="tokenSymbol"
-        :error="amountOfTokensToSend <= 0 || !Number.isInteger(amountOfTokensToSend) || amountOfTokensToSend > Number(daoFunds)"
+          filled
+          square
+          :disable="tokenName === ''"
+          v-model.number="amountOfTokensToSend"
+          type="number"
+          label="Amount of tokens to transfer"
+          :suffix="tokenSymbol"
+          :error="amountOfTokensToSend <= 0 || !Number.isInteger(amountOfTokensToSend) || amountOfTokensToSend > Number(daoFunds)"
       >
         <template v-slot:error>
           <span v-if="amountOfTokensToSend <= 0">
@@ -137,45 +145,46 @@
             Amount of tokens must be integer (no decimals).
           </span>
           <span v-if="amountOfTokensToSend > Number(daoFunds)">
-            Amount of tokens to send is greater than funds owned by DAO ({{Number(daoFunds).toFixed(0)}} {{tokenSymbol}}).
+            Amount of tokens to send is greater than funds owned by DAO ({{ Number(daoFunds).toFixed(0) }} {{ tokenSymbol }}).
           </span>
         </template>
       </q-input>
     </div>
     <div class="col-6 q-pa-xs" v-if="transactionType.value === TokenType.CRYPTO">
       <q-input
-        filled
-        square
-        :disable="daoFundsWei === BigInt(0)"
-        v-model.number="amountOfCryptoToSend"
-        type="number"
-        :label="`Amount of ${nativeCurrencyName} to send`"
-        :suffix="nativeCurrencyName"
-        :error="amountOfCryptoToSend <= 0 || !isDaoHavingEnoughCryptoBalance || !cryptoTransferAboveMinimumWeiToSend"
+          filled
+          square
+          :disable="daoFundsWei === BigInt(0)"
+          v-model="amountOfCryptoToSend"
+          type="number"
+          :oninput="onAmountOfCryptoNumberChanged"
+          :label="`Amount of ${amountOfCryptoToSend} to send`"
+          :suffix="nativeCurrencyName"
+          :error="amountOfCryptoToSend <= 0 || !isDaoHavingEnoughCryptoBalance || !cryptoTransferAboveMinimumWeiToSend"
       >
         <template v-slot:error>
           <span v-if="amountOfCryptoToSend <= 0">
-            Amount of {{nativeCurrencyName}} must be greater than 0.
+            Amount of {{ nativeCurrencyName }} must be greater than 0.
           </span>
           <span v-if="!isDaoHavingEnoughCryptoBalance">
-            Amount of {{nativeCurrencyName}} to send is greater than funds owned by DAO ({{Number(daoFunds).toFixed(0)}} {{nativeCurrencyName}}).
+            Amount of {{ nativeCurrencyName }} to send is greater than funds owned by DAO ({{ toEth(daoFundsWei) }} {{ nativeCurrencyName }}).
           </span>
-          <span v-if="amountOfCryptoToSend !== 0 && !cryptoTransferAboveMinimumWeiToSend">
-            Minimum amount to send in transfer is {{MINIMUM_ETH_TO_SEND}} {{nativeCurrencyName}}.
+          <span v-if="amountOfCryptoToSend && amountOfCryptoToSend !== 0 && !cryptoTransferAboveMinimumWeiToSend">
+            Minimum amount to send in transfer is {{ toEth(MINIMUM_WEI_TO_SEND) }} {{ nativeCurrencyName }}.
           </span>
         </template>
       </q-input>
     </div>
     <div class="col-6 q-pa-xs" v-if="transactionType.value === TokenType.NFT">
       <q-input
-        filled
-        square
-        :disable="tokenName === ''"
-        v-model.number="nftId"
-        type="number"
-        label="Token (NFT) ID"
-        :suffix="tokenSymbol"
-        :error="nftId < 0"
+          filled
+          square
+          :disable="tokenName === ''"
+          v-model.number="nftId"
+          type="number"
+          label="Token (NFT) ID"
+          :suffix="tokenSymbol"
+          :error="nftId < 0"
       >
         <template v-slot:error>
           <span v-if="nftId < 0">
@@ -185,7 +194,7 @@
             Amount of tokens must be integer (no decimals).
           </span>
           <span v-if="amountOfTokensToSend > Number(daoFunds)">
-            Amount of tokens to send is greater than funds owned by DAO ({{Number(daoFunds).toFixed(0)}} {{tokenSymbol}}).
+            Amount of tokens to send is greater than funds owned by DAO ({{ Number(daoFunds).toFixed(0) }} {{ tokenSymbol }}).
           </span>
         </template>
       </q-input>
@@ -194,27 +203,27 @@
   <div class="row q-mt-md items-center" v-show="tokenName !== '' || transactionType.value === TokenType.CRYPTO">
     <div class="col-6 q-pa-xs" id="tokenInfoColumn" v-if="transactionType.value !== TokenType.CRYPTO">
       <token-info-card
-        v-if="transactionType.value === TokenType.ERC20"
-        :big-token="false"
-        label="Transfer asset"
-        :token-symbol="tokenSymbol"
-        :decimals="decimals"
-        :token-name="tokenName"
-        :network-name="ethConnectionStore.networkName"
-        :network-icon="ethConnectionStore.networkIcon">
+          v-if="transactionType.value === TokenType.ERC20"
+          :big-token="false"
+          label="Transfer asset"
+          :token-symbol="tokenSymbol"
+          :decimals="decimals"
+          :token-name="tokenName"
+          :network-name="ethConnectionStore.networkName"
+          :network-icon="ethConnectionStore.networkIcon">
       </token-info-card>
       <nft-token-info-card
-        v-if="transactionType.value === TokenType.NFT"
-        :big-token="false"
-        :nft-id="nftId"
-        :token-address="tokenAddress"
-        label="Transfer asset"
-        :token-symbol="tokenSymbol"
-        :decimals="decimals"
-        :token-name="tokenName"
-        :network-name="ethConnectionStore.networkName"
-        :network-icon="ethConnectionStore.networkIcon"
-        :collection-mode-only="false"
+          v-if="transactionType.value === TokenType.NFT"
+          :big-token="false"
+          :nft-id="nftId"
+          :token-address="tokenAddress"
+          label="Transfer asset"
+          :token-symbol="tokenSymbol"
+          :decimals="decimals"
+          :token-name="tokenName"
+          :network-name="ethConnectionStore.networkName"
+          :network-icon="ethConnectionStore.networkIcon"
+          :collection-mode-only="false"
       >
       </nft-token-info-card>
     </div>
@@ -226,20 +235,20 @@
           :amount-of-wei-to-send="toWeiNumber(amountOfCryptoToSend)">
       </crypto-dao-wallet-card>
       <dao-wallet-card
-        v-if="tokenType === TokenType.ERC20"
-        :token-symbol="tokenSymbol"
-        :dao-funds="daoFunds"
-        :amount-of-tokens-to-send="amountOfTokensToSend">
+          v-if="tokenType === TokenType.ERC20"
+          :token-symbol="tokenSymbol"
+          :dao-funds="daoFunds"
+          :amount-of-tokens-to-send="amountOfTokensToSend">
       </dao-wallet-card>
       <dao-nft-wallet-card
-        @dao-nft-ownership="onNftOwnershipUpdated"
-        v-if="tokenType === TokenType.NFT"
-        :token-address="tokenAddress"
-        :dao-funds="daoFunds"
-        :amount-of-tokens-to-send="1"
-        :token-symbol="tokenSymbol"
-        :nft-id="nftId"
-        :dao-address="daoAddress">
+          @dao-nft-ownership="onNftOwnershipUpdated"
+          v-if="tokenType === TokenType.NFT"
+          :token-address="tokenAddress"
+          :dao-funds="daoFunds"
+          :amount-of-tokens-to-send="1"
+          :token-symbol="tokenSymbol"
+          :nft-id="nftId"
+          :dao-address="daoAddress">
       </dao-nft-wallet-card>
     </div>
   </div>
@@ -253,7 +262,7 @@ import { Notify, useQuasar } from 'quasar';
 import { ERC_20_SERVICE } from 'src/api/services/erc-20-service';
 import { ClientProposalTransaction } from 'src/api/model/ipfs/proposal-transaction/client-proposal-transaction';
 import { TransferErc20TransactionData } from 'src/api/model/ipfs/proposal-transaction/transfer-erc-20-transaction-data';
-import { ProposalTransactionType } from 'src/api/model/ipfs/proposal-transaction-type';
+import { BlockchainProposalTransactionType } from 'src/api/model/ipfs/blockchain-proposal-transaction-type';
 import { ClientToken } from 'src/api/model/ipfs/client-token';
 import TokenInfoCard from 'components/TokenInfoCard.vue';
 import DaoWalletCard from 'components/DaoWalletCard.vue';
@@ -264,9 +273,12 @@ import { isEthAddress } from 'src/api/services/utils-service';
 import { getBalance, toEth, toWei, toWeiNumber } from 'src/api/services/eth-service';
 import { TOKEN_SERVICE } from 'src/api/services/token-service';
 import CryptoDaoWalletCard from 'components/CryptoDaoWalletCard.vue';
+import {
+  TransferCryptoTransactionData
+} from 'src/api/model/ipfs/proposal-transaction/transfer-crypto-transaction-data';
 
-const transactionTypes = ref([{ value: TokenType.ERC20, label: 'ERC-20 transfer' }, { value: TokenType.NFT, label: 'NFT transfer' }, { value: TokenType.CRYPTO, label: 'CRYPTOCURRENCY transfer' }]);
-const transactionType = ref({ value: TokenType.ERC20, label: 'ERC-20 transfer' });
+const transactionTypes = ref([{value: TokenType.ERC20, label: 'ERC-20 transfer'}, {value: TokenType.NFT, label: 'NFT transfer'}, {value: TokenType.CRYPTO, label: 'CRYPTOCURRENCY transfer'}]);
+const transactionType = ref({value: TokenType.ERC20, label: 'ERC-20 transfer'});
 const tokenAddress = ref('');
 const transferToAddress = ref('0x3d7aEfaeCDb38A32AD6b376397d7BB0aaA9Abf73');
 const tokenName = ref('');
@@ -280,13 +292,21 @@ const nftId = ref(undefined);
 const daoOwnsNft = ref(false);
 const ethConnectionStore = useEthConnectionStore();
 const $q = useQuasar();
-const MINIMUM_ETH_TO_SEND: string = <string>process.env.MINIMUM_ETH_TO_SEND_IN_TRANSFER;
+const MINIMUM_WEI_TO_SEND: bigint = BigInt(<string>process.env.MINIMUM_WEI_TO_SEND_IN_TRANSFER);
+const daoFundsWei = ref(<bigint>BigInt(0));
 const props = defineProps<{
   daoChainId: string,
   daoAddress: string,
   txIndex: number,
   previousTransactions: ClientProposalTransaction[],
 }>();
+const isDaoHavingEnoughCryptoBalance = computed(() => {
+  if (amountOfCryptoToSend.value) {
+    return daoFundsWei.value >= toWeiNumber(amountOfCryptoToSend.value);
+  } else {
+    return daoFundsWei.value > 0;
+  }
+});
 
 const getWalletClass = computed(() => {
   let classString = 'col-6 q-pa-xs';
@@ -310,96 +330,112 @@ const getSelectClass = computed(() => {
 });
 
 const thereIsAlreadyTransactionWithThisToken = computed(() => {
-  return props.previousTransactions.filter(_ => (<any>_.data).token.address === tokenAddress.value).length > 0
+  return props.previousTransactions.filter(_ => (<any>_.data).token?.address === tokenAddress.value).length > 0
+      //show only to next txs, not first
+      && props.txIndex !== 0;
+});
+
+const thereIsAlreadySendCryptoTransaction = computed(() => {
+  return props.previousTransactions.filter(_ => (<any>_.transactionType) === BlockchainProposalTransactionType.TRANSFER_CRYPTO).length > 0
     //show only to next txs, not first
     && props.txIndex !== 0;
 });
+
 
 const isEverythingFilled = computed(() => {
   if (transactionType.value.value === TokenType.ERC20) {
     // token exists
     return tokenName.value !== '' &&
-      //token address is provided
-      (tokenAddress.value.trim() !== '') &&
-      //transfer to address is provided
-      (transferToAddress.value.trim() !== '') &&
-      //amount of tokens to send greater than 0
-      Number(amountOfTokensToSend.value) > 0 &&
-      //amount of tokens is integer
-      Number.isInteger(amountOfTokensToSend.value) &&
-      // amount of tokens to send is less than funds owned by DAO
-      Number(amountOfTokensToSend.value) <= Number(daoFunds.value) &&
-      // you cannot send tokens to token
-      tokenAddress.value.trim() !== transferToAddress.value.trim() &&
-      //receiver is not dao
-      transferToAddress.value.trim() !== props.daoAddress.trim() &&
-      isTransferToCorrectEthAddress.value === true &&
-      !thereIsAlreadyTransactionWithThisToken.value;
+        //token address is provided
+        (tokenAddress.value.trim() !== '') &&
+        //transfer to address is provided
+        (transferToAddress.value.trim() !== '') &&
+        //amount of tokens to send greater than 0
+        Number(amountOfTokensToSend.value) > 0 &&
+        //amount of tokens is integer
+        Number.isInteger(amountOfTokensToSend.value) &&
+        // amount of tokens to send is less than funds owned by DAO
+        Number(amountOfTokensToSend.value) <= Number(daoFunds.value) &&
+        // you cannot send tokens to token
+        tokenAddress.value.trim() !== transferToAddress.value.trim() &&
+        //receiver is not dao
+        transferToAddress.value.trim() !== props.daoAddress.trim() &&
+        isTransferToCorrectEthAddress.value === true &&
+        !thereIsAlreadyTransactionWithThisToken.value;
   } else if (transactionType.value.value === TokenType.NFT) {
     // token exists
     return tokenName.value !== '' &&
-      //token address is provided
-      (tokenAddress.value.trim() !== '') &&
-      //transfer to address is provided
-      (transferToAddress.value.trim() !== '') &&
-      //nftId >= 0
-      ((nftId.value) && Number(nftId.value) >= 0) &&
-      //dao owns nft
-      daoOwnsNft.value === true &&
-      // you cannot send tokens to token
-      tokenAddress.value.trim() !== transferToAddress.value.trim() &&
-      //receiver is not dao
-      transferToAddress.value.trim() !== props.daoAddress.trim() &&
-      isTransferToCorrectEthAddress.value === true &&
-      !thereIsAlreadyTransactionWithThisToken.value;
+        //token address is provided
+        (tokenAddress.value.trim() !== '') &&
+        //transfer to address is provided
+        (transferToAddress.value.trim() !== '') &&
+        //nftId >= 0
+        ((nftId.value) && Number(nftId.value) >= 0) &&
+        //dao owns nft
+        daoOwnsNft.value === true &&
+        // you cannot send tokens to token
+        tokenAddress.value.trim() !== transferToAddress.value.trim() &&
+        //receiver is not dao
+        transferToAddress.value.trim() !== props.daoAddress.trim() &&
+        isTransferToCorrectEthAddress.value === true &&
+        !thereIsAlreadyTransactionWithThisToken.value;
   } else if (transactionType.value.value === TokenType.CRYPTO) {
     return (transferToAddress.value.trim() !== '') &&
-      transferToAddress.value.trim() !== props.daoAddress.trim() &&
-      isTransferToCorrectEthAddress.value === true &&
-      !thereIsAlreadyTransactionWithThisToken.value &&
-      cryptoTransferAboveMinimumWeiToSend.value;
+        transferToAddress.value.trim() !== props.daoAddress.trim() &&
+        isTransferToCorrectEthAddress.value === true &&
+        !thereIsAlreadySendCryptoTransaction.value &&
+        cryptoTransferAboveMinimumWeiToSend.value &&
+        isDaoHavingEnoughCryptoBalance.value;
   } else {
     return false;
   }
 });
 const cryptoTransferAboveMinimumWeiToSend = computed(() => {
-  return toWeiNumber(amountOfCryptoToSend.value) >= toWei(MINIMUM_ETH_TO_SEND);
+  return toWeiNumber(amountOfCryptoToSend.value) >= MINIMUM_WEI_TO_SEND;
 });
 
 const emit = defineEmits(['proposalTransaction']);
-watch(() => [transferToAddress.value, amountOfTokensToSend.value, nftId.value, daoFunds.value, tokenName.value, daoOwnsNft.value], async () => {
+watch(() => [transferToAddress.value, amountOfTokensToSend.value, nftId.value, daoFunds.value, tokenName.value, daoOwnsNft.value, isDaoHavingEnoughCryptoBalance.value], async () => {
   emitProposalTransaction();
 });
 const emitProposalTransaction = () => {
   if (isEverythingFilled.value) {
     const clientToken = new ClientToken(
-      tokenAddress.value,
-      tokenName.value,
-      tokenSymbol.value,
-      tokenType.value,
-      ethConnectionStore.chainId,
-      decimals.value,
+        tokenAddress.value,
+        tokenName.value,
+        tokenSymbol.value,
+        tokenType.value,
+        ethConnectionStore.chainId,
+        decimals.value,
     );
     if (tokenType.value === TokenType.ERC20) {
       emit('proposalTransaction', props.txIndex, new ClientProposalTransaction(
-        ProposalTransactionType.TRANSFER_ERC_20_TOKENS,
-        new TransferErc20TransactionData(
-          clientToken,
-          transferToAddress.value,
-          amountOfTokensToSend.value.toFixed(0),
-        )
+          BlockchainProposalTransactionType.TRANSFER_ERC_20_TOKENS,
+          new TransferErc20TransactionData(
+              clientToken,
+              transferToAddress.value,
+              amountOfTokensToSend.value.toFixed(0),
+          )
       ));
-    } else {
+    } else if (tokenType.value === TokenType.NFT) {
       emit('proposalTransaction', props.txIndex, new ClientProposalTransaction(
-        ProposalTransactionType.TRANSFER_NFT_TOKEN,
-        new TransferNftTransactionData(
-          clientToken,
-          transferToAddress.value,
-          nftId.value.toFixed(0),
-        )
+          BlockchainProposalTransactionType.TRANSFER_NFT_TOKEN,
+          new TransferNftTransactionData(
+              clientToken,
+              transferToAddress.value,
+              nftId.value.toFixed(0),
+          )
+      ));
+    } else if (tokenType.value === TokenType.CRYPTO) {
+      emit('proposalTransaction', props.txIndex, new ClientProposalTransaction(
+          BlockchainProposalTransactionType.TRANSFER_CRYPTO,
+          new TransferCryptoTransactionData(
+              transferToAddress.value,
+              toWeiNumber(amountOfCryptoToSend.value).toString(),
+          )
       ));
     }
-  } else {
+  }  else {
     emit('proposalTransaction', props.txIndex, undefined);
   }
 }
@@ -416,13 +452,13 @@ const readErc20 = async () => {
   emitProposalTransaction();
 };
 const readNft = async () => {
-  const { nameRes, symbolRes, decimalsRes } = await ERC_721_SERVICE.readTokenData(tokenAddress.value);
+  const {nameRes, symbolRes, decimalsRes} = await ERC_721_SERVICE.readTokenData(tokenAddress.value);
   tokenName.value = nameRes;
   tokenSymbol.value = symbolRes;
   tokenType.value = TokenType.NFT;
   decimals.value = decimalsRes;
   $q.loading.hide();
-  Notify.create({ message: 'Successfully fetched NFT token data!', position: 'top-right', color: 'green-8' });
+  Notify.create({message: 'Successfully fetched NFT token data!', position: 'top-right', color: 'green-8'});
   daoFunds.value = await ERC_20_SERVICE.readTokenBalance(props.daoAddress, tokenAddress.value, decimals.value);
   emitProposalTransaction();
 };
@@ -441,7 +477,7 @@ watch(() => [tokenAddress.value, transactionType.value], async () => {
       tokenSymbol.value = '';
       decimals.value = '';
       $q.loading.hide();
-      Notify.create({ message: `Incorrect token address. Is it valid ERC-20 token address on ${ethConnectionStore.networkName}?`, position: 'top-right', color: 'red-8' });
+      Notify.create({message: `Incorrect token address. Is it valid ERC-20 token address on ${ethConnectionStore.networkName}?`, position: 'top-right', color: 'red-8'});
     }
   } else if (transactionType.value.value === TokenType.NFT) {
     try {
@@ -451,7 +487,7 @@ watch(() => [tokenAddress.value, transactionType.value], async () => {
       tokenSymbol.value = '';
       decimals.value = '';
       $q.loading.hide();
-      Notify.create({ message: `Incorrect token address. Is it valid ERC-20/NFT token address on ${ethConnectionStore.networkName}?`, position: 'top-right', color: 'red-8' });
+      Notify.create({message: `Incorrect token address. Is it valid ERC-20/NFT token address on ${ethConnectionStore.networkName}?`, position: 'top-right', color: 'red-8'});
     }
   } else {
     tokenType.value = TokenType.CRYPTO;
@@ -467,7 +503,6 @@ const isTransferToCorrectEthAddress = computed(() => {
   return isEthAddress(transferToAddress.value);
 });
 
-const daoFundsWei = ref(<bigint> BigInt(0));
 const readDaoFunds = async () => {
   daoFundsWei.value = await getBalance(props.daoAddress);
   daoFunds.value = toEth(daoFundsWei.value);
@@ -506,12 +541,6 @@ const badgeTextColor = computed(() => {
     return 'white';
   }
 });
-
-const isDaoHavingEnoughCryptoBalance = computed(() => {
-  if (amountOfCryptoToSend.value) {
-    return daoFundsWei.value >= toWeiNumber(amountOfCryptoToSend.value);
-  } else {
-    return daoFundsWei.value > 0;
-  }
-});
+const onAmountOfCryptoNumberChanged = (elem: any) => {
+}
 </script>
