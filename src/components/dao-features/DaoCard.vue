@@ -4,8 +4,16 @@
       <q-item-label class=" text-primary text-center text-overline" style="font-size: 1rem">DAO</q-item-label>
 
     </q-card-section>
+    <q-separator class="q-mt-xs q-mb-xs" v-if="!props.isCreateProposalMode"></q-separator>
+    <div class="text-overline text-center" v-if="!props.isCreateProposalMode">Actions</div>
+    <q-card-section horizontal style="padding: 2px; margin:2px;" v-if="!props.isCreateProposalMode">
+      <q-btn square align="center" class="full-width" color="primary" glossy icon-right="fa-solid fa-plus"
+             @click="$router.push(`/${props.dao.ipfsHash}/create-proposal`)" label="Create proposal"/>
+    </q-card-section>
     <q-separator class="q-mt-xs q-mb-xs"></q-separator>
-    <div class="row  text-center items-center q-pt-xs" style="height:80px" >
+    <div class="text-overline text-center">Name</div>
+
+    <div class="row  text-center items-center q-pt-xs" >
       <div class="col-grow items-center">
         <div class="text-subtitle2 q-pa-md">
           <q-item-label class=" text-primary text-bold">{{ props.dao.clientDao.name }}</q-item-label>
@@ -13,6 +21,7 @@
       </div>
     </div>
     <q-separator class="q-ma-xs"></q-separator>
+    <div class="text-overline text-center">Description</div>
     <div class="row justify-center text-center items-center q-pt-xs" v-if="props.dao.clientDao.imageBase64 !== ''">
       <div class="col-auto justify-center items-center">
         <q-img
@@ -24,8 +33,11 @@
     <q-card-section style="padding: 2px; margin:2px;" >
       <div class="text-subtitle2 q-pa-xs">{{ props.dao.clientDao.description }}</div>
     </q-card-section>
+
     <q-separator class="q-mt-xs q-mb-xs"></q-separator>
+
     <q-card-section style="padding:0; margin:0; ">
+      <div class="text-overline text-center">Details</div>
       <q-list>
         <q-item v-if="props.isFull">
           <q-item-section avatar>
@@ -174,11 +186,6 @@
           </q-item-section>
         </q-item>
       </q-list>
-      <q-card-section horizontal style="padding: 2px; margin:2px;" v-if="!props.isCreateProposalMode">
-        <q-btn square align="center" class="full-width" color="primary" glossy icon-right="fa-solid fa-plus"
-               @click="$router.push(`/${props.dao.ipfsHash}/create-proposal`)" label="Create proposal"/>
-      </q-card-section>
-
     </q-card-section>
   </q-card>
 </template>
