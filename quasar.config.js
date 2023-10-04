@@ -90,11 +90,12 @@ module.exports = configure(function (ctx) {
       // polyfillModulePreload: true,
       // distDir
 
-      extendViteConf (viteConf) {
-        viteConf.build = {
-          target: 'es2020',
-        }
-      },
+      // extendViteConf (viteConf) {
+      //   viteConf.build = {
+      //     target: 'es2020',
+      //   }
+      //   return viteConf;
+      // },
       // viteVuePluginOptions: {},
 
 

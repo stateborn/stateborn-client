@@ -33,5 +33,5 @@ import { ref } from 'vue';
 import WalletConnect from 'src/WalletConnect.vue';
 
 const tab = ref('tab1');
-
+const a = BigInt(2);
 </script>

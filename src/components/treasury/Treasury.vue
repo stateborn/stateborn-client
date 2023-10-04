@@ -129,7 +129,7 @@
 </template>
 <script setup lang="ts">
 import { api } from 'boot/axios';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { onBeforeUnmount, onMounted, ref } from 'vue';
 import { AssetDto } from 'src/api/dto/assets/asset-dto';
 import { TokenType } from 'src/api/model/ipfs/token-type';
@@ -154,7 +154,9 @@ const buffer = ref(1);
 const readTreasuryEverySeconds = 60;
 let counter = 0;
 let interval: any;
+const router = useRouter();
 onMounted(async () => {
+  await router.push({ path: route.fullPath, query: { view: 'treasury' }});
   await readTreasury();
   startInterval();
 });
@@ -195,7 +197,8 @@ const readTreasury = async () => {
 }
 
 onBeforeUnmount(() => {
-  clearInterval(interval)
-})
+  clearInterval(interval);
+  router.push({ path: route.fullPath});
+});
 
 </script>

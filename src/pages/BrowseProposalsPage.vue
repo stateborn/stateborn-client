@@ -120,7 +120,7 @@
   </q-page>
 </template>
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { api } from 'boot/axios';
 import ProposalCard from 'components/proposal/ProposalCard.vue';
 import PictureParallax from 'components/PictureParallax.vue';
@@ -178,15 +178,33 @@ const loadProposals = async (limit: number, offset: number, filter?: string) => 
 };
 
 onMounted(async () => {
-  proposals.value = await loadProposals(initialPagination.value.rowsPerPage, (initialPagination.value.page - 1) * initialPagination.value.rowsPerPage);
-  if (proposals.value.length > 0) {
-    hasData.value = true;
-    await sleep(50);
-    tableEntryWidth.value = width(document.getElementById('proposalsTable')!) - 10;
+  if (route.query.view === 'treasury') {
+    tab.value = 'treasury';
+  } else {
+    await loadProposalsInitially();
   }
-  proposalsLoaded.value = true;
-  calculateScrollHeight();
 });
+
+const loadProposalsInitially = async () => {
+  if (!proposalsLoaded.value) {
+    console.log('laduje propos');
+    proposals.value = await loadProposals(initialPagination.value.rowsPerPage, (initialPagination.value.page - 1) * initialPagination.value.rowsPerPage);
+    if (proposals.value.length > 0) {
+      hasData.value = true;
+      await sleep(50);
+      tableEntryWidth.value = width(document.getElementById('proposalsTable')!) - 10;
+    }
+    proposalsLoaded.value = true;
+    calculateScrollHeight();
+  }
+}
+
+watch([route], async () => {
+  if (route.query.view !== 'treasury') {
+    await loadProposalsInitially();
+  }
+})
+
 
 api.get(`/api/rest/v1/dao/${daoIpfsHash}/proposals/count`).then(async (response) => {
   initialPagination.value.rowsNumber = Number(response.data.count);

@@ -76,6 +76,7 @@ import { getDao } from 'src/api/services/dao-service';
 import { DaoBackend } from 'src/api/model/dao-backend';
 import { dom, useMeta } from 'quasar';
 import width = dom.width;
+import { useRoute } from 'vue-router';
 
 // 200 picture height, 50 toolbar height, 20 some spaces
 const proposalScrollHeight = ref(window.innerHeight - 50  - 200 - 20);
