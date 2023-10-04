@@ -10,7 +10,7 @@
               Loading - please wait
             </div>
             <q-linear-progress :value="progress" :buffer="buffer" v-if="isRead" size="0.15em"/>
-            <div class="text-h2 q-mt-sm q-mb-xs">{{ daoName }} DAO treasury</div>
+            <div class="text-h2 q-mt-sm q-mb-xs">{{ daoName }} treasury</div>
             <div class="text-subtitle2">
               List of <span class="text-bold">{{daoName}}</span> on-chain treasury assets <br>
               <div class="row">
@@ -31,7 +31,7 @@
           <q-card-section class="col-3 flex flex-center">
             <q-img
                 class="rounded-borders"
-                src="/treasury2.webp"
+                src="/gold4.png"
                 :style="$q.platform.is.mobile ? 'height:50px; width:50px;' : 'height:100px; width:100px;'"
             />
           </q-card-section>

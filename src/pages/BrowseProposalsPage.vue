@@ -187,7 +187,6 @@ onMounted(async () => {
 
 const loadProposalsInitially = async () => {
   if (!proposalsLoaded.value) {
-    console.log('laduje propos');
     proposals.value = await loadProposals(initialPagination.value.rowsPerPage, (initialPagination.value.page - 1) * initialPagination.value.rowsPerPage);
     if (proposals.value.length > 0) {
       hasData.value = true;
