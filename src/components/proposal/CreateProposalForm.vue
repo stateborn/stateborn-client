@@ -113,7 +113,7 @@
       </template>
     </q-input>
     <file-reader label="Upload proposal attachments" class="q-mt-xs" @file-uploaded="onFileUploaded" @file-removed="onFileRemoved" :as-base="true" size-kb-limit="1000"></file-reader>
-
+    <q-btn glossy class="q-mt-md q-mb-md full-width" color="primary" label="SHOW description preview" @click="showDescriptionPreview"></q-btn>
     <q-select filled :options="proposalTypeOptions" square v-model="proposalType" label="Proposal type" class="q-mt-md">
       <template v-slot:prepend>
         <q-badge style="padding:5px" :label="proposalType.value"
@@ -161,10 +161,11 @@
           size="xl"
           icon="fa-solid fa-cube"
           icon-color="yellow"
-          :disable="!ethConnectionStore.isConnected || !connectedNetworkMatchesTokenNetwork"
+          :disable="!ethConnectionStore.isConnected || !connectedNetworkMatchesTokenNetwork || !proposalType.value === 'YES/NO'"
           v-model="createDaoOnChainTransaction"
         >
-          <span class="text-subtitle2">Create DAO treasury assets <span class="text-bold">on-chain</span> transfer</span>
+          <span class="text-subtitle2">Create DAO treasury assets <span class="text-bold">on-chain</span> transfer
+            <span class="text-red-8" v-if="proposalType === ProposalType.OPTIONS" >(only for YES/NO proposal type)</span></span>
         </q-toggle>
       </div>
     </div>
@@ -174,6 +175,7 @@
           v-if="createDaoOnChainTransaction && dao.clientDao.contractAddress"
           :dao-address="dao.clientDao.contractAddress!"
           :tx-index="txIndex.index"
+          :dao-chain-id="dao.clientDao.token.chainId"
           :previous-transactions="transactions.slice(0, txIndex.index )"
           @proposal-transaction="onProposalTransactionAdded"
           >
@@ -208,6 +210,7 @@
         </q-card-section>
       </q-card>
     </q-dialog>
+    <description-preview-d-ialog :description="descriptionForPreview" :show-popup="showDescriptionPreviewDialog"></description-preview-d-ialog>
   </div>
 </template>
 <script lang="ts" setup>
@@ -225,17 +228,18 @@ import { getLatestBlockNumber } from 'src/api/services/eth-service';
 import { ClientProposal } from 'src/api/model/ipfs/client-proposal';
 import { ProposalType } from 'src/api/model/ipfs/proposal-type';
 import { TOKEN_SERVICE } from 'src/api/services/token-service';
-import { changeNetwork } from 'src/api/services/change-network-service';
 import { DaoBackend } from 'src/api/model/dao-backend';
 import CreateProposalTransactionRow from 'components/proposal/CreateProposalTransactionRow.vue';
 import { ClientProposalTransaction } from 'src/api/model/ipfs/proposal-transaction/client-proposal-transaction';
 import { generateRandomString } from 'src/api/services/utils-service';
 import anime from 'animejs/lib/anime';
 import DifferentNetworkBanner from 'components/DifferentNetworkBanner.vue';
-
+import DescriptionPreviewDIalog from 'components/proposal/DescriptionPreviewDialog.vue';
+import { sleep } from 'src/api/services/sleep-service';
 dayjs.extend(dayjsPluginUTC);
 const title = ref('New proposal');
 const description = ref('This proposal is about...');
+const descriptionForPreview = ref('');
 const proposalTypeOptions = ref([{ value: 'YES/NO', label: 'YES / NO - vote YES or NO' }, { value: 'OPTIONS', label: 'OPTIONS - vote for one of the options' }]);
 const proposalType = ref({ value: 'YES/NO', label: 'YES / NO - vote YES or NO' });
 const timeUnits = ref([
@@ -252,6 +256,7 @@ const emit = defineEmits(['proposalChanged']);
 const imagesMap = new Map();
 const showSignProposalDialog = ref(false);
 const createDaoOnChainTransaction = ref(false);
+const showDescriptionPreviewDialog = ref(false);
 const transactions = ref(<ClientProposalTransaction[]>[]);
 const router = useRouter();
 class TxIndex {
@@ -268,6 +273,13 @@ const transactionsCurrentlyEdited = ref(0);
 const props = defineProps<{
   dao: DaoBackend,
 }>();
+
+const showDescriptionPreview = async () => {
+  showDescriptionPreviewDialog.value = false;
+  descriptionForPreview.value = calculateDescriptionValue();
+  await sleep(100);
+  showDescriptionPreviewDialog.value = true;
+};
 
 const isFormValid = computed(() => {
   return ethConnectionStore.isConnected && connectedNetworkMatchesTokenNetwork.value && hasRequiredAmountOfTokens.value === true && title.value.trim() !== ''

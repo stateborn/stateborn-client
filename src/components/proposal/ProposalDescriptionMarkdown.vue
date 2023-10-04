@@ -1,5 +1,5 @@
 <template>
-  <q-markdown :src="props.description" class="my-markdown text-grey-9 text-left text-subtitle2">
+  <q-markdown :src="props.description" class="my-markdown text-black text-left text-subtitle2">
   </q-markdown>
 </template>
 

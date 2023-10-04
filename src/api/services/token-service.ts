@@ -18,6 +18,8 @@ export class TokenService {
         icon: '/ethereum.svg',
         chainIdHex: '0x1',
         currency: 'ETH',
+        currencyName: 'Ether',
+        currencyIcon: '/ether.webp',
       },
       {
         chainId: '42161',
@@ -25,6 +27,8 @@ export class TokenService {
         icon: '/arbitrum.svg',
         chainIdHex: '0xA4B1',
         currency: 'ETH',
+        currencyName: 'Ether',
+        currencyIcon: '/ether.webp',
       },
       {
         chainId: '137',
@@ -32,13 +36,17 @@ export class TokenService {
         icon: '/polygon.svg',
         chainIdHex: '0x89',
         currency: 'MATIC',
+        currencyName: 'Matic',
+        currencyIcon: '/matic.svg',
       },
       {
         chainId: process.env.DEVELOPMENT_NETWORK_CHAIN_ID!,
         name: process.env.DEVELOPMENT_NETWORK_NAME!,
         icon: process.env.DEVELOPMENT_NETWORK_ICON_NAME!,
         chainIdHex: process.env.DEVELOPMENT_NETWORK_CHAIN_ID_HEX!,
+        currencyName: 'Ether',
         currency: 'LOCAL-ETH',
+        currencyIcon: '/ether.webp',
       },
     ]
       :
@@ -49,6 +57,8 @@ export class TokenService {
       icon: '/ethereum.svg',
       chainIdHex: '0x1',
       currency: 'ETH',
+      currencyName: 'Ether',
+      currencyIcon: '/ether.webp',
     },
     {
       chainId: '42161',
@@ -56,6 +66,8 @@ export class TokenService {
       icon: '/arbitrum.svg',
       chainIdHex: '0xA4B1',
       currency: 'ETH',
+      currencyName: 'Ether',
+      currencyIcon: '/ether.webp',
     },
     {
       chainId: '137',
@@ -63,6 +75,8 @@ export class TokenService {
       icon: '/polygon.svg',
       chainIdHex: '0x89',
       currency: 'MATIC',
+      currencyName: 'Matic',
+      currencyIcon: '/matic.svg',
     },
   ]
 
@@ -95,8 +109,6 @@ export class TokenService {
     return this.supportedNetworks.filter(_ => _.chainIdHex.toLowerCase() === chainIdHex.toLowerCase())[0].chainId;
   }
 
-
-
   getNetworkIcon(chainId: string): string {
     return this.getProperty(chainId, 'icon');
   }
@@ -105,6 +117,13 @@ export class TokenService {
     return this.getProperty(chainId, 'currency');
   }
 
+  getNetworkCurrencyIcon(chainId: string): string {
+    return this.getProperty(chainId, 'currencyIcon');
+  }
+
+  getCurrencyName(chainId: string): string {
+    return this.getProperty(chainId, 'currencyName');
+  }
 
   isSupportedNetwork(chainIdHex: string): boolean {
     return  this.supportedNetworks.filter(_ => _.chainIdHex.toLowerCase() === chainIdHex.toLowerCase()).length > 0

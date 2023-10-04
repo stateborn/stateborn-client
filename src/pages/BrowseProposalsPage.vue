@@ -28,72 +28,90 @@
             <dao-card :dao="dao" v-if="dao !== null" :is-full="true" :proposals-count="proposalsCount"></dao-card>
           </div>
           <div class="col-lg-9 col-md-7 col-xs-grow">
+            <div class="col-12">
+              <q-tabs v-model="tab" align="justify" inline-label :style="$q.platform.is.mobile ? 'font-size:12px': ''" class="noise q-ml-xs ">
+                <q-tab name="proposals">
+                  <q-img src="/propa.svg" style="height:29px; width: 29px;margin-right:10px"></q-img>
+                  Proposals
+                </q-tab>
+                <q-tab name="treasury">
+                  <q-img src="/gold4.png" style="height:35px; width: 35px;margin-right:10px"></q-img>
+                  Treasury
+                </q-tab>
+              </q-tabs>
+              <q-tab-panels v-model="tab" animated style="border: 0px;">
+                <q-tab-panel name="proposals" style="margin:0;padding:0;" class="bodynoise">
+                  <q-scroll-area :style="`height: ${proposalScrollHeight}px; width: 100%; min-width:300px`" ref="proposalScrollArea"
+                                 v-if="proposals.length > 0 || hasData">
+                    <q-table
+                        id="proposalsTable"
+                        flat bordered
+                        grid
+                        v-model:pagination="initialPagination"
+                        title="Proposals"
+                        :rows="proposals"
+                        :columns="columns"
+                        row-key="name"
+                        :filter="filter"
+                        @request="onTableDataRequest"
+                        hide-header
+                    >
 
-
-            <q-scroll-area :style="`height: ${proposalScrollHeight}px; width: 100%; min-width:300px`" ref="proposalScrollArea"
-                           v-if="proposals.length > 0 || hasData">
-              <q-table
-                  id="proposalsTable"
-                  flat bordered
-                  grid
-                  v-model:pagination="initialPagination"
-                  title="Proposals"
-                  :rows="proposals"
-                  :columns="columns"
-                  row-key="name"
-                  :filter="filter"
-                  @request="onTableDataRequest"
-                  hide-header
-              >
-
-                <template v-slot:top-right>
-                  <q-input borderless dense debounce="500" v-model="filter" placeholder="Search">
-                    <template v-slot:append>
-                      <q-icon name="search"/>
-                    </template>
-                  </q-input>
-                </template>
-                <template v-slot:item="props">
-                  <proposal-card
-                      v-show="tableEntryWidth > 0"
-                      class="q-ma-xs q-mt-lg"
-                      :style="`min-width:${tableEntryWidth}px` "
-                      :dao-ipfs-hash="daoIpfsHash"
-                      :proposal="props.row"
-                      @click="$router.push(`/${daoIpfsHash}/${props.row.ipfsHash}`)"></proposal-card>
-                </template>
-                <template v-slot:no-data="{ icon, message, filter }">
-                  <div class="full-width row flex-center q-gutter-sm text-primary">
+                      <template v-slot:top-right>
+                        <q-input borderless dense debounce="500" v-model="filter" placeholder="Search">
+                          <template v-slot:append>
+                            <q-icon name="search"/>
+                          </template>
+                        </q-input>
+                      </template>
+                      <template v-slot:item="props">
+                        <proposal-card
+                            v-show="tableEntryWidth > 0"
+                            class="q-ma-xs q-mt-lg"
+                            :style="`min-width:${tableEntryWidth}px` "
+                            :dao-ipfs-hash="daoIpfsHash"
+                            :proposal="props.row"
+                            @click="$router.push(`/${daoIpfsHash}/${props.row.ipfsHash}`)"></proposal-card>
+                      </template>
+                      <template v-slot:no-data="{ icon, message, filter }">
+                        <div class="full-width row flex-center q-gutter-sm text-primary">
                 <span>
                    No data found
                   </span>
-                    <q-icon name="fa-solid fa-triangle-exclamation"/>
+                          <q-icon name="fa-solid fa-triangle-exclamation"/>
+                        </div>
+                      </template>
+                    </q-table>
+                  </q-scroll-area>
+                  <div class="row items-center justify-center" v-else
+                       :style="$q.platform.is.mobile ? 'height:100px': `height:${proposalScrollHeight}px`">
+                    <div class="row justify-center items-center" v-if="!proposalsLoaded">
+                      <div class="col-auto justify-center q-pa-xs">
+                        <q-spinner
+                            class="text-center justify-center"
+                            color="primary"
+                            size="3em"
+                        />
+                      </div>
+                    </div>
+                    <div class="col-lg-12 col-xs-grow justify-center" v-else>
+                      <div class="row justify-center" v-if="!$q.platform.is.mobile">
+                        <div class="col-lg-auto col-xs-12 justify-center">
+                          <div class="text-h5" v-if="proposalsLoaded">No proposals yet</div>
+                        </div>
+                      </div>
+                      <div class="text-center text-subtitle2" v-else>
+                        <span v-if="proposalsLoaded">No proposals yet</span>
+                      </div>
+                    </div>
                   </div>
-                </template>
-              </q-table>
-            </q-scroll-area>
-
-            <div class="row items-center justify-center" v-else
-                 :style="$q.platform.is.mobile ? 'height:100px': `height:${proposalScrollHeight}px`">
-              <div class="row justify-center items-center" v-if="!proposalsLoaded">
-                <div class="col-auto justify-center q-pa-xs">
-                  <q-spinner
-                    class="text-center justify-center"
-                    color="primary"
-                    size="3em"
-                  />
-                </div>
-              </div>
-              <div class="col-lg-12 col-xs-grow justify-center" v-else>
-                <div class="row justify-center" v-if="!$q.platform.is.mobile">
-                  <div class="col-lg-auto col-xs-12 justify-center">
-                    <div class="text-h5" v-if="proposalsLoaded">No proposals yet</div>
+                </q-tab-panel>
+                <q-tab-panel name="treasury" style="margin:0;padding:0;">
+                  <div>
+                      <treasury :dao-name="dao?.clientDao.name" :dao-address="dao?.clientDao.contractAddress" class="q-ma-xs"></treasury>
                   </div>
-                </div>
-                <div class="text-center text-subtitle2" v-else>
-                  <span v-if="proposalsLoaded">No proposals yet</span>
-                </div>
-              </div>
+                </q-tab-panel>
+              </q-tab-panels>
             </div>
           </div>
         </div>
@@ -108,7 +126,7 @@ import ProposalCard from 'components/proposal/ProposalCard.vue';
 import PictureParallax from 'components/PictureParallax.vue';
 import { useRoute } from 'vue-router';
 import DaoCard from 'components/dao-features/DaoCard.vue';
-import { dom, useMeta } from 'quasar';
+import { dom } from 'quasar';
 import { sleep } from 'src/api/services/sleep-service';
 import { getProposal } from 'src/api/services/proposal-service';
 import { getDao } from 'src/api/services/dao-service';
@@ -116,8 +134,8 @@ import { DaoBackend } from 'src/api/model/dao-backend';
 import width = dom.width;
 import { BackendProposal } from 'src/api/model/backend-proposal';
 import { filterImagesAndAttachmentsFromDescription } from 'src/api/services/description-service';
-import DaoCardMin from 'components/dao-features/DaoCardMin.vue';
 import { useCurrentChainStore } from 'stores/current-chain-store';
+import Treasury from 'components/treasury/Treasury.vue';
 
 // 200 picture height, 50 toolbar height, 20 some spaces
 const proposalScrollHeight = ref(window.innerHeight - 50  - 200 - 20);
@@ -131,6 +149,8 @@ const daoIpfsHash: string = <string>route.params.daoIpfsHash;
 const hasData = ref(false);
 const proposalsCount = ref('');
 const proposalsLoaded = ref(false);
+const tab = ref('proposals');
+
 const initialPagination = ref({
   sortBy: 'desc',
   descending: false,

@@ -109,8 +109,8 @@
                         <div class="col-auto text-bold sectionName">Description</div>
                         <div class="col-grow text-right">
                           <q-badge style="padding:5px" :label="`TRANSFER ${item.tokenType}`"
-                                   :color="item.tokenType === TokenType.ERC20 ? 'primary' : 'secondary'"
-                                   :text-color="item.tokenType === TokenType.ERC20 ? 'white' : 'black'"></q-badge>
+                                   :color="badgeColor(item.tokenType)"
+                                   :text-color="badgeTextColor(item.tokenType)"></q-badge>
                           <q-icon color="primary" name="fa-solid fa-circle-info" class="q-pl-xs"
                                   style="margin-bottom: 3px;padding-right:5px">
                             <q-tooltip class="stateborn-tooltip" v-if="item.tokenType === TokenType.ERC20">
@@ -121,17 +121,21 @@
                               Description: Transfer {{item.tokenSymbol}} NFT with ID {{item.tokenId}} from DAO treasury to
                               address {{item.transferToAddress}}.
                             </q-tooltip>
+                            <q-tooltip class="stateborn-tooltip" v-if="item.tokenType === TokenType.CRYPTO">
+                              Description: Transfer {{item.amount}} {{item.tokenSymbol}} from DAO treasury to
+                              address {{item.transferToAddress}}.
+                            </q-tooltip>
                           </q-icon>
                         </div>
                       </div>
-                      <div class="row text-subtitle2">
+                      <div class="row text-subtitle2" v-if="item.transactionType !== BlockchainProposalTransactionType.TRANSFER_CRYPTO">
                         <div class="col-auto text-bold sectionName">Token</div>
                         <div class="col-grow text-right">{{ item.token }}
                           <q-btn flat round color="primary" size="xs" icon="fa-solid fa-arrow-up-right-from-square"
                                  @click="goToEtherscan(item.tokenAddress, item.chainId)"/>
                         </div>
                       </div>
-                      <div class="row text-subtitle2" v-if="item.tokenType === TokenType.ERC20">
+                      <div class="row text-subtitle2" v-if="item.tokenType !== TokenType.NFT">
                         <div class="col-auto text-bold sectionName">Transfer amount</div>
                         <div class="col-grow text-right">{{ item.amount }} {{ item.tokenSymbol }}
                         </div>
@@ -170,11 +174,11 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { onMounted, ref, watch } from 'vue';
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useEthConnectionStore } from 'stores/eth-connection-store';
 import { TokenType } from 'src/api/model/ipfs/token-type';
 import { goToEtherscan } from 'src/api/services/utils-service';
-import { ProposalTransactionType } from 'src/api/model/ipfs/proposal-transaction-type';
+import { BlockchainProposalTransactionType } from 'src/api/model/ipfs/blockchain-proposal-transaction-type';
 import { ERC_721_SERVICE } from 'src/api/services/erc-721-service';
 import { IpfsNftInfo } from 'src/api/model/ipfs-nft-info';
 import { BlockchainProposalStatus } from 'src/api/model/blockchain-proposal-status';
@@ -194,11 +198,12 @@ import { OnChainProposalDetails } from 'src/api/model/on-chain-proposal-details'
 import ExecuteOnChainProposalTransactionsTimelineEntry
   from 'components/proposal/proposal-transactios/ExecuteOnChainProposalTransactionsTimelineEntry.vue';
 import { sleep } from 'src/api/services/sleep-service';
-import { onBeforeUnmount } from 'vue';
+import { toEth } from 'src/api/services/eth-service';
+import { TOKEN_SERVICE } from 'src/api/services/token-service';
 
 class TransactionRow {
   description: string;
-  transactionType: ProposalTransactionType;
+  transactionType: BlockchainProposalTransactionType;
   token: string;
   tokenDecimals: number;
   tokenAddress: string;
@@ -211,7 +216,7 @@ class TransactionRow {
   ipfsNftInfo: IpfsNftInfo | undefined;
 
   constructor(description: string,
-              transactionType: ProposalTransactionType,
+              transactionType: BlockchainProposalTransactionType,
               token: string,
               tokenDecimals: number,
               tokenAddress: string,
@@ -259,29 +264,53 @@ const getNftDetails = async (tokenAddress: string, tokenId: number): Promise<Ipf
 const fillTable = async () => {
   let i = 1;
   rows.value = [];
-  chainId.value = (<any>props.proposal.clientProposal.transactions![0].data).token.chainId;
-  for (const _ of props.proposal.clientProposal.transactions!) {
-    const data: any = _.data;
-    i++;
-    let ipfsNftInfo: IpfsNftInfo | undefined;
-    if (_.transactionType === ProposalTransactionType.TRANSFER_NFT_TOKEN) {
-      ipfsNftInfo = await getNftDetails(data.token.address, data.tokenId);
-    }
-    rows.value.push(
-      new TransactionRow(
-        `Transfer #${i - 1}`,
-        _.transactionType,
-        `${data.token.name} (${data.token.symbol})`,
-        data.token.decimals,
-        data.token.address,
-        data.transferToAddress,
-        _.transactionType === ProposalTransactionType.TRANSFER_ERC_20_TOKENS ? data.transferAmount : '',
-        _.transactionType === ProposalTransactionType.TRANSFER_NFT_TOKEN ? data.tokenId : '',
-        data.token.symbol,
-        data.token.chainId,
-        data.token.type,
-        ipfsNftInfo)
+  const transactionType: BlockchainProposalTransactionType = props.proposal.clientProposal.transactions![0].transactionType;
+  if (transactionType === BlockchainProposalTransactionType.TRANSFER_CRYPTO) {
+    for (const _ of props.proposal.clientProposal.transactions!) {
+      const data: any = _.data;
+      i++;
+      rows.value.push(
+          new TransactionRow(
+              `Transfer #${i - 1}`,
+              _.transactionType,
+              '',
+              18,
+              '',
+              data.transferToAddress,
+              toEth(BigInt(data.amount)),
+              0,
+              TOKEN_SERVICE.getNetworkCurrency(props.dao.clientDao.token.chainId),
+              '',
+              TokenType.CRYPTO,
+              undefined)
       );
+    }
+  } else {
+
+    chainId.value = (<any>props.proposal.clientProposal.transactions![0].data).token.chainId;
+    for (const _ of props.proposal.clientProposal.transactions!) {
+      const data: any = _.data;
+      i++;
+      let ipfsNftInfo: IpfsNftInfo | undefined;
+      if (_.transactionType === BlockchainProposalTransactionType.TRANSFER_NFT_TOKEN) {
+        ipfsNftInfo = await getNftDetails(data.token.address, data.tokenId);
+      }
+      rows.value.push(
+        new TransactionRow(
+          `Transfer #${i - 1}`,
+          _.transactionType,
+          `${data.token.name} (${data.token.symbol})`,
+          data.token.decimals,
+          data.token.address,
+          data.transferToAddress,
+          _.transactionType === BlockchainProposalTransactionType.TRANSFER_ERC_20_TOKENS ? data.transferAmount : '',
+          _.transactionType === BlockchainProposalTransactionType.TRANSFER_NFT_TOKEN ? data.tokenId : '',
+          data.token.symbol,
+          data.token.chainId,
+          data.token.type,
+          ipfsNftInfo)
+        );
+    }
   }
 };
 
@@ -366,6 +395,24 @@ window.addEventListener('resize', resizeListener, true);
 onBeforeUnmount(() => {
   window.removeEventListener('resize', resizeListener, true)
 });
+const badgeColor = (tokenType: TokenType) => {
+  if (tokenType === TokenType.ERC20) {
+    return 'primary';
+  } else if (tokenType === TokenType.NFT) {
+    return 'secondary';
+  } else {
+    return 'black';
+  }
+};
 
+const badgeTextColor = (tokenType: TokenType) => {
+  if (tokenType === TokenType.ERC20) {
+    return 'white';
+  } else if (tokenType === TokenType.NFT) {
+    return 'primary';
+  } else {
+    return 'white';
+  }
+};
 
 </script>

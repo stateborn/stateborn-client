@@ -3,7 +3,7 @@
     <div class="row justify-center text-center items-center q-pt-xs">
       <div class="col-auto">
         <q-img
-          style="height: 100px; width: 100px;"
+          :style="$q.platform.is.mobile ? 'height: 50px; width: 50px;': 'height: 100px; width: 100px;'"
           src="/stateborn-logo.webp"
         />
       </div>

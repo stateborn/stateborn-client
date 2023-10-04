@@ -6,9 +6,12 @@ import { ethers, ZeroAddress } from 'ethers';
 import { OnChainProposalDetails } from 'src/api/model/on-chain-proposal-details';
 import { ClientProposalTransaction } from 'src/api/model/ipfs/proposal-transaction/client-proposal-transaction';
 import { TransferErc20TransactionData } from 'src/api/model/ipfs/proposal-transaction/transfer-erc-20-transaction-data';
-import { ProposalTransactionType } from 'src/api/model/ipfs/proposal-transaction-type';
+import { BlockchainProposalTransactionType } from 'src/api/model/ipfs/blockchain-proposal-transaction-type';
 import { TransferNftTransactionData } from 'src/api/model/ipfs/proposal-transaction/transfer-nft-transaction-data';
 import { TokenType } from 'src/api/model/ipfs/token-type';
+import {
+  TransferCryptoTransactionData
+} from 'src/api/model/ipfs/proposal-transaction/transfer-crypto-transaction-data';
 
 export const createDaoOnChain = async (tokenAddress: string, tokenCollateral: bigint, chainId: string, tokenType: TokenType): Promise<string> => {
     if (tokenType === TokenType.ERC20) {
@@ -80,22 +83,28 @@ export const createProposalOnChain = async (daoAddress: string, proposalId: stri
         });
     });
     const onChainTransfers = <string[]>transactions.map(_ => {
-        if (_.transactionType === ProposalTransactionType.TRANSFER_ERC_20_TOKENS) {
+        if (_.transactionType === BlockchainProposalTransactionType.TRANSFER_ERC_20_TOKENS) {
             return Dao__factory.createInterface().encodeFunctionData('sendErc20', [
                 ethers.toUtf8Bytes(proposalId),
                 (<TransferErc20TransactionData>_.data).token.address,
                 (<TransferErc20TransactionData>_.data).transferToAddress,
                 ethers.parseUnits((<TransferErc20TransactionData>_.data).transferAmount, Number((<TransferErc20TransactionData>_.data).token.decimals)),
             ]);
-        } else if (_.transactionType === ProposalTransactionType.TRANSFER_NFT_TOKEN) {
+        } else if (_.transactionType === BlockchainProposalTransactionType.TRANSFER_NFT_TOKEN) {
             return Dao__factory.createInterface().encodeFunctionData('sendNft', [
                 ethers.toUtf8Bytes(proposalId),
                 (<TransferNftTransactionData>_.data).token.address,
                 (<TransferNftTransactionData>_.data).transferToAddress,
                 Number((<TransferNftTransactionData>_.data).tokenId),
             ]);
+        } else if (_.transactionType === BlockchainProposalTransactionType.TRANSFER_CRYPTO) {
+          return Dao__factory.createInterface().encodeFunctionData('sendCrypto', [
+            ethers.toUtf8Bytes(proposalId),
+            (<TransferNftTransactionData>_.data).transferToAddress,
+            BigInt((<TransferCryptoTransactionData>_.data).amount),
+          ]);
         } else {
-            return undefined;
+            throw new Error(`Transaction type ${_.transactionType} not supported`);
         }
     }).filter(_ => _ !== undefined);
     const collateral = ethers.parseEther(requiredCollateral);

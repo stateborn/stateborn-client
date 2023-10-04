@@ -3,9 +3,12 @@ import { ETH_CONNECTION_SERVICE } from 'src/api/services/eth-connection-service'
 import { ClientProposal } from 'src/api/model/ipfs/client-proposal';
 import { ProposalType } from 'src/api/model/ipfs/proposal-type';
 import { ClientDao } from 'src/api/model/ipfs/client-dao';
-import { ProposalTransactionType } from 'src/api/model/ipfs/proposal-transaction-type';
+import { BlockchainProposalTransactionType } from 'src/api/model/ipfs/blockchain-proposal-transaction-type';
 import { TransferErc20TransactionData } from 'src/api/model/ipfs/proposal-transaction/transfer-erc-20-transaction-data';
 import { TransferNftTransactionData } from 'src/api/model/ipfs/proposal-transaction/transfer-nft-transaction-data';
+import {
+  TransferCryptoTransactionData
+} from 'src/api/model/ipfs/proposal-transaction/transfer-crypto-transaction-data';
 
 export const signProposal = async (clientProposal :ClientProposal): Promise<string> => {
   const abiEncodedProposal = abiEncodeProposal(clientProposal);
@@ -16,7 +19,7 @@ export const signProposal = async (clientProposal :ClientProposal): Promise<stri
 
 export const abiEncodeProposal = (clientProposal: ClientProposal) => {
   const types = ['address', 'bytes', 'bytes', 'bytes', 'bytes32', 'bytes32', 'bytes32', 'uint256'];
-  const values = [
+  const values: any[] = [
     clientProposal.creatorAddress,
     ethers.toUtf8Bytes(clientProposal.daoIpfsHash),
     ethers.toUtf8Bytes(clientProposal.title),
@@ -35,7 +38,7 @@ export const abiEncodeProposal = (clientProposal: ClientProposal) => {
       types.push('bytes');
       values.push(ethers.toUtf8Bytes(transaction.transactionType));
       switch (transaction.transactionType) {
-        case ProposalTransactionType.TRANSFER_ERC_20_TOKENS:
+        case BlockchainProposalTransactionType.TRANSFER_ERC_20_TOKENS:
           types.push('address');
           values.push((<TransferErc20TransactionData>transaction.data).token.address);
           types.push('address');
@@ -43,13 +46,19 @@ export const abiEncodeProposal = (clientProposal: ClientProposal) => {
           types.push('uint256');
           values.push(Number((<TransferErc20TransactionData>transaction.data).transferAmount));
           break;
-        case ProposalTransactionType.TRANSFER_NFT_TOKEN:
+        case BlockchainProposalTransactionType.TRANSFER_NFT_TOKEN:
           types.push('address');
           values.push((<TransferNftTransactionData>transaction.data).token.address);
           types.push('address');
           values.push((<TransferNftTransactionData>transaction.data).transferToAddress);
           types.push('uint256');
           values.push(Number((<TransferNftTransactionData>transaction.data).tokenId));
+          break;
+        case BlockchainProposalTransactionType.TRANSFER_CRYPTO:
+          types.push('address');
+          values.push((<TransferCryptoTransactionData>transaction.data).transferToAddress);
+          types.push('uint256');
+          values.push(BigInt((<TransferCryptoTransactionData>transaction.data).amount));
           break;
         default:
           throw new Error(`Transaction type ${transaction.transactionType} not supported`);

@@ -25,6 +25,12 @@
             <div class="row">
               <div class="col-lg-9 col-xs-12">
                 <div class="q-pa-xs">
+                  <div class="row justify-center q-pt-md" v-if="$q.platform.is.mobile">
+                    <div class="col-auto">
+                      <q-video src="https://www.youtube.com/embed/M4jw6TtgYqg/?rel=0" />
+                    </div>
+                  </div>
+
                   <div class="row" >
                     <div class="col-12">
                       <div class="q-pa-lg">
@@ -70,11 +76,11 @@
                     </div>
                   </div>
 
-                  <div class="row justify-center q-pt-md">
+                  <div class="row justify-center q-pt-md" v-if="!$q.platform.is.mobile">
                     <div class="col-auto">
                       <q-video
                         src="https://www.youtube.com/embed/M4jw6TtgYqg/?rel=0"
-                        :style="$q.platform.is.mobile ? '': 'width: 853px; height: 480px'"
+                        style="width: 853px; height: 480px"
                       />
                     </div>
                   </div>
