@@ -15,7 +15,7 @@ export class TokenService {
       {
         chainId: '1',
         name: 'Ethereum Mainnet',
-        icon: '/ether.webp',
+        icon: '/ethereum.svg',
         chainIdHex: '0x1',
         currency: 'ETH',
         currencyName: 'Ether',
@@ -54,7 +54,7 @@ export class TokenService {
     {
       chainId: '1',
       name: 'Ethereum Mainnet',
-      icon: '/ether.webp',
+      icon: '/ethereum.svg',
       chainIdHex: '0x1',
       currency: 'ETH',
       currencyName: 'Ether',

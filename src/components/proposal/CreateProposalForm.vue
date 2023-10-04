@@ -403,7 +403,6 @@ const callCreateProposal = async () => {
   Notify.create({ message: `Latest block number: ${latestBlockNumber}`, position: 'top', color: 'primary' });
   const fullDescription = calculateDescriptionValue();
   const startDate = dayjs();
-  console.log('mam transactions', transactions);
   const clientProposal: ClientProposal = new ClientProposal(
     ethConnectionStore.account,
     props.dao.ipfsHash,
@@ -418,9 +417,7 @@ const callCreateProposal = async () => {
     transactions.value.length > 0? transactions.value.map((_) => _) : undefined
 );
   showSignProposalDialog.value = true;
-  console.log('signauje', clientProposal);
   const signature = await signProposal(clientProposal);
-  console.log('poszlo');
   api.post('/api/rest/v1/proposal', {
     clientProposal,
     creatorSignature: signature,
