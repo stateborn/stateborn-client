@@ -280,7 +280,7 @@ import {
 const transactionTypes = ref([{value: TokenType.ERC20, label: 'ERC-20 transfer'}, {value: TokenType.NFT, label: 'NFT transfer'}, {value: TokenType.CRYPTO, label: 'CRYPTOCURRENCY transfer'}]);
 const transactionType = ref({value: TokenType.ERC20, label: 'ERC-20 transfer'});
 const tokenAddress = ref('');
-const transferToAddress = ref('0x3d7aEfaeCDb38A32AD6b376397d7BB0aaA9Abf73');
+const transferToAddress = ref('');
 const tokenName = ref('');
 const tokenSymbol = ref('');
 const daoFunds = ref('');
@@ -518,6 +518,9 @@ watch(() => [props.daoChainId, ethConnectionStore.isConnected], () => {
 onMounted(async () => {
   await readDaoFunds();
   nativeCurrencyName.value = TOKEN_SERVICE.getNetworkCurrency(props.daoChainId);
+  if (process.env.IS_LOCALHOST) {
+    transferToAddress.value = <string>process.env.TRANSFER_TO_DEV_ADDRESS;
+  }
 });
 
 tokenAddress.value = process.env.DEVELOPMENT_NETWORK_ERC_20_TOKEN_ADDRESS!;

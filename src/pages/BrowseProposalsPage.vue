@@ -29,13 +29,13 @@
           </div>
           <div class="col-lg-9 col-md-7 col-xs-grow">
             <div class="col-12">
-              <q-tabs v-model="tab" align="justify" inline-label :style="$q.platform.is.mobile ? 'font-size:12px': ''" class="noise q-ml-xs ">
+              <q-tabs v-model="tab" align="justify" inline-label :style="$q.platform.is.mobile ? 'font-size:12px': ''" class="noise q-ml-xs " v-if="dao === undefined || dao?.clientDao.contractAddress !== undefined">
                 <q-tab name="proposals">
                   <q-img src="/propa.svg" style="height:29px; width: 29px;margin-right:10px"></q-img>
                   Proposals
                 </q-tab>
                 <q-tab name="treasury">
-                  <q-img src="/gold4.png" style="height:35px; width: 35px;margin-right:10px"></q-img>
+                  <q-img src="/gold.webp" style="height:35px; width: 35px;margin-right:10px"></q-img>
                   Treasury
                 </q-tab>
               </q-tabs>

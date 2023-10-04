@@ -31,7 +31,7 @@
           <q-card-section class="col-3 flex flex-center">
             <q-img
                 class="rounded-borders"
-                src="/gold4.png"
+                src="/gold.webp"
                 :style="$q.platform.is.mobile ? 'height:50px; width:50px;' : 'height:100px; width:100px;'"
             />
           </q-card-section>

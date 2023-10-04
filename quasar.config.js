@@ -83,6 +83,7 @@ module.exports = configure(function (ctx) {
         POLYGON_ERC_20_DAO_FACTORY_ADDRESS: '0xBC4Be7cA45e84E5a30abF72Af4D40d5d5611F666',
         POLYGON_NFT_DAO_FACTORY_ADDRESS: '0x93C2366436c80cb43548000D24263402673ba74A',
         MINIMUM_WEI_TO_SEND_IN_TRANSFER: '100000000',
+        TRANSFER_TO_DEV_ADDRESS: '0x3d7aEfaeCDb38A32AD6b376397d7BB0aaA9Abf73',
       },
       // rawDefine: {}
       // ignorePublicFolder: true,
